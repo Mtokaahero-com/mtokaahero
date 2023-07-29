@@ -1,3 +1,3 @@
-# curly-fortnight
-# we are going build a great UI using just html and css
-# we are going build a real estate template for houses found in Abuja Nigeria
+# Project Manager App with QraphQL
+
+This is a sample of A simple app, using React, Apollo and GraphQl
