@@ -1,8 +1,12 @@
+import Navbar from "./pages/Navbar"
+import './index.css'
 
 
 const App = () => {
   return (
-    <div>App</div>
+    <div>
+      <Navbar />
+    </div>
   )
 }
 
