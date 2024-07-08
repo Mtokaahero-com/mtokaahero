@@ -27,7 +27,7 @@ export default function Component() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <Image
-                  src="/placeholder.svg"
+                  src="/brakepad.jpg"
                   width="300"
                   height="200"
                   alt="Part Image"
@@ -36,12 +36,12 @@ export default function Component() {
                 <CardContent className="p-4 space-y-2">
                   <h3 className="text-lg font-bold">Brake Pads</h3>
                   <p className="text-muted-foreground">$29.99</p>
-                  <Button variant="outline">Add to Cart</Button>
+                  <Button variant="destructive">Add to Cart</Button>
                 </CardContent>
               </Card>
               <Card>
                 <Image
-                  src="/placeholder.svg"
+                  src="/engine-oil.jpg"
                   width="300"
                   height="200"
                   alt="Part Image"
@@ -50,27 +50,27 @@ export default function Component() {
                 <CardContent className="p-4 space-y-2">
                   <h3 className="text-lg font-bold">Engine Oil</h3>
                   <p className="text-muted-foreground">$24.99</p>
-                  <Button variant="outline">Add to Cart</Button>
+                  <Button variant="destructive">Add to Cart</Button>
                 </CardContent>
               </Card>
               <Card>
                 <Image
-                  src="/placeholder.svg"
+                  src="/tires.jpg"
                   width="300"
                   height="200"
                   alt="Part Image"
                   className="rounded-t-md"
                 />
                 <CardContent className="p-4 space-y-2">
-                  <h3 className="text-lg font-bold">Windshield Wipers</h3>
+                  <h3 className="text-lg font-bold">Tires </h3>
                   <p className="text-muted-foreground">$12.99</p>
-                  <Button variant="outline">Add to Cart</Button>
+                  <Button variant="destructive">Add to Cart</Button>
                 </CardContent>
               </Card>
             </div>
           </div>
         </section>
-        <section className="bg-muted py-12 md:py-24 px-6">
+        <section className="bg-muted-foreground py-12 md:py-24 px-6">
           <div className="container mx-auto max-w-4xl space-y-8">
             <div className="text-center">
               <h2 className="text-3xl font-bold">Imported Vehicles</h2>
@@ -81,7 +81,7 @@ export default function Component() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <Image
-                  src="/placeholder.svg"
+                  src="/toyota.jpg"
                   width="300"
                   height="200"
                   alt="Vehicle Image"
@@ -90,12 +90,12 @@ export default function Component() {
                 <CardContent className="p-4 space-y-2">
                   <h3 className="text-lg font-bold">Toyota Corolla</h3>
                   <p className="text-muted-foreground">$18,999</p>
-                  <Button variant="outline">View Details</Button>
+                  <Button variant="destructive">View Details</Button>
                 </CardContent>
               </Card>
               <Card>
                 <Image
-                  src="/placeholder.svg"
+                  src="/honda.jpg"
                   width="300"
                   height="200"
                   alt="Vehicle Image"
@@ -104,12 +104,12 @@ export default function Component() {
                 <CardContent className="p-4 space-y-2">
                   <h3 className="text-lg font-bold">Honda Civic</h3>
                   <p className="text-muted-foreground">$22,499</p>
-                  <Button variant="outline">View Details</Button>
+                  <Button variant="destructive">View Details</Button>
                 </CardContent>
               </Card>
               <Card>
                 <Image
-                  src="/placeholder.svg"
+                  src="/nissan.jpg"
                   width="300"
                   height="200"
                   alt="Vehicle Image"
@@ -118,7 +118,7 @@ export default function Component() {
                 <CardContent className="p-4 space-y-2">
                   <h3 className="text-lg font-bold">Nissan Altima</h3>
                   <p className="text-muted-foreground">$20,999</p>
-                  <Button variant="outline">View Details</Button>
+                  <Button variant="destructive">View Details</Button>
                 </CardContent>
               </Card>
             </div>

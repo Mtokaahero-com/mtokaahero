@@ -4,13 +4,14 @@ import Link from "next/link";
 
 export default function Component() {
   return (
-    <section className="w-full bg-[url('/hero-image.jpg')] bg-cover bg-center py-20 md:py-32 lg:py-40">
-      <div className="container px-4 md:px-6">
+    <section className="relative w-full bg-[url('/hero-image.jpg')] bg-cover bg-center py-20 md:py-32 lg:py-40">
+      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="relative container px-4 md:px-6">
         <div className="max-w-3xl space-y-6">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            Your One-Stop Garage Shop
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
+            Your One-Stop Online Garage Shop
           </h1>
-          <p className="text-lg text-muted-foreground md:text-xl">
+          <p className="text-lg text-gray-300 md:text-xl">
             Find the perfect spare parts, import your dream vehicle, or schedule
             a service with our expert mechanics. We've got you covered for all
             your automotive needs.

@@ -20,13 +20,13 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-4">
             <Link href="#" aria-label="Facebook" prefetch={false}>
-              <FacebookIcon className="w-6 h-6 text-muted-foreground hover:text-primary transition-colors" />
+              <FacebookIcon className="w-6 h-6 text-primary hover:text-primary transition-colors" />
             </Link>
             <Link href="#" aria-label="Twitter" prefetch={false}>
-              <TwitterIcon className="w-6 h-6 text-muted-foreground hover:text-primary transition-colors" />
+              <TwitterIcon className="w-6 h-6 text-primary hover:text-primary transition-colors" />
             </Link>
             <Link href="#" aria-label="Instagram" prefetch={false}>
-              <InstagramIcon className="w-6 h-6 text-muted-foreground hover:text-primary transition-colors" />
+              <InstagramIcon className="w-6 h-6 text-primary hover:text-primary transition-colors" />
             </Link>
           </div>
         </div>
@@ -34,42 +34,42 @@ export default function Footer() {
           <h3 className="text-lg font-semibold">Quick Links</h3>
           <Link
             href="#"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-primary hover:text-primary transition-colors"
             prefetch={false}
           >
             Home
           </Link>
           <Link
             href="#"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-primary hover:text-primary transition-colors"
             prefetch={false}
           >
             Shop
           </Link>
           <Link
             href="#"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-primary hover:text-primary transition-colors"
             prefetch={false}
           >
             Vehicles
           </Link>
           <Link
             href="#"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-primary hover:text-primary transition-colors"
             prefetch={false}
           >
             Services
           </Link>
           <Link
             href="#"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-primary hover:text-primary transition-colors"
             prefetch={false}
           >
             About
           </Link>
           <Link
             href="#"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-primary hover:text-primary transition-colors"
             prefetch={false}
           >
             Contact
@@ -77,7 +77,7 @@ export default function Footer() {
         </div>
         <div className="grid gap-2">
           <h3 className="text-lg font-semibold">Contact</h3>
-          <p className="text-muted-foreground">
+          <p className="text-primary">
             123 Main St, Nairobi Kenya
             <br />
             Phone: (123) 456-7890
@@ -87,7 +87,7 @@ export default function Footer() {
         </div>
         <div className="grid gap-2">
           <h3 className="text-lg font-semibold">Hours</h3>
-          <p className="text-muted-foreground">
+          <p className="text-primary">
             Monday - Friday: 9am - 6pm
             <br />
             Saturday: 9am - 3pm
@@ -97,12 +97,12 @@ export default function Footer() {
         </div>
       </div>
       <div className="container max-w-7xl mt-8 flex items-center justify-between">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-primary text-sm">
           &copy; 2024 MtokaaHero. All rights reserved.
         </p>
         <Link
           href="#"
-          className="text-muted-foreground text-sm hover:text-primary transition-colors"
+          className="text-primary text-sm hover:text-primary transition-colors"
           prefetch={false}
         >
           Privacy Policy
