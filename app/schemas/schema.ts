@@ -9,3 +9,9 @@ export const schemaForms = yup.object().shape({
     address: yup.string().required('Address is required'),
     password: yup.string().required('Password is required'),
 });
+
+
+export const schemaFormsLogin = yup.object().shape({
+    email: yup.string().email('Invalid email').required('Email is required'),
+    password: yup.string().required('Password is required'),
+});
