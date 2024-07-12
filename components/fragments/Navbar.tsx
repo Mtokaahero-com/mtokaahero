@@ -1,150 +1,231 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/1Wk9T4nwO7M
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerClose,
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetClose,
+} from "@/components/ui/sheet";
+import Image from "next/image";
 import { JSX, SVGProps } from "react";
 
 export default function Component() {
   return (
-    <header className="flex items-center justify-between h-16 px-4 md:px-6 bg-primary text-primary-foreground">
-      <Link href="#" className="flex items-center gap-2" prefetch={false}>
-        <CarIcon className="w-6 h-6" />
-        <span className="text-lg font-bold">MtokaaHeroHero</span>
-      </Link>
-      <nav className="hidden md:flex items-center gap-6">
-        <Link
-          href="#"
-          className="text-sm font-medium hover:underline"
-          prefetch={false}
-        >
-          Home
+    <header className="sticky top-0 z-40 w-full bg-background border-b">
+      <div className="container flex items-center h-16 px-4 md:px-6">
+        <Link href="/" className="mr-6 md:mr-10" prefetch={false}>
+          <div className="flex items-center gap-2">
+            <Image src="/logo.jpeg" alt="vendy logo" width={150} height={150} />
+          </div>
         </Link>
-        <Link
-          href="#"
-          className="text-sm font-medium hover:underline"
-          prefetch={false}
-        >
-          Parts
-        </Link>
-        <Link
-          href="#"
-          className="text-sm font-medium hover:underline"
-          prefetch={false}
-        >
-          Vehicles
-        </Link>
-        <Link
-          href="#"
-          className="text-sm font-medium hover:underline"
-          prefetch={false}
-        >
-          Services
-        </Link>
-        <Link
-          href="#"
-          className="text-sm font-medium hover:underline"
-          prefetch={false}
-        >
-          About
-        </Link>
-        <Link
-          href="#"
-          className="text-sm font-medium hover:underline"
-          prefetch={false}
-        >
-          Contact
-        </Link>
-        <Link
-          href="#"
-          className="text-sm font-medium hover:underline"
-          prefetch={false}
-        >
-          Create Account
-        </Link>
-      </nav>
-      <div className="relative hidden md:block">
-        <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search parts, vehicles, services..."
-          className="pl-8 pr-4 py-2 rounded-md bg-primary-foreground text-primary focus:outline-none focus:ring-2 focus:ring-primary-foreground/50"
-        />
-      </div>
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon">
-          <ShoppingCartIcon className="h-6 w-6" />
-          <span className="sr-only">Cart</span>
-        </Button>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="md:hidden">
-              <MenuIcon className="h-6 w-6" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="md:hidden">
-            <div className="grid gap-4 p-4">
-              <Link
-                href="#"
-                className="flex items-center gap-2 text-lg font-semibold"
-                prefetch={false}
+        <div className="relative flex-1 max-w-md">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <SearchIcon className="w-5 h-5 text-muted-foreground" />
+          </div>
+          <Input
+            type="search"
+            placeholder="Search products..."
+            className="w-full pl-10 pr-4 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+          />
+        </div>
+        <nav className="hidden md:flex items-center gap-4">
+          <Link
+            href="/"
+            className="px-4 py-2 rounded-md hover:bg-muted"
+            prefetch={false}
+          >
+            Home
+          </Link>
+
+          <Link
+            href="/vendors/all"
+            className="px-4 py-2 rounded-md hover:bg-muted"
+            prefetch={false}
+          >
+            Stores
+          </Link>
+          <Link
+            href="/"
+            className="px-4 py-2 rounded-md hover:bg-muted"
+            prefetch={false}
+          >
+            Create A Garage
+          </Link>
+
+          <Link
+            href="/auth/customers/signin"
+            className="px-4 py-2 rounded-md hover:bg-muted"
+            prefetch={false}
+          >
+            Create A customer Account
+          </Link>
+        </nav>
+        <div className="ml-auto flex items-center gap-4">
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <ShoppingCartIcon className="h-6 w-6" />
+                <span className="sr-only">Cart</span>
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent className="w-full max-w-md">
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between border-b p-4">
+                  <h3 className="text-lg font-medium">Your Cart</h3>
+                  <DrawerClose asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full"
+                    >
+                      <XIcon className="h-6 w-6" />
+                      <span className="sr-only">Close</span>
+                    </Button>
+                  </DrawerClose>
+                </div>
+                <div className="flex-1 overflow-auto p-4 space-y-4">
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src="/placeholder.svg"
+                      alt="Product Image"
+                      width={80}
+                      height={80}
+                      className="rounded-md"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-medium">Product Name</h4>
+                      <p className="text-muted-foreground">$19.99</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="icon">
+                        <MinusIcon className="h-4 w-4" />
+                        <span className="sr-only">Decrease quantity</span>
+                      </Button>
+                      <span>1</span>
+                      <Button variant="ghost" size="icon">
+                        <PlusIcon className="h-4 w-4" />
+                        <span className="sr-only">Increase quantity</span>
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src="/placeholder.svg"
+                      alt="Product Image"
+                      width={80}
+                      height={80}
+                      className="rounded-md"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-medium">Another Product</h4>
+                      <p className="text-muted-foreground">$29.99</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="icon">
+                        <MinusIcon className="h-4 w-4" />
+                        <span className="sr-only">Decrease quantity</span>
+                      </Button>
+                      <span>2</span>
+                      <Button variant="ghost" size="icon">
+                        <PlusIcon className="h-4 w-4" />
+                        <span className="sr-only">Increase quantity</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                <div className="border-t p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-medium">$49.98</span>
+                  </div>
+                  <Button className="w-full">Proceed to Checkout</Button>
+                </div>
+              </div>
+            </DrawerContent>
+          </Drawer>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full md:hidden"
               >
-                <CarIcon className="w-6 h-6" />
-                <span>MtokaaHeroHero</span>
-              </Link>
-              <Link href="#" className="text-sm font-medium" prefetch={false}>
-                Home
-              </Link>
-              <Link href="#" className="text-sm font-medium" prefetch={false}>
-                Parts
-              </Link>
-              <Link href="#" className="text-sm font-medium" prefetch={false}>
-                Vehicles
-              </Link>
-              <Link href="#" className="text-sm font-medium" prefetch={false}>
-                Services
-              </Link>
-              <Link href="#" className="text-sm font-medium" prefetch={false}>
-                About
-              </Link>
-              <Link href="#" className="text-sm font-medium" prefetch={false}>
-                Contact
-              </Link>
-              <Link href="#" className="text-sm font-medium" prefetch={false}>
-                Create Account
-              </Link>
-            </div>
-          </SheetContent>
-        </Sheet>
+                <MenuIcon className="h-6 w-6" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full max-w-md">
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between border-b p-4">
+                  <Link
+                    href="#"
+                    className="flex items-center gap-2"
+                    prefetch={false}
+                  >
+                    <MountainIcon className="h-6 w-6" />
+                    <span className="font-medium">Vendy MarketPlace</span>
+                  </Link>
+                  <SheetClose asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full"
+                    >
+                      <XIcon className="h-6 w-6" />
+                      <span className="sr-only">Close</span>
+                    </Button>
+                  </SheetClose>
+                </div>
+                <nav className="flex flex-col gap-2 p-4">
+                  <Link
+                    href="#"
+                    className="px-4 py-2 rounded-md hover:bg-muted"
+                    prefetch={false}
+                  >
+                    New
+                  </Link>
+                  <Link
+                    href="#"
+                    className="px-4 py-2 rounded-md hover:bg-muted"
+                    prefetch={false}
+                  >
+                    Clothing
+                  </Link>
+                  <Link
+                    href="#"
+                    className="px-4 py-2 rounded-md hover:bg-muted"
+                    prefetch={false}
+                  >
+                    Accessories
+                  </Link>
+                  <Link
+                    href="#"
+                    className="px-4 py-2 rounded-md hover:bg-muted"
+                    prefetch={false}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    href="#"
+                    className="px-4 py-2 rounded-md hover:bg-muted"
+                    prefetch={false}
+                  >
+                    Beauty
+                  </Link>
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
-  );
-}
-
-function CarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
-      <circle cx="7" cy="17" r="2" />
-      <path d="M9 17h6" />
-      <circle cx="17" cy="17" r="2" />
-    </svg>
   );
 }
 
@@ -169,6 +250,86 @@ function MenuIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
+function MinusIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12h14" />
+    </svg>
+  );
+}
+
+function MountainIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
+) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+    </svg>
+  );
+}
+
+function PlusIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
+    </svg>
+  );
+}
+
+function SearchIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+
 function ShoppingCartIcon(
   props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
 ) {
@@ -188,6 +349,26 @@ function ShoppingCartIcon(
       <circle cx="8" cy="21" r="1" />
       <circle cx="19" cy="21" r="1" />
       <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+    </svg>
+  );
+}
+
+function XIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   );
 }
