@@ -52,11 +52,11 @@ export default function Component() {
             Stores
           </Link>
           <Link
-            href="/"
+            href="/auth/service-accounts/signin"
             className="px-4 py-2 rounded-md hover:bg-muted"
             prefetch={false}
           >
-            Create A Garage
+            Create A Service Account
           </Link>
 
           <Link
