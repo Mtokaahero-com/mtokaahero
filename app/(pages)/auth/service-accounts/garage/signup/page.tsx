@@ -24,15 +24,15 @@ export default function Component() {
         <div className="flex flex-col items-center justify-center space-y-2">
           <WrenchIcon className="h-12 w-12 text-primary" />
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Acme Auto Repair
+            MtokaaHero Auto Repair
           </h1>
         </div>
         <Card>
           <CardHeader>
             <CardTitle>Sign in to your account</CardTitle>
             <CardDescription>
-              Enter your username and password to access the Acme Auto Repair
-              platform.
+              Enter your username and password to access the MtokaaHero Auto
+              Repair platform.
             </CardDescription>
           </CardHeader>
           <CardContent>

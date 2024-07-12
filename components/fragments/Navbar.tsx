@@ -45,11 +45,11 @@ export default function Component() {
           </Link>
 
           <Link
-            href="/vendors/all"
+            href="/all/garages"
             className="px-4 py-2 rounded-md hover:bg-muted"
             prefetch={false}
           >
-            Stores
+            Garages
           </Link>
           <Link
             href="/auth/service-accounts/signin"

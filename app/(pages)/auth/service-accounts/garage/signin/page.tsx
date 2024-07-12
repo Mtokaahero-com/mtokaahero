@@ -34,11 +34,15 @@ export default function Component() {
               <CardTitle className="text-2xl font-bold">
                 Set Up Your Garage Account
               </CardTitle>
-                          <Link href="/auth/garage/signin" prefetch={false} className="text-center">
-                              <span className="text-red-600 hover:text-primary/90">
-                                  Sign in to your account
-                              </span>
-                          </Link>
+              <Link
+                href="/auth/garage/signin"
+                prefetch={false}
+                className="text-center"
+              >
+                <span className="text-red-600 hover:text-primary/90">
+                  Sign in to your account
+                </span>
+              </Link>
               <CardDescription>
                 Fill out the form below to get started.
               </CardDescription>
@@ -50,7 +54,7 @@ export default function Component() {
                     <Label htmlFor="garage-name">Garage Name</Label>
                     <Input
                       id="garage-name"
-                      placeholder="Acme Auto Repair"
+                      placeholder="MtokaaHero Auto Repair"
                       required
                     />
                   </div>
@@ -63,7 +67,7 @@ export default function Component() {
                   <Label htmlFor="address">Address</Label>
                   <Input
                     id="address"
-                    placeholder="123 Main St, Anytown USA"
+                    placeholder="123 Main St, Anytown Kenya"
                     required
                   />
                 </div>

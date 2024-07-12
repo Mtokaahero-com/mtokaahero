@@ -14,7 +14,7 @@ export default function Component() {
         </p>
         <div className="grid grid-cols-2 gap-4">
           <Link
-            href="#"
+            href="/auth/service-accounts/mechanic/signup"
             className="bg-card p-6 rounded-lg shadow-md hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col items-center justify-center gap-2"
             prefetch={false}
           >
@@ -25,7 +25,7 @@ export default function Component() {
             </p>
           </Link>
           <Link
-            href="#"
+            href="/auth/service-accounts/garage/signup"
             className="bg-card p-6 rounded-lg shadow-md hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col items-center justify-center gap-2"
             prefetch={false}
           >

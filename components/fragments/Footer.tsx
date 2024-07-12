@@ -11,15 +11,14 @@ import { JSX, SVGProps } from "react";
 
 export default function Component() {
   return (
-    <footer className="bg-muted py-12">
+    <footer className="bg-muted py-12 pl-9">
       <div className="container max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         <div className="flex flex-col gap-4">
           <Link href="#" className="flex items-center gap-2" prefetch={false}>
-            <MountainIcon className="h-6 w-6" />
             <span className="text-lg font-bold">MtokaaHero Auto Parts</span>
           </Link>
           <div className="flex flex-col gap-1 text-sm text-muted-foreground">
-            <div>123 Main St, Anytown USA</div>
+            <div>123 Main St, Anytown Kenya</div>
             <div>info@mtokaahero.com</div>
             <div>555-1234-5678</div>
           </div>
@@ -122,26 +121,6 @@ function InstagramIcon(
   );
 }
 
-function MountainIcon(
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
-  );
-}
 
 function TwitterIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
