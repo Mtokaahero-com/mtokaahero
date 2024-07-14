@@ -12,6 +12,6 @@ export const schemaForms = yup.object().shape({
 
 
 export const schemaFormsLogin = yup.object().shape({
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup.string().required('Password is required'),
+    email: yup.string().email('Invalid email'),
+    password: yup.string()
 });
