@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Header from "@/components/fragments/Header";
 import Hero from "@/components/fragments/Hero";
 

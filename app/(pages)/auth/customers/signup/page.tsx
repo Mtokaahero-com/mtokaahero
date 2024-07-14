@@ -28,7 +28,7 @@ export default function Component() {
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Or{" "}
             <Link
-              href="/customers/signin"
+              href="/auth/customers/signin"
               className="font-medium text-primary hover:text-primary/90"
               prefetch={true}
             >

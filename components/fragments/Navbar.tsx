@@ -52,7 +52,7 @@ export default function Component() {
             Garages
           </Link>
           <Link
-            href="/auth/service-accounts/signin"
+            href="/auth/service-accounts/"
             className="px-4 py-2 rounded-md hover:bg-muted"
             prefetch={false}
           >
