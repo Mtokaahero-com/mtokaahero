@@ -16,6 +16,12 @@ import { useAuth } from "@/app/context/context";
 import { toast } from "react-hot-toast";
 import { LoadingComponent } from "@/components/fragments/loading";
 
+interface expectedAuthProps {
+  accessToken: string;
+  statusCode: number;
+  error: string | null;
+  message: string;
+}
 
 export default function Component() {
   const formOptions = { resolver: yupResolver(schemaFormsLogin) };
@@ -30,16 +36,13 @@ export default function Component() {
   const Auth = async () => {
     const token = Cookies.get("token");
     if (token) {
+      console.log(token);
       const response = await validateToken(token);
       if (response) {
-        router.push("/dashboard");
-      } else {
-        Cookies.remove("token");
-        toast.error("Invalid token");
-      }
-    } else {
-      console.log("No token");
-    }
+        router.push("/");
+      } 
+    } 
+    return;
   }
 
 
@@ -47,19 +50,35 @@ export default function Component() {
     setLoading(true);
     Auth();
     setLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
 
-  const handleChange = async() => {
-      try {
-        const response = await axios.post("http://localhost:8880/auth/api/login", {
-          email: formData.email, 
-          password: formData.password,
-      });
-        const { accessToken } = response.data;
-        console.log(accessToken);
-      Cookies.set("token", accessToken);
+
+  const handleChange = async () => {
+    if (!formData.email || !formData.password) {
+      return toast.error("Please fill all fields");
+    }
+    try {
+        const response = await fetch("http://localhost:8880/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+      const data: expectedAuthProps = await response.json();
+      if (data.statusCode === 200) {
+        const token = data.accessToken;
+        Cookies.set("token", token);
+        toast.success("Logged in successfully");
+        // router.push("/dashboard");
+      } else {
+        toast.error(data.message
+          ? data.message
+          : "An error occurred, please try again"
+        )}
     } catch (error) {
       console.error(error);
       throw error;
@@ -106,6 +125,7 @@ export default function Component() {
                     name="email"
                     type="email"
                     autoComplete="email"
+                      onChange={(e) => { setFormData({ ...formData, email: e.target.value }) }}
                     required
                     className="block w-full appearance-none rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0"
                   />
@@ -126,7 +146,8 @@ export default function Component() {
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                      type="password"
+                      onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }}
                     autoComplete="current-password"
                     required
                     className="block w-full appearance-none rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0"
