@@ -1,7 +1,7 @@
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { JSX, SVGProps } from "react";
-
+import Image from "next/image";
 
 export default function Component() {
   return (
@@ -76,7 +76,7 @@ export default function Component() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img
+                <Image
                   src="/placeholder.svg"
                   alt="Product Image"
                   width={64}
@@ -95,7 +95,7 @@ export default function Component() {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img
+                <Image
                   src="/placeholder.svg"
                   alt="Product Image"
                   width={64}
