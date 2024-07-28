@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await axios.post("/api/auth/login", { email, password });
+            const response = await axios.post("http://localhost:8880/api/auth/login", { email, password });
             Cookies.set("token", response.data.token);
         } catch (error) {
             console.error(error);
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 }
             });
     
-            console.log(response.data);
+            console.log("log from authcontext", response.data);
             const data = response.data as AuthProps;
             if (data.statusCode === 200) {
                 return true;
