@@ -38,10 +38,6 @@ export default function Component() {
     
   }  
 
-
-
-
-
   return (
     <main>
       {loading ? (
