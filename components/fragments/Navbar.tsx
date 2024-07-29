@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,11 +16,17 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import Image from "next/image";
-import { JSX, SVGProps } from "react";
+import { JSX, SVGProps, useState, useEffect } from "react";
+import { useAuth } from "@/app/context/context";
+
+
 
 export default function Component() {
+  const { user, validateToken } = useAuth();
+
+  
   return (
-    <header className="sticky top-0 z-40 w-full bg-background border-b">
+    <header className="sticky top-0 z-40 w-full bg-background border-b h-24 flex justify-center items-center">
       <div className="container flex items-center h-16 px-4 md:px-6">
         <Link href="/" className="mr-6 md:mr-10" prefetch={false}>
           <div className="flex items-center gap-2">
@@ -49,14 +57,22 @@ export default function Component() {
             className="px-4 py-2 rounded-md hover:bg-muted"
             prefetch={false}
           >
-            Garages
+            SpareParts
+          </Link>
+          <Link
+            href="/all/garages"
+            className="px-4 py-2 rounded-md hover:bg-muted"
+            prefetch={false}
+          >
+            Bookings
           </Link>
           <Link
             href="/auth/service-accounts/"
             className="px-4 py-2 rounded-md hover:bg-muted"
             prefetch={false}
           >
-            Create A Service Account
+            Create A Service Account  {/* TODO: check for service accounts */}
+            
           </Link>
 
           <Link
@@ -64,7 +80,7 @@ export default function Component() {
             className="px-4 py-2 rounded-md hover:bg-muted"
             prefetch={false}
           >
-            Create A customer Account
+            Customer Account
           </Link>
         </nav>
         <div className="ml-auto flex items-center gap-4">

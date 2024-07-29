@@ -1,20 +1,48 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { schemaForms } from "@/app/schemas/schema";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { useAuth } from "@/app/context/context";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function Component() {
-  const formOptions = { resolver: yupResolver(schemaForms) };
-  const { register, handleSubmit, formState } = useForm(formOptions);
-  const { errors } = formState;
+  const [errors, setErrors] = useState<string>("");
+  const [token, setToken] = useState<string | null>(
+    Cookies.get("ntokaaCustomer") || null
+  );
+  const { validateToken } = useAuth();
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    address: "",
+    email: "",
+    password: "",
+  });
 
+  const validToken = async () => {
+    if (token) {
+      const data = await validateToken();
+      if (!data?.isSuccessful) {
+        Cookies.remove("ntokaaCustomer");
+        setToken(null);
+      } else {
+        // router.push("/auth/customers/profile");
+        console.log(data);
+      }
+    }
+  };
+
+  useEffect(() => {
+    validToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
   const handleChange = () => {
     console.log("Form submitted");
   };
@@ -36,12 +64,7 @@ export default function Component() {
             </Link>
           </p>
         </div>
-        <form
-          className="space-y-6"
-          action="#"
-          method="POST"
-          onSubmit={handleSubmit(handleChange)}
-        >
+        <form className="space-y-6" action="#" method="POST">
           <div>
             <Label
               htmlFor="firstName"
@@ -51,7 +74,6 @@ export default function Component() {
             </Label>
             <div className="mt-1">
               <Input
-                {...register("firstName")}
                 id="firstName"
                 name="firstName"
                 type="text"
@@ -59,13 +81,7 @@ export default function Component() {
                 required
                 className="block w-full appearance-none rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0"
               />
-              <span>
-                {errors.firstName && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.firstName.message}
-                  </p>
-                )}
-              </span>
+              <span>{errors || ""}</span>
             </div>
           </div>
           <div>
@@ -77,7 +93,6 @@ export default function Component() {
             </Label>
             <div className="mt-1">
               <Input
-                {...register("lastName")}
                 id="lastName"
                 name="lastName"
                 type="text"
@@ -98,7 +113,6 @@ export default function Component() {
             </Label>
             <div className="mt-1">
               <Input
-                {...register("phone")}
                 id="phone"
                 name="phone"
                 type="number"
@@ -118,7 +132,6 @@ export default function Component() {
             </Label>
             <div className="mt-1">
               <Input
-                {...register("address")}
                 id="address"
                 name="address"
                 type="text"
@@ -137,7 +150,6 @@ export default function Component() {
             </Label>
             <div className="mt-1">
               <Input
-                {...register("email")}
                 id="email"
                 name="email"
                 type="email"
@@ -156,7 +168,6 @@ export default function Component() {
             </Label>
             <div className="mt-1">
               <Input
-                {...register("password")}
                 id="password"
                 name="password"
                 type="password"

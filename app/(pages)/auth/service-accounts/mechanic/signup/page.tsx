@@ -29,10 +29,7 @@ export default function RegisterMechanic() {
     }))
   };
 
-  const validateAuthToken = async (authToken: string) => {
-    const response = 
-  }
-
+  const validateAuthToken = async (authToken: string) => { }
   return (
     <div className="flex h-screen w-full items-center justify-center bg-background">
       <div className="w-full max-w-md space-y-6">

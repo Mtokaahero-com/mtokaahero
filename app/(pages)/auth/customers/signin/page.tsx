@@ -5,89 +5,77 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { schemaFormsLogin } from "@/app/schemas/schema";
-import { useForm } from "react-hook-form";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/context";
 import { toast } from "react-hot-toast";
-import { LoadingComponent } from "@/components/fragments/loading";
-
-interface expectedAuthProps {
-  accessToken: string;
-  statusCode: number;
-  error: string | null;
-  message: string;
-}
+import  Loading  from "@/components/ui/loading";
+import {
+  customerObject,
+  defaultLoginObject,
+} from "@/app/interface/api-interfaces";
 
 export default function Component() {
-  const formOptions = { resolver: yupResolver(schemaFormsLogin) };
-  const { handleSubmit, formState } = useForm(formOptions);
-  const { errors } = formState;
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const {user, validateToken} = useAuth();
   const router = useRouter(); 
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState<string>("")
+  const [token, setToken] = useState<string | null>(
+    Cookies.get("ntokaaCustomer") || null
+  );
 
-
-  const Auth = async () => {
-    const token = Cookies.get("token");
+  const validToken = async () => {
     if (token) {
-      console.log(token);
-      const response = await validateToken(token);
-      if (response) {
-        router.push("/");
-      } 
-    } 
-    return;
-  }
-
-
-  useEffect(() => {
-    setLoading(true);
-    Auth();
-    setLoading(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-
-
-
-  const handleChange = async () => {
-    if (!formData.email || !formData.password) {
-      return toast.error("Please fill all fields");
-    }
-    try {
-        const response = await fetch("http://localhost:8880/api/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-      const data: expectedAuthProps = await response.json();
-      if (data.statusCode === 200) {
-        const token = data.accessToken;
-        Cookies.set("token", token);
-        toast.success("Logged in successfully");
-        // router.push("/dashboard");
+      const data = await validateToken(token, "ntokaaCustomer");
+      if (!data?.isSuccessful) {
+        Cookies.remove("ntokaaCustomer");
+        setToken(null);
       } else {
-        toast.error(data.message
-          ? data.message
-          : "An error occurred, please try again"
-        )}
-    } catch (error) {
-      console.error(error);
-      throw error;
+        router.push("/auth/customers/profile");
+        console.log(data);
+      }
     }
   };
+
+  useEffect(() => {
+    validToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    const response = await fetch("http://localhost:5500/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    const data: defaultLoginObject = await response.json();
+    if (data.httpStatus === 200) {
+      Cookies.set("ntokaaCustomer", data.accessToken);
+      setToken(data.accessToken);
+      toast.success(data.message);
+      setLoading(false);
+      // router.push("/auth/customers/dashboard");
+    } else {
+      toast.error(data.message);
+      setError(data.message);
+      setLoading(false);
+    }
+    
+  }  
+
   return (
-    <>
+    <main>
       {loading ? (
-        <LoadingComponent />
+    <Loading/>
       ) : (
         <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-md space-y-8">
@@ -110,7 +98,7 @@ export default function Component() {
               className="space-y-6"
               action="#"
               method="POST"
-              onSubmit={handleSubmit(handleChange)}
+              onSubmit={handleSubmit}
             >
               <div>
                 <Label
@@ -130,8 +118,8 @@ export default function Component() {
                     className="block w-full appearance-none rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0"
                   />
                   <span className="text-sm text-red-600">
-                    {" "}
-                    {errors.email && errors.email.message}{" "}
+                      {" "}
+                      {error || ""}
                   </span>
                 </div>
               </div>
@@ -153,8 +141,8 @@ export default function Component() {
                     className="block w-full appearance-none rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0"
                   />
                   <span className="text-sm text-red-600">
-                    {" "}
-                    {errors.password && errors.password.message}{" "}
+                      {" "}
+                      {error || ""}
                   </span>
                 </div>
               </div>
@@ -194,6 +182,6 @@ export default function Component() {
           </div>
         </div>
       )}
-    </>
+    </main>
   );
 }
