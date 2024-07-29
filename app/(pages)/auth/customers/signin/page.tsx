@@ -11,7 +11,10 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/context";
 import { toast } from "react-hot-toast";
 import  Loading  from "@/components/ui/loading";
-import { customerObject } from "@/app/interface/api-interfaces";
+import {
+  customerObject,
+  defaultLoginObject,
+} from "@/app/interface/api-interfaces";
 
 export default function Component() {
   const [loading, setLoading] = useState(false);
@@ -19,22 +22,53 @@ export default function Component() {
   const router = useRouter(); 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string>("")
-  const [token, setToken] = useState<string | null>(Cookies.get("mtokaaCustomer") || null);
+  const [token, setToken] = useState<string | null>(
+    Cookies.get("ntokaaCustomer") || null
+  );
+
+  const validToken = async () => {
+    if (token) {
+      const data = await validateToken(token, "ntokaaCustomer");
+      if (!data?.isSuccessful) {
+        Cookies.remove("ntokaaCustomer");
+        setToken(null);
+      } else {
+        router.push("/auth/customers/profile");
+        console.log(data);
+      }
+    }
+  };
+
+  useEffect(() => {
+    validToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
     const response = await fetch("http://localhost:5500/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      },  
+      },
       body: JSON.stringify(formData),
-    })  
-    const data = await response.json();
-    console.log(data)
+    });
+    const data: defaultLoginObject = await response.json();
+    if (data.httpStatus === 200) {
+      Cookies.set("ntokaaCustomer", data.accessToken);
+      setToken(data.accessToken);
+      toast.success(data.message);
+      setLoading(false);
+      // router.push("/auth/customers/dashboard");
+    } else {
+      toast.error(data.message);
+      setError(data.message);
+      setLoading(false);
+    }
     
   }  
 
