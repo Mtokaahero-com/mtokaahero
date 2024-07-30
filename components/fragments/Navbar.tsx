@@ -27,14 +27,14 @@ export function NavBar() {
     }
   ]
   return (
-    <section className="absolute top-0 w-[90vw] h-20 flex flex-row items-center justify-between ">
-      <div className="flex flex-row items-center justify-center space-x-8">
+    <section className="absolute top-0 md:w-[90%] w-full h-20 flex flex-row items-center justify-end md:justify-between ">
+      <div className="hidden md:flex flex-row items-center justify-center space-x-8">
         <a href="/">
           <img src="/logo.svg" alt="logo" />
         </a>
         {
           nav_links.map(link => (
-            <a className="text-black/60 hover:text-black" key={link.title} href={link.location}>{link.title} </a>
+            <a className=" text-black/60 hover:text-black" key={link.title} href={link.location}>{link.title} </a>
           ))
         }
       </div>
