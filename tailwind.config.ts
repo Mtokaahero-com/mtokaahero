@@ -10,6 +10,10 @@ const config = {
         body: ["var(--font-body)", ...fontFamily.sans],
       },
       colors: {
+        brand_blue: "#2463EB",
+        brand_pink: "#F7DDDD",
+        brand_violet: "#C4B5FD",
+        brand_gray: "#E3E3E3",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -68,6 +72,5 @@ const config = {
   },
   plugins: [require("tailwindcss-animate")],
 };
-
 
 export default config;
