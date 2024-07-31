@@ -6,17 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/app/context/context";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
 
 export default function Component() {
   const [errors, setErrors] = useState<string>("");
-  const [token, setToken] = useState<string | null>(
-    Cookies.get("ntokaaCustomer") || null
-  );
-  const { validateToken } = useAuth();
-  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -26,26 +18,9 @@ export default function Component() {
     password: "",
   });
 
-  const validToken = async () => {
-    if (token) {
-      const data = await validateToken();
-      if (!data?.isSuccessful) {
-        Cookies.remove("ntokaaCustomer");
-        setToken(null);
-      } else {
-        // router.push("/auth/customers/profile");
-        console.log(data);
-      }
-    }
-  };
 
-  useEffect(() => {
-    validToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-  const handleChange = () => {
-    console.log("Form submitted");
-  };
+
+
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-md space-y-8">
