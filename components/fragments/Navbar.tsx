@@ -30,7 +30,11 @@ export default function NavBar() {
     <section className="absolute top-0 md:w-[90%] w-full h-20 flex flex-row items-center justify-end md:justify-between ">
       <div className="hidden md:flex flex-row items-center justify-center space-x-8">
         <a href="/">
-          <Image src="/logo.svg" alt="logo" />
+          <Image src="/logo.svg"
+            alt="logo"
+            width={100}
+            height={100}
+          />
         </a>
         {
           nav_links.map(link => (

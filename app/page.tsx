@@ -5,7 +5,7 @@ import Image from "next/image";
 
 
 export default function Home() {
-  return <main className="w-full  h-screen max-w-screen space-y-20">
+  return <main className="w-full  h-screen max-w-screen">
     <HeroSection />
     <StatsSection />
     <Testimonials />
@@ -21,7 +21,7 @@ export default function Home() {
 
 function HeroSection() {
   return (
-    <section className="relative p-2 md:p-36 space-y-6 md:space-y-10 md:w-auto w-full h-full bg-brand_pink  flex flex-col items-start justify-center ">
+    <section className="relative p-2 md:p-36 space-y-6 md:space-y-10 md:w-auto w-full h-full bg-brand_gray  flex flex-col items-start justify-center ">
       <Navbar />
       <Button
         variant={"ghost"}
@@ -54,26 +54,26 @@ function StatsSection() {
       <div className="md:w-[45%] w-96 h-full md:p-20 flex items-center justify-end ">
         <div className="grid grid-cols-2 grid-rows-2 rounded-2xl md:h-[88%] md:w-[80%] h-full w-full">
           <div className="space-y-2 row-span-1 col-span-1 border rounded-tl-xl flex flex-col items-center justify-center">
-            <Image src="/sold.svg" alt="" />
-            <p className="text-black/60">Vehicles Sold</p>
-            <h1 className="text-black md:text-3xl text-2xl font-bold">
-              5.5 million
+            <Image src="/sold.svg" alt="" width={100} height={100} />
+            <p className="text-black/60">Vehicle Market</p>
+            <h1 className="text-black font-bold">
+              We help you sell your car
             </h1>
           </div>
           <div className="space-y-2 row-span-1 col-span-1 border rounded-tr-xl flex flex-col items-center justify-center">
-            <Image src="/revenue.svg" alt="" />
-            <p className="text-black/60">Revenue Generated</p>
-            <h1 className="text-black md:text-3xl text-2xl font-bold">
-              24 billion
+            <Image src="/revenue.svg" alt="" width={100} height={100} />
+            <p className="text-black/60">Garage Manager </p>
+            <h1 className="text-black font-bold">
+              Manage your garage with ease online!
             </h1>
           </div>
           <div className="space-y-2 row-span-1 col-span-1 border rounded-bl-xl flex flex-col items-center justify-center">
-            <Image src="/customer.svg" alt="" />
+            <Image src="/customer.svg" alt="" width={100} height={100}/>
             <p className="text-black/60">Customer Satisfaction</p>
             <h1 className="text-black md:text-3xl text-2xl font-bold">99%</h1>
           </div>
           <div className="space-y-2 row-span-1 col-span-1 border rounded-bl-xl flex flex-col items-center justify-center">
-            <Image src="/repairs.svg" alt="" />
+            <Image src="/repairs.svg" alt="" height={100} width={100}/>
             <p className="text-black/60">Repairs Completed</p>
             <h1 className="text-black md:text-3xl text-2xl font-bold">
               78, 513
@@ -171,6 +171,8 @@ function ReviewCard() {
           className="h-8 w-8 rounded-full object-contain "
           src="/profile_user.jpg"
           alt=""
+          height={32}
+          width={32}
         />
         <p>Michael Johnson</p>
       </span>
@@ -269,7 +271,7 @@ function Discovery() {
   return (
     <section className="space-y-4 md:space-y-0 items-center justify-center w-full md:h-[70vh] h-auto flex md:flex-row flex-col bg-white ">
       <div className="w-80 md:w-[35%] h-full flex flex-col justify-center space-y-4  ">
-        <Image className="h-10 w-10" src="/bolt.svg" alt="" />
+        <Image className="h-10 w-10" src="/bolt.svg" alt="" width={100} height={100}/>
         <h1 className="text-4xl font-bold md:w-[90%] w-full">
           Discover MtokaaHero Comprehensive Garage Solutions
         </h1>
@@ -279,10 +281,10 @@ function Discovery() {
         </p>
         <span className="flex flex-row items-center space-x-2">
           <button>
-            <Image className="h-10 w-10" src="/chev_left.svg" alt="" />
+            <Image className="h-10 w-10" src="/chev_left.svg" alt="" height={10}  width={10}/>
           </button>
           <button>
-            <Image className="h-10 w-10" src="/chev_right.svg" alt="" />
+            <Image className="h-10 w-10" src="/chev_right.svg" alt="" height={10} width={10}/>
           </button>
         </span>
       </div>
