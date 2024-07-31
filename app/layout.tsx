@@ -1,17 +1,11 @@
-
-
-
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./context/context";
 
-
-
 const inter = Inter({ subsets: ["latin"] });
 import Navbar from "../components/fragments/Navbar";
-import Footer from "../components/fragments/Footer";
-import {Toaster} from 'react-hot-toast';
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "MtokaaHero",
@@ -27,10 +21,14 @@ export default function RootLayout({
     <AuthProvider>
       <html lang="en">
         <body className={inter.className}>
-          <Toaster position="top-right" />
-          <Navbar />
+          {/* <Navbar /> */}
           {children}
-          <Footer />
+          <Toaster
+            richColors
+            expand={true}
+            position="top-center"
+            className="font-primary"
+          />
         </body>
       </html>
     </AuthProvider>
