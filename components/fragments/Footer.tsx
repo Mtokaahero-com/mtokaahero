@@ -1,41 +1,33 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/GpDZalpzTCJ
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { JSX, SVGProps } from "react";
 
-
 export default function Component() {
   const the_links = [
     {
       title: "Spare Parts",
-      location: "/"
+      location: "/",
     },
     {
       title: "Car Imports",
-      location: "/"
+      location: "/",
     },
 
     {
       title: "Vehicle Repairs",
-      location: "/"
+      location: "/",
     },
 
     {
       title: "Online Booking",
-      location: "/"
+      location: "/",
     },
     {
       title: "User Accounts",
-      location: "/"
+      location: "/",
     },
-
-  ]
-
+  ];
 
   return (
     <footer className="border-t-[0.5px] p-10">
@@ -47,7 +39,7 @@ export default function Component() {
       </div>
       <div className="container max-w-7xl mt-8 flex flex-col items-start p-8 space-y-2 justify-center text-xs text-muted-foreground">
         <span className="flex flex-row items-center space-x-2">
-          <img src="/logo.svg" alt="" />
+          {/* <Image src="/logo.svg" alt="" /> */}
           <h1 className="font-bold text-sm  text-black">
             MtokaaHero - Your Ultimate Garage Solution
           </h1>
@@ -59,14 +51,13 @@ export default function Component() {
 }
 
 interface Link {
-  location: string
-  title: string
+  location: string;
+  title: string;
 }
 
-
 interface PropData {
-  links: Link[]
-  section_title: string
+  links: Link[];
+  section_title: string;
 }
 
 function QuickLinks({ links, section_title }: PropData) {
@@ -75,9 +66,10 @@ function QuickLinks({ links, section_title }: PropData) {
       <h1 className="text-black/60 text-xl">{section_title}</h1>
       <div className="flex flex-col space-y-2 mt-4">
         {links.map((link: Link) => (
+          // eslint-disable-next-line react/jsx-key
           <a href={link.location}>{link.title}</a>
         ))}
       </div>
     </div>
-  )
+  );
 }
