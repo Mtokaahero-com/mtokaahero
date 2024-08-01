@@ -50,43 +50,71 @@ function HeroSection() {
 
 function StatsSection() {
   return (
-    <section className="items-center justify-center w-screen md:h-[70vh] flex md:flex-row flex-col bg-white ">
-      <div className="md:w-[45%] w-96 h-full md:p-20 flex items-center justify-end ">
+    <section className="items-center justify-center w-screen md:h-[70vh] flex md:flex-row flex-col bg-white pt-9 ">
+      <div className="md:w-[45%] w-96 h-full md:p-20 flex items-center justify-end">
         <div className="grid grid-cols-2 grid-rows-2 rounded-2xl md:h-[88%] md:w-[80%] h-full w-full">
           <div className="space-y-2 row-span-1 col-span-1 border rounded-tl-xl flex flex-col items-center justify-center">
-            <Image src="/sold.svg" alt="" width={100} height={100} />
-            <p className="text-black/60">Vehicle Market</p>
-            <h1 className="text-black font-bold">
-              We help you sell your car
+            <Image
+              src="/sold.svg"
+              alt="Vehicle Market"
+              width={100}
+              height={100}
+            />
+            <p className="text-black/60 text-sm md:text-base font-bold">Vehicle Market</p>
+            <h1 className="text-black   text-sm md:text-lg">
+              {/* We help you sell your car */}
             </h1>
           </div>
           <div className="space-y-2 row-span-1 col-span-1 border rounded-tr-xl flex flex-col items-center justify-center">
-            <Image src="/revenue.svg" alt="" width={100} height={100} />
-            <p className="text-black/60">Garage Manager </p>
-            <h1 className="text-black font-bold">
-              Manage your garage with ease online!
+            <Image
+              src="/revenue.svg"
+              alt="Garage Manager"
+              width={100}
+              height={100}
+            />
+            <p className="text-black/60 text-sm md:text-base font-bold">Garage Manager</p>
+            <h1 className="text-black  text-sm md:text-lg text-center">
+              {/* Manage your garage with ease online! */}
             </h1>
           </div>
           <div className="space-y-2 row-span-1 col-span-1 border rounded-bl-xl flex flex-col items-center justify-center">
-            <Image src="/customer.svg" alt="" width={100} height={100}/>
-            <p className="text-black/60">Customer Satisfaction</p>
-            <h1 className="text-black md:text-3xl text-2xl font-bold">99%</h1>
+            <Image
+              src="/customer.svg"
+              alt="Customer Satisfaction"
+              width={100}
+              height={100}
+            />
+            <p className="text-black/60 text-sm md:text-base font-bold">
+              High Client Satisfaction
+            </p>
+            <h1 className="text-black text-sm md:text-3xl text-center">
+              {/* Your Satisfaction is our Priority */}
+            </h1>
           </div>
           <div className="space-y-2 row-span-1 col-span-1 border rounded-bl-xl flex flex-col items-center justify-center">
-            <Image src="/repairs.svg" alt="" height={100} width={100}/>
-            <p className="text-black/60">Repairs Completed</p>
-            <h1 className="text-black md:text-3xl text-2xl font-bold">
-              78, 513
+            <Image
+              src="/repairs.svg"
+              alt="Repairs Completed"
+              height={100}
+              width={100}
+            />
+            <p className="text-black/60 text-sm md:text-base font-bold">
+              Car Imports 
+            </p>
+            <h1 className="text-black font-bold text-2xl md:text-3xl">
+              {/* 78,513 */}
             </h1>
           </div>
         </div>
       </div>
       <div className="w-full md:w-[55%] h-full flex flex-col p-10 items-start justify-center space-y-4">
-        <h1 className="text-black/60 font-bold">Drive Excellence</h1>
-        <h1 className="text-black font-bold text-4xl w-80 md:w-[50%] ">
+        <h1 className="text-black/60 font-bold text-base md:text-lg">
+          Drive Excellence
+        </h1>
+        <h1 className="text-black font-bold text-2xl md:text-4xl w-80 md:w-[50%]">
           Revolutionizing the Way You Experience Automotive Services
         </h1>
-        <p className="font-light text-black">
+        <p className="font-light text-black text-sm md:text-base">
           Revolutionizing the Way You Experience Automotive Services
         </p>
         <Button
@@ -99,7 +127,6 @@ function StatsSection() {
     </section>
   );
 }
-
 
 function Testimonials() {
   return (
