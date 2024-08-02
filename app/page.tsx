@@ -1,16 +1,38 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/fragments/Footer";
-import Navbar from "@/components/fragments/Navbar";
 import Image from "next/image";
+import { ArrowRight, Play } from "lucide-react";
+import { motion } from "framer-motion";
+
+
+const services = [
+  {
+    title: "Spare Parts",
+    description: "Genuine Quality",
+    image: "/spareparts.jpg",
+  },
+  {
+    title: "Car Imports",
+    description: "Worldwide Reach",
+    image: "/export.png",
+  },
+  {
+    title: "Vehicle Repair",
+    description: "Certified Experts",
+    image: "/maintenance.jpg",
+  },
+]
 
 
 export default function Home() {
   return <main className="w-full  h-screen max-w-screen">
     <HeroSection />
     <StatsSection />
-    <Testimonials />
     <OurServices />
     <WhyChooseUs />
+    <Testimonials />
     <Discovery />
     <GuideSection />
     <Footer />
@@ -18,35 +40,79 @@ export default function Home() {
 }
 
 
-
-function HeroSection() {
+export function HeroSection() {
   return (
-    <section className="relative p-2 md:p-36 space-y-6 md:space-y-10 md:w-auto w-full h-full bg-brand_gray  flex flex-col items-start justify-center ">
-      <Navbar />
-      <Button
-        variant={"ghost"}
-        className="font-bold border border-black/40 rounded-2xl space-x-2 flex flex-row items-center justify-center"
+    <section className="relative h-screen w-full overflow-hidden">
+      {/* Background video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover"
       >
-        <span>Drive Your Dreams Forward </span>
-        <span className="text-brand_blue">Explore</span>
-      </Button>
-      <h1 className="md:text-6xl text-5xl font-bold w-96 md:w-[40%] ">
-        Welcome to MtokaaHero Your Ultimate Garage Solution
-      </h1>
-      <p>From spare parts to vehichle repairs, we got you covered.</p>
-      <div className="space-x-4">
-        <Button
-          variant={"ghost"}
-          className="w-28 border border-black/40 p-2 hover:bg-_brand_pink"
+        <source
+          src="https://res.cloudinary.com/dazptrvgj/video/upload/v1722592933/7565182-uhd_4096_2160_25fps_zsffdo.mp4"
+          type="video/mp4"
+        />
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Overlay to darken the video */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black opacity-60"></div>
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex flex-col justify-center items-start max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-6 md:space-y-8"
         >
-          Learn More
-        </Button>
-        <Button className="w-28 p-2">Get Started</Button>
+          <Button
+            variant="outline"
+            className="font-bold text-4xl text-white border-white/40 rounded-full px-6 py-2 bg-transparent hover:bg-white/10 transition-colors duration-300"
+          >
+            <span className="mr-2 ">Drive Your Dreams Forward</span>
+            <span className="text-brand_blue">Explore</span>
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-white max-w-2xl">
+            Welcome to MtokaaHero
+            <span className="block text-brand_blue">
+              Your Ultimate Garage Solution
+            </span>
+          </h1>
+
+          <p className="text-xl text-white/80 max-w-xl">
+            From spare parts to vehicle repairs, we ve got you covered.
+          </p>
+
+          <div className="flex flex-wrap gap-4 mt-8">
+            <Button
+              variant="outline"
+              className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300"
+            >
+              Learn More
+            </Button> 
+            <Button className="w-40 bg-brand_blue hover:bg-brand_blue/80 transition-colors duration-300">
+              Get Started
+            </Button>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="mt-12"
+          >
+          </motion.div> 
+        </motion.div>
       </div>
     </section>
   );
 }
-
 
 function StatsSection() {
   return (
@@ -239,7 +305,15 @@ function OurServices() {
           </span>
         </div>
         <div className="md:row-span-1 md:col-span-2 flex flex-col col-span-1 row-span-1 p-2 space-y-4">
-          <div className="h-80 w-[100%] md:h-[100%] bg-black/10 border rounded-2xl  "></div>
+          <div className="h-80 w-fit md:h-fit bg-black/10 border rounded-2xl flex justify-center p-2 ">
+            {/* Image */}
+            <Image src="/customerservice.jpg" alt="alt"
+              width={500}
+              height={100}
+              quality={100}
+              loading="lazy"
+            />
+          </div>
           <span>
             <h1 className="font-bold text-xl">Customer Support</h1>
             <p>24/7 Assitance</p>
