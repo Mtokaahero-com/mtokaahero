@@ -40,7 +40,7 @@ export default function Home() {
 }
 
 
-export function HeroSection() {
+function HeroSection() {
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Background video */}
