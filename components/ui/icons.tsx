@@ -1,6 +1,8 @@
+import { JSX, SVGProps } from "react";
 
 
-function CogIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+
+export function CogIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -32,7 +34,7 @@ function CogIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGEle
   );
 }
 
-function SparkleIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+export function SparkleIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -51,7 +53,7 @@ function SparkleIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSV
   );
 }
 
-function WrenchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+export function WrenchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -70,7 +72,7 @@ function WrenchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVG
   );
 }
 
-function XIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+export function XIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -86,6 +88,155 @@ function XIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGEleme
     >
       <path d="M18 6 6 18" />
       <path d="m6 6 12 12" />
+    </svg>
+  );
+}
+
+export function BatteryIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="16" height="10" x="2" y="7" rx="2" ry="2" />
+      <line x1="22" x2="22" y1="11" y2="13" />
+    </svg>
+  );
+}
+
+export function BracketsIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M16 3h3v18h-3" />
+      <path d="M8 21H5V3h3" />
+    </svg>
+  );
+}
+
+export function FuelIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="3" x2="15" y1="22" y2="22" />
+      <line x1="4" x2="14" y1="9" y2="9" />
+      <path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18" />
+      <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5" />
+    </svg>
+  );
+}
+
+export function MonitorCheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m9 10 2 2 4-4" />
+      <rect width="20" height="14" x="2" y="3" rx="2" />
+      <path d="M12 17v4" />
+      <path d="M8 21h8" />
+    </svg>
+  );
+}
+
+export function ServerIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+      <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+      <line x1="6" x2="6.01" y1="6" y2="6" />
+      <line x1="6" x2="6.01" y1="18" y2="18" />
+    </svg>
+  );
+}
+
+
+
+export function CarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
+      <circle cx="7" cy="17" r="2" />
+      <path d="M9 17h6" />
+      <circle cx="17" cy="17" r="2" />
+    </svg>
+  );
+}
+
+export function CheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20 6 9 17l-5-5" />
     </svg>
   );
 }

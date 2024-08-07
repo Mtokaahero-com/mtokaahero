@@ -9,6 +9,9 @@ const config = {
         heading: ["var(--font-heading)", ...fontFamily.sans],
         body: ["var(--font-body)", ...fontFamily.sans],
       },
+      backgroundImage: {
+        'hero-pattern': "url('/public/stats3.jpg')",
+      },
       colors: {
         brand_blue: "#2463EB",
         brand_pink: "#F7DDDD",
