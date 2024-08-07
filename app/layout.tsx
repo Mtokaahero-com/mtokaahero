@@ -4,7 +4,6 @@ import "./globals.css";
 import { AuthProvider } from "./context/context";
 
 const inter = Inter({ subsets: ["latin"] });
-import Navbar from "../components/fragments/Navbar";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -21,7 +20,6 @@ export default function RootLayout({
     <AuthProvider>
       <html lang="en">
         <body className={inter.className}>
-          <Navbar />
           {children}
           <Toaster
             richColors

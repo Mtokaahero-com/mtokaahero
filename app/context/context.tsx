@@ -14,7 +14,7 @@ import {
   defaultLoginObject,
   defaultValidateObject,
   customerObject,
-} from "../interface/api-interfaces";
+} from "../interfaces/api-interfaces";
 import Router from "next/router";
 
 interface User {
