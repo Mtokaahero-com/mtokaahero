@@ -200,91 +200,6 @@ function StatsSection() {
   );
 }
 
-
-
-
-
-function Testimonials() {
-  return (
-    <section className="items-center justify-center w-full h-[70vh] flex md:flex-row flex-col bg-white ">
-      <div className="md:w-[50%] h-full md:p-20 p-10 flex items-center justify-end">
-        <div className="h-full md:w-[60%] bg-black/10 border border-black/20">
-          {/* Image */}
-        </div>
-      </div>
-      <div className="md:w-[50%] h-full flex flex-col p-10 items-start justify-center space-y-6">
-        <h1 className="text-3xl font-bold text-black w-96 md:w-[50%] text-balance">
-          Transform Your Car Care Experience with MtokaaHero
-        </h1>
-        <p className="md:w-[50%]">
-          Discover a seamless way to buy spare parts, import cars, and book
-          vehicle repair services all in one place. Join thousands of satisfied
-          customers today.
-        </p>
-        <Button>Get Started Now</Button>
-        <ReviewCard />
-      </div>
-    </section>
-  );
-}
-
-
-interface ReviewCardProps {
-  Image?: string;
-  name: string;
-  rating: number | Float32Array;
-  review_message: string;
-}
-
-function ReviewCard() {
-  // function ReviewCard(props) {
-  // const {Image, name, rating, review_message} = props;
-
-  const rating = 5;
-  return (
-    <div className="hover:border-brand_violet transition-all duration-300 ease-in-out hover:shadow-lg border md:w-[50%] h-40 rounded-2xl p-4 flex flex-col space-y-2">
-      <span className="flex flex-row items-center justify-start space-x-2">
-        <span className="flex">
-          {Array(rating)
-            .fill(null)
-            .map((_, index) => (
-              <svg
-                key={index}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#FACC15"
-                className="size-8"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ))}
-        </span>
-        <p className="text-black/60">{rating}.0</p>
-      </span>
-      <p className="text-black/60">
-        MtokaaHero saved me so much time on car repairs and parts.
-      </p>
-      <span className="flex items-center space-x-2">
-        <Image
-          className="h-8 w-8 rounded-full object-contain "
-          src="/profile_user.jpg"
-          alt=""
-          height={32}
-          width={32}
-        />
-        <p>Michael Johnson</p>
-      </span>
-    </div>
-  );
-}
-
-
-
-
 function OurServices() {
   return (
     <div className="flex flex-col">
@@ -402,34 +317,6 @@ function OurServices() {
   )
 }
 
-
-
-function Discovery() {
-  return (
-    <section className="space-y-4 md:space-y-0 items-center justify-center w-full md:h-[70vh] h-auto flex md:flex-row flex-col bg-white ">
-      <div className="w-80 md:w-[35%] h-full flex flex-col justify-center space-y-4  ">
-        <Image className="h-10 w-10" src="/bolt.svg" alt="" width={100} height={100}/>
-        <h1 className="text-4xl font-bold md:w-[90%] w-full">
-          Discover MtokaaHero Comprehensive Garage Solutions
-        </h1>
-        <p className="md:w-[65%] w-full">
-          From spare parts to vehicle repairs, MtokaaHero has everything you
-          need for your car.
-        </p>
-        <span className="flex flex-row items-center space-x-2">
-          <button>
-            <Image className="h-10 w-10" src="/chev_left.svg" alt="" height={10}  width={10}/>
-          </button>
-          <button>
-            <Image className="h-10 w-10" src="/chev_right.svg" alt="" height={10} width={10}/>
-          </button>
-        </span>
-      </div>
-      <div className="overflow-hidden md:w-[30%] h-96 w-full md:h-full bg-black/10"></div>
-      <Image className="bg-black/10 object-cover " src="" alt="" />
-    </section>
-  );
-}
 
 function GuideSection() {
   return (
