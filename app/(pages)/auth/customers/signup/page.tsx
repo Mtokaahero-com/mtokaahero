@@ -1,14 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {expectedProfileProps, ValidationAuthProps} from '@/types/foreignTypes'
+import Loading  from "@/components/ui/loading";
 
 export default function Component() {
-  const [errors, setErrors] = useState<string>("");
+  const [authToken, setAuthToken] = useState<string | undefined>(Cookies.get("customerToken"));
+  const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -18,6 +22,75 @@ export default function Component() {
     password: "",
   });
 
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const response = await fetch(
+      "https://goose-merry-mollusk.ngrok-free.app/api/customer",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+    const data: expectedProfileProps = await response.json();
+    console.log(data);
+    if (data.httpStatus === 201) {
+      Cookies.set("customerToken", data.token);
+      setAuthToken(data.token);
+    } else {
+      console.log(data);
+    }
+  }
+
+   const ValidateAuthToken = async (): Promise<ValidationAuthProps> => {
+     return new Promise(async (resolve, reject) => {
+       try {
+         const response = await fetch(
+           "https://goose-merry-mollusk.ngrok-free.app/api/auth/validate",
+           {
+             method: "GET",
+             headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${authToken}`,
+             },
+           }
+         );
+         const data: ValidationAuthProps = await response.json();
+         console.log(data);
+         if (data.statusCode === 200) {
+           resolve(data);
+         } else if (data.statusCode === 401) {
+           Cookies.remove("customerToken");
+         }
+       } catch (error) {
+         reject("An error occurred while validating the token");
+         console.log(error);
+       }
+     });
+   };
+
+
+  
+  useEffect(() => {
+    if (authToken) {
+      setLoading(true);
+      ValidateAuthToken()
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authToken]);
 
 
 
@@ -56,7 +129,6 @@ export default function Component() {
                 required
                 className="block w-full appearance-none rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0"
               />
-              <span>{errors || ""}</span>
             </div>
           </div>
           <div>
