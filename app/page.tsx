@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/fragments/Footer";
-import Image from "next/image";
 import { ArrowRight, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -13,7 +12,6 @@ import {
   MonitorCheckIcon,
   ServerIcon,
   WrenchIcon,
-  CarIcon,
   CheckIcon,
 } from '@/components/ui/icons'
 import Navbar from "@/components/fragments/Navbar";
@@ -119,66 +117,7 @@ function StatsSection() {
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
-      <div className="relative z-10 md:w-[45%] w-96 h-full md:p-20 flex items-center justify-end">
-        <div className="grid grid-cols-2 grid-rows-2 rounded-2xl md:h-[88%] md:w-[80%] h-full w-full">
-          <div className="space-y-2 row-span-1 col-span-1 border border-gray-200 rounded-tl-xl flex flex-col items-center justify-center bg-white bg-opacity-30 p-4">
-            <Image
-              src="/sold.svg"
-              alt="Vehicle Market"
-              width={100}
-              height={100}
-            />
-            <p className="text-white text-sm md:text-base font-bold">
-              Vehicle Market
-            </p>
-            <h1 className="text-white text-sm md:text-lg">
-              {/* We help you sell your car */}
-            </h1>
-          </div>
-          <div className="space-y-2 row-span-1 col-span-1 border border-gray-200 rounded-tr-xl flex flex-col items-center justify-center bg-white bg-opacity-30 p-4">
-            <Image
-              src="/revenue.svg"
-              alt="Garage Manager"
-              width={100}
-              height={100}
-            />
-            <p className="text-white text-sm md:text-base font-bold">
-              Garage Manager
-            </p>
-            <h1 className="text-white text-sm md:text-lg text-center">
-              {/* Manage your garage with ease online! */}
-            </h1>
-          </div>
-          <div className="space-y-2 row-span-1 col-span-1 border border-gray-200 rounded-bl-xl flex flex-col items-center justify-center bg-white bg-opacity-30 p-4">
-            <Image
-              src="/customer.svg"
-              alt="Customer Satisfaction"
-              width={100}
-              height={100}
-            />
-            <p className="text-white text-sm md:text-base font-bold">
-              High Client Satisfaction
-            </p>
-            <h1 className="text-white text-sm md:text-3xl text-center">
-              {/* Your Satisfaction is our Priority */}
-            </h1>
-          </div>
-          <div className="space-y-2 row-span-1 col-span-1 border border-gray-200 rounded-bl-xl flex flex-col items-center justify-center bg-white bg-opacity-30 p-4">
-            <Image
-              src="/repairs.svg"
-              alt="Repairs Completed"
-              height={100}
-              width={100}
-            />
-            <p className="text-white text-sm md:text-base font-bold">
-              Car Imports
-            </p>
-            <h1 className="text-white font-bold text-2xl md:text-3xl">
-              {/* 78,513 */}
-            </h1>
-          </div>
-        </div>
-      </div>
+    
       <div className="relative z-10 w-full md:w-[55%] h-full flex flex-col p-10 items-start justify-center space-y-4">
         <h1 className="text-white font-bold text-base md:text-lg">
           Drive Excellence
@@ -266,9 +205,12 @@ function OurServices() {
     <div className="flex flex-col  w-full  items-center justify-center">
       <main className="flex-1 grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center bg-slate-300">
         <section className="space-y-4">
-          <h2 className="text-2xl font-bold">For Mechanics & Garages</h2>
+          <h2 className="text-2xl font-bold">
+            Create a Mechanic/Garage Account
+          </h2>
           <p className="text-muted-foreground">
-            Streamline your automotive services with our powerful tools and features:
+            Streamline your automotive services with our powerful tools and
+            features:
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
             <Button variant="outline">Sign In</Button>
@@ -290,10 +232,15 @@ function OurServices() {
           </ul>
         </section>
         <section className="space-y-4">
-          <h2 className="text-2xl font-bold">For Customers</h2>
-          <p className="text-muted-foreground">Find the best mechanics and schedule services with ease:</p>
+          {/* //? CUSTOMERS */}
+          <h2 className="text-2xl font-bold">Our Customers</h2>
+          <p className="text-muted-foreground">
+            Find the best mechanics and schedule services with ease:
+          </p>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline">Sign In</Button>
+            <Link href={'/auth/customers/signin'}>
+              <Button variant="outline">Sign In</Button>
+            </Link>
             <Button>Find Garages</Button>
             <Button>Book Service</Button>
           </div>
@@ -314,7 +261,7 @@ function OurServices() {
         </section>
       </main>
     </div>
-  )
+  );
 }
 
 
