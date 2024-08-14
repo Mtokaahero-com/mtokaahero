@@ -1,13 +1,10 @@
-
-
-
 export interface expectedProfileProps {
-    httpStatus: number;
-    firstName: string;
-    lastName: string;
-    email: string 
-    phone: string
-    token: string
+  httpStatus: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  token: string;
 }
 
 export interface ExpectedAsCloudinaryResponse {
@@ -49,4 +46,18 @@ export interface ValidationAuthProps {
   error: string | null;
   message: string;
   statusCode: number;
+}
+
+
+export interface ExpectedAsProductTypes {
+  id: number;
+  productName: string;
+  productDescription: string;
+  productPrice: number;
+  productImage: string;
+  productCategory: string;
+  productStatus: string;
+  garageId: number;
+  createdAt: string;
+  updatedAt: string;
 }

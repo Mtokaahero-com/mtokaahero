@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { JSX, SVGProps } from "react";
 
@@ -10,7 +9,8 @@ export default function Component() {
           Choose Your Account Type
         </h1>
         <p className="text-muted-foreground">
-          Select whether you would like to sign up as a mechanic or a garage owner.
+          Select whether you would like to sign up as a mechanic or a garage
+          owner.
         </p>
         <div className="grid grid-cols-2 gap-4">
           <Link
@@ -41,7 +41,9 @@ export default function Component() {
   );
 }
 
-function BuildingIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+function BuildingIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}

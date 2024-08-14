@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -74,7 +74,7 @@ export default function Navbar() {
                 {navLinks.map((link) => (
                   <NavLink key={link.title} href={link.location}>
                     <span
-                      className={` text-2xl font-bold ${scrolled ? " text-black": "text-white"}  }`}
+                      className={` text-2xl font-bold ${scrolled ? " text-black" : "text-white"}  }`}
                     >
                       {link.title}
                     </span>

@@ -66,7 +66,9 @@ function QuickLinks({ links, section_title }: PropData) {
       <h1 className="text-black/60 text-xl">{section_title}</h1>
       <div className="flex flex-col space-y-2 mt-4">
         {links.map((link: Link, index: number) => (
-          <a key={index} href={link.location}>{link.title}</a>
+          <a key={index} href={link.location}>
+            {link.title}
+          </a>
         ))}
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { JSX, SVGProps } from "react";
 import Image from "next/image";
@@ -15,8 +14,7 @@ export default function Component() {
         </div>
         <div className="flex-1 space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold">John Doe</h1>
-          <p className="text-muted-foreground">
-          </p>
+          <p className="text-muted-foreground"></p>
         </div>
       </div>
       <div className="grid md:grid-cols-2 gap-8">

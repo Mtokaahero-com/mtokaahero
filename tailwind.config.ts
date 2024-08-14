@@ -10,7 +10,7 @@ const config = {
         body: ["var(--font-body)", ...fontFamily.sans],
       },
       backgroundImage: {
-        'hero-pattern': "url('/public/stats3.jpg')",
+        "hero-pattern": "url('/public/stats3.jpg')",
       },
       colors: {
         brand_blue: "#2463EB",

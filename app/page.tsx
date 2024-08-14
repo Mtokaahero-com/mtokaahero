@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/fragments/Footer";
@@ -13,9 +13,8 @@ import {
   ServerIcon,
   WrenchIcon,
   CheckIcon,
-} from '@/components/ui/icons'
+} from "@/components/ui/icons";
 import Navbar from "@/components/fragments/Navbar";
-
 
 export default function Home() {
   return (
@@ -32,7 +31,6 @@ export default function Home() {
     </main>
   );
 }
-
 
 function HeroSection() {
   return (
@@ -89,7 +87,7 @@ function HeroSection() {
               className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300"
             >
               Learn More
-            </Button> 
+            </Button>
             <Button className="w-40 bg-brand_blue hover:bg-brand_blue/80 transition-colors duration-300">
               Get Started
             </Button>
@@ -100,8 +98,7 @@ function HeroSection() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.6 }}
             className="mt-12"
-          >
-          </motion.div> 
+          ></motion.div>
         </motion.div>
       </div>
     </section>
@@ -117,7 +114,6 @@ function StatsSection() {
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
-    
       <div className="relative z-10 w-full md:w-[55%] h-full flex flex-col p-10 items-start justify-center space-y-4">
         <h1 className="text-white font-bold text-base md:text-lg">
           Drive Excellence
@@ -198,9 +194,7 @@ function OurServices() {
   );
 }
 
-
-
- function WhyChooseUs() {
+function WhyChooseUs() {
   return (
     <div className="flex flex-col  w-full  items-center justify-center">
       <main className="flex-1 grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center bg-slate-300">
@@ -238,7 +232,7 @@ function OurServices() {
             Find the best mechanics and schedule services with ease:
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Link href={'/auth/customers/signin'}>
+            <Link href={"/auth/customers/signin"}>
               <Button variant="outline">Sign In</Button>
             </Link>
             <Button>Find Garages</Button>
@@ -263,7 +257,6 @@ function OurServices() {
     </div>
   );
 }
-
 
 function GuideSection() {
   return (

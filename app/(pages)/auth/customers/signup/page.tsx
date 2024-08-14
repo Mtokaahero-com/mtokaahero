@@ -7,11 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import {expectedProfileProps, ValidationAuthProps} from '@/types/foreignTypes'
-import Loading  from "@/components/ui/loading";
+import {
+  expectedProfileProps,
+  ValidationAuthProps,
+} from "@/types/foreignTypes";
+import Loading from "@/components/ui/loading";
 
 export default function Component() {
-  const [authToken, setAuthToken] = useState<string | undefined>(Cookies.get("customerToken"));
+  const [authToken, setAuthToken] = useState<string | undefined>(
+    Cookies.get("customerToken"),
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -21,7 +26,6 @@ export default function Component() {
     email: "",
     password: "",
   });
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +38,7 @@ export default function Component() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      }
+      },
     );
     const data: expectedProfileProps = await response.json();
     console.log(data);
@@ -44,37 +48,35 @@ export default function Component() {
     } else {
       console.log(data);
     }
-  }
+  };
 
-   const ValidateAuthToken = async (): Promise<ValidationAuthProps> => {
-     return new Promise(async (resolve, reject) => {
-       try {
-         const response = await fetch(
-           "https://goose-merry-mollusk.ngrok-free.app/api/auth/validate",
-           {
-             method: "GET",
-             headers: {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${authToken}`,
-             },
-           }
-         );
-         const data: ValidationAuthProps = await response.json();
-         console.log(data);
-         if (data.statusCode === 200) {
-           resolve(data);
-         } else if (data.statusCode === 401) {
-           Cookies.remove("customerToken");
-         }
-       } catch (error) {
-         reject("An error occurred while validating the token");
-         console.log(error);
-       }
-     });
-   };
+  const ValidateAuthToken = async (): Promise<ValidationAuthProps> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch(
+          "https://goose-merry-mollusk.ngrok-free.app/api/auth/validate",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+          },
+        );
+        const data: ValidationAuthProps = await response.json();
+        console.log(data);
+        if (data.statusCode === 200) {
+          resolve(data);
+        } else if (data.statusCode === 401) {
+          Cookies.remove("customerToken");
+        }
+      } catch (error) {
+        reject("An error occurred while validating the token");
+        console.log(error);
+      }
+    });
+  };
 
-
-  
   useEffect(() => {
     if (authToken) {
       setLoading(true);
@@ -89,10 +91,8 @@ export default function Component() {
           setLoading(false);
         });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authToken]);
-
-
 
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">

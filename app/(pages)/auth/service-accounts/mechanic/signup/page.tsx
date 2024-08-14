@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -7,11 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import React, {useState} from "react";
-
+import React, { useState } from "react";
 
 export default function Component() {
-
   const [formData, setFormData] = useState({
     name: "",
     last: "",
@@ -19,14 +16,14 @@ export default function Component() {
     phone: "",
     password: "",
     profilePicture: "",
-  }); 
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
+      [name]: value,
+    }));
   };
 
   return (

@@ -1,8 +1,8 @@
 import { JSX, SVGProps } from "react";
 
-
-
-export function CogIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+export function CogIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -34,7 +34,9 @@ export function CogIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SV
   );
 }
 
-export function SparkleIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+export function SparkleIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -53,7 +55,9 @@ export function SparkleIcon(props: React.JSX.IntrinsicAttributes & React.SVGProp
   );
 }
 
-export function WrenchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+export function WrenchIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -72,7 +76,9 @@ export function WrenchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps
   );
 }
 
-export function XIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+export function XIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -92,7 +98,9 @@ export function XIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGS
   );
 }
 
-export function BatteryIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function BatteryIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -112,7 +120,9 @@ export function BatteryIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElem
   );
 }
 
-export function BracketsIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function BracketsIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -132,7 +142,9 @@ export function BracketsIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGEle
   );
 }
 
-export function FuelIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function FuelIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -154,7 +166,9 @@ export function FuelIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement
   );
 }
 
-export function MonitorCheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function MonitorCheckIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -176,7 +190,9 @@ export function MonitorCheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSV
   );
 }
 
-export function ServerIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function ServerIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -198,9 +214,9 @@ export function ServerIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGEleme
   );
 }
 
-
-
-export function CarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function CarIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
@@ -222,7 +238,9 @@ export function CarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
   );
 }
 
-export function CheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+export function CheckIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>,
+) {
   return (
     <svg
       {...props}
