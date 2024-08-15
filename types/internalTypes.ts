@@ -1,10 +1,10 @@
-import { ExpectedAsProductTypes  } from "./foreignTypes";
+import { ExpectedAsProductTypes } from './foreignTypes';
 
 export interface CartItem extends ExpectedAsProductTypes {
-  quantity: number;
+    quantity: number;
 }
 
 export interface CartState {
-  items: CartItem[];
-  totalItems: number;
+    items: CartItem[];
+    totalItems: number;
 }
