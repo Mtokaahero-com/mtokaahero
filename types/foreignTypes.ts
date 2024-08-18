@@ -1,7 +1,8 @@
-export interface expectedProfileProps {
-    httpStatus: number;
+export interface ExpectedProfileProps {
+    id: number;
     firstName: string;
     lastName: string;
+    role: string;
     email: string;
     phone: string;
     token: string;
@@ -59,4 +60,12 @@ export interface ExpectedAsProductTypes {
     garageId: number;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface ExpectedMechanicProps {
+    id: number;
+    name: string;
+    email?: string;
+    specialty: string;
+    image: string;
 }

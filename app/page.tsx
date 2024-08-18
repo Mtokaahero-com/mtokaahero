@@ -86,9 +86,11 @@ function HeroSection() {
                         >
                             Learn More
                         </Button>
-                        <Button className="w-40 bg-brand_blue hover:bg-brand_blue/80 transition-colors duration-300">
-                            Get Started
-                        </Button>
+                        <Link href="/auth/customers/signin">
+                            <Button className="w-40 bg-brand_blue hover:bg-brand_pink transition-colors duration-300">
+                                Get Started
+                            </Button>
+                        </Link>
                     </div>
 
                     <motion.div

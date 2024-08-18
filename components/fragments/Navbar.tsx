@@ -74,13 +74,15 @@ export default function Navbar() {
                             </div>
                         </div>
                         <div className="hidden md:block">
-                            <Button
-                                variant="default"
-                                size="default"
-                                className="bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
-                            >
-                                Get Started
-                            </Button>
+                            <Link href="/get-started">
+                                <Button
+                                    variant="default"
+                                    size="default"
+                                    className="bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
+                                >
+                                    Get Started
+                                </Button>
+                            </Link>
                         </div>
                         <div className="md:hidden">
                             <button
