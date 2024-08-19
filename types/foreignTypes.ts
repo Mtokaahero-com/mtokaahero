@@ -52,14 +52,11 @@ export interface ValidationAuthProps {
 export interface ExpectedAsProductTypes {
     id: number;
     productName: string;
-    productDescription: string;
+    productDescription?: string;
     productPrice: number;
     productImage: string;
-    productCategory: string;
-    productStatus: string;
+    productCategory?: string;
     garageId: number;
-    createdAt: string;
-    updatedAt: string;
 }
 
 export interface ExpectedMechanicProps {

@@ -92,7 +92,7 @@ export default function CartComponent() {
                     <SheetTitle>Your Cart</SheetTitle>
                 </SheetHeader>
                 <div className="mt-8">
-                    {items.map((item: CartItemProps['item']) => (
+                    {items.map((item) => (
                         <CartItem
                             key={item.id}
                             item={item}

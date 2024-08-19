@@ -5,12 +5,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarIcon, CarIcon, PackageIcon, WrenchIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import Navigation from '@/components/fragments/getStartedNavigation';
-import { ExpectedMechanicProps } from '@/types/foreignTypes';
+import { ExpectedMechanicProps, ExpectedAsProductTypes } from '@/types/foreignTypes';
+import { addToCart, clearCart, removeFromCart } from '@/app/features/cartActions';
+import { useDispatch } from 'react-redux';
 
 export default function Component() {
     const [selectedMechanic, setSelectedMechanic] = useState<ExpectedMechanicProps | null>(null);
+
+    const dispatch = useDispatch();
+
+    const handleAddToCart = (product: ExpectedAsProductTypes) => {
+        dispatch(addToCart(product));
+    };
+
+    const handleRemoveFromCart = (productId: number) => {
+        dispatch(removeFromCart(productId));
+    };
+
+    const handleClearCart = () => {
+        dispatch(clearCart());
+    };
 
     const mechanics = [
         {
@@ -45,17 +61,53 @@ export default function Component() {
     ];
 
     const products = [
-        { id: 1, name: 'Oil Filter', price: 15.99 },
-        { id: 2, name: 'Brake Pads', price: 45.99 },
-        { id: 3, name: 'Spark Plugs', price: 9.99 },
-        { id: 4, name: 'Air Filter', price: 12.99 },
-        { id: 5, name: 'Wiper Blades', price: 22.99 },
-        { id: 6, name: 'Car Battery', price: 89.99 },
+        {
+            id: 1,
+            productName: 'Oil Filter',
+            productPrice: 15.99,
+            garageId: 1,
+            productImage: '/placeholder.svg?height=100&width=100',
+        },
+        {
+            id: 2,
+            productName: 'Brake Pads',
+            productPrice: 45.99,
+            garageId: 1,
+            productImage: '/placeholder.svg?height=100&width=100',
+        },
+        {
+            id: 3,
+            productName: 'Spark Plugs',
+            productPrice: 9.99,
+            garageId: 1,
+            productImage: '/placeholder.svg?height=100&width=100',
+        },
+        {
+            id: 4,
+            productName: 'Air Filter',
+            productPrice: 12.99,
+            garageId: 1,
+            productImage: '/placeholder.svg?height=100&width=100',
+        },
+        {
+            id: 5,
+            productName: 'Wiper Blades',
+            productPrice: 22.99,
+            garageId: 1,
+            productImage: '/placeholder.svg?height=100&width=100',
+        },
+        {
+            id: 6,
+            productName: 'Car Battery',
+            productPrice: 89.99,
+            garageId: 1,
+            productImage: '/placeholder.svg?height=100&width=100',
+        },
     ];
 
     return (
         <div className="flex flex-col min-h-screen">
-            <Navigation/>   
+            <Navigation />
             <div className="container mx-auto px-4 py-8 flex-grow">
                 <Tabs defaultValue="services" className="mb-8">
                     <TabsList className="grid w-full grid-cols-2">
@@ -107,11 +159,11 @@ export default function Component() {
                             {products.slice(0, 3).map((product) => (
                                 <Card key={product.id}>
                                     <CardHeader>
-                                        <CardTitle>{product.name}</CardTitle>
-                                        <CardDescription>${product.price.toFixed(2)}</CardDescription>
+                                        <CardTitle>{product.productName}</CardTitle>
+                                        <CardDescription>${product.productPrice.toFixed(2)}</CardDescription>
                                     </CardHeader>
                                     <CardFooter>
-                                        <Button>Add to Cart</Button>
+                                        <Button onClick={()=>handleAddToCart(product)}>Add to Cart</Button>
                                     </CardFooter>
                                 </Card>
                             ))}
@@ -123,38 +175,38 @@ export default function Component() {
                 </Tabs>
 
                 <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Book a Repair Session</CardTitle>
-          <CardDescription>Schedule your vehicle repair with our expert mechanics</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Your Name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="your@email.com" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="service">Service Required</Label>
-              <Input id="service" placeholder="e.g., Oil Change, Brake Repair" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="date">Preferred Date</Label>
-              <Input id="date" type="date" />
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter>
-          <Button className="w-full">
-            <CalendarIcon className="mr-2 h-4 w-4" /> Book Appointment
-          </Button>
-        </CardFooter>
-      </Card>
+                    <CardHeader>
+                        <CardTitle>Book a Repair Session</CardTitle>
+                        <CardDescription>Schedule your vehicle repair with our expert mechanics</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="name">Name</Label>
+                                    <Input id="name" placeholder="Your Name" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input id="email" type="email" placeholder="your@email.com" />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="service">Service Required</Label>
+                                <Input id="service" placeholder="e.g., Oil Change, Brake Repair" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="date">Preferred Date</Label>
+                                <Input id="date" type="date" />
+                            </div>
+                        </form>
+                    </CardContent>
+                    <CardFooter>
+                        <Button className="w-full">
+                            <CalendarIcon className="mr-2 h-4 w-4" /> Book Appointment
+                        </Button>
+                    </CardFooter>
+                </Card>
             </div>
         </div>
     );
