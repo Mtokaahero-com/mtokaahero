@@ -14,5 +14,4 @@ const Testimonial = ({ quote, author, role }: TestimonialCardProps) => (
     </Card>
 );
 
-
 export default Testimonial;

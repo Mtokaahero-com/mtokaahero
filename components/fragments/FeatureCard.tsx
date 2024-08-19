@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FeatureCardProps } from '@/types/uiTypes';
 
-
 const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
     <Card>
         <CardHeader>

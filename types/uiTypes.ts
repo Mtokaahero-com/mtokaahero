@@ -4,13 +4,11 @@ export interface FeatureCardProps {
     description: string;
 }
 
-
 export interface TestimonialCardProps {
     quote: string;
     author: string;
     role: string;
 }
-
 
 export interface MechanicStoreCardProps {
     item: {
@@ -24,7 +22,6 @@ export interface MechanicStoreCardProps {
     onBookSession: (item: any) => void;
 }
 
-
 export interface ProfileSheetProps {
     item: {
         name: string;
@@ -35,7 +32,6 @@ export interface ProfileSheetProps {
     isOpen: boolean;
     onClose: () => void;
 }
-
 
 export interface BookingDialogProps {
     isOpen: boolean;

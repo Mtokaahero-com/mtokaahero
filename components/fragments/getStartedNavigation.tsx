@@ -1,5 +1,4 @@
-"use client"
-
+'use client';
 
 import { RootState } from '@/app/store/store';
 import { Button } from '@/components/ui/button';
@@ -9,9 +8,7 @@ import { useSelector } from 'react-redux';
 import CartComponent from './cart';
 import Link from 'next/link';
 
-
 const Navigation = () => {
-
     const [items, totalItems] = useSelector((state: RootState) => state.cart.items);
 
     return (
@@ -25,13 +22,22 @@ const Navigation = () => {
                     <Link href="/" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Home
                     </Link>
-                    <Link href="/services" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    <Link
+                        href="/services"
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
+                    >
                         Services
                     </Link>
-                    <Link href="/mechanics" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    <Link
+                        href="/mechanics"
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
+                    >
                         Mechanics
                     </Link>
-                    <Link href="/products" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    <Link
+                        href="/products"
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
+                    >
                         Products
                     </Link>
                     <Link href="/contact" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400">

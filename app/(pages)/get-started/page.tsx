@@ -163,7 +163,7 @@ export default function Component() {
                                         <CardDescription>${product.productPrice.toFixed(2)}</CardDescription>
                                     </CardHeader>
                                     <CardFooter>
-                                        <Button onClick={()=>handleAddToCart(product)}>Add to Cart</Button>
+                                        <Button onClick={() => handleAddToCart(product)}>Add to Cart</Button>
                                     </CardFooter>
                                 </Card>
                             ))}

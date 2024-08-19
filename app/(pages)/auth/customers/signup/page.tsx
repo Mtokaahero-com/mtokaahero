@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 
 export default function Component() {
-
     return (
         <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
             <div className="mx-auto w-full max-w-md space-y-8">

@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -6,7 +6,6 @@ import { AuthProvider } from './context/context';
 
 const inter = Inter({ subsets: ['latin'] });
 import { Toaster } from 'sonner';
-
 
 import { store } from './store/store';
 import { Provider } from 'react-redux';
