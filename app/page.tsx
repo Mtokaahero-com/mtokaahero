@@ -84,7 +84,7 @@ function HeroSection() {
                             variant="outline"
                             className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300"
                         >
-                            Learn More
+                            Register your Garage
                         </Button>
                         <Link href="/auth/customers/signin">
                             <Button className="w-40 bg-brand_blue hover:bg-brand_pink transition-colors duration-300">

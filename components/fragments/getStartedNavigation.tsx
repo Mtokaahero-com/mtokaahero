@@ -1,14 +1,13 @@
 "use client"
 
 
+import { RootState } from '@/app/store/store';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Link, MenuIcon, ShoppingCartIcon } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { MenuIcon } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/app/store/store';
 import CartComponent from './cart';
-
+import Link from 'next/link';
 
 
 const Navigation = () => {
@@ -23,21 +22,21 @@ const Navigation = () => {
 
             <div className="hidden lg:flex lg:items-center lg:w-auto">
                 <div className="text-sm lg:flex-grow">
-                    <a href="/" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    <Link href="/" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Home
-                    </a>
-                    <a href="#" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    </Link>
+                    <Link href="/services" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Services
-                    </a>
-                    <a href="#" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    </Link>
+                    <Link href="/mechanics" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Mechanics
-                    </a>
-                    <a href="#" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    </Link>
+                    <Link href="/products" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Products
-                    </a>
-                    <a href="#" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400">
+                    </Link>
+                    <Link href="/contact" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400">
                         Contact
-                    </a>
+                    </Link>
                 </div>
             </div>
             <div className="flex items-center">
@@ -56,21 +55,21 @@ const Navigation = () => {
                     </SheetTrigger>
                     <SheetContent>
                         <div className="mt-6 flex flex-col space-y-2">
-                            <a href="#" className="text-gray-800 hover:text-gray-600">
+                            <Link href="/" className="text-gray-800 hover:text-gray-600">
                                 Home
-                            </a>
-                            <a href="#" className="text-gray-800 hover:text-gray-600">
+                            </Link>
+                            <Link href="/services" className="text-gray-800 hover:text-gray-600">
                                 Services
-                            </a>
-                            <a href="#" className="text-gray-800 hover:text-gray-600">
+                            </Link>
+                            <Link href="/mechanics" className="text-gray-800 hover:text-gray-600">
                                 Mechanics
-                            </a>
-                            <a href="#" className="text-gray-800 hover:text-gray-600">
+                            </Link>
+                            <Link href="/products" className="text-gray-800 hover:text-gray-600">
                                 Products
-                            </a>
-                            <a href="#" className="text-gray-800 hover:text-gray-600">
+                            </Link>
+                            <Link href="/contacts" className="text-gray-800 hover:text-gray-600">
                                 Contact
-                            </a>
+                            </Link>
                         </div>
                     </SheetContent>
                 </Sheet>

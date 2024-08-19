@@ -1,25 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import Link from 'next/link';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import Loading from '@/components/ui/loading';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Link from 'next/link';
 
 export default function Component() {
-    const [authToken, setAuthToken] = useState<string | undefined>(Cookies.get('customerToken'));
-    const [loading, setLoading] = useState<boolean>(false);
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        address: '',
-        email: '',
-        password: '',
-    });
 
     return (
         <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
