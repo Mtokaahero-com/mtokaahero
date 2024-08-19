@@ -1,34 +1,31 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { AuthProvider } from "./context/context";
+"use client"
 
-const inter = Inter({ subsets: ["latin"] });
-import { Toaster } from "sonner";
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { AuthProvider } from './context/context';
 
-export const metadata: Metadata = {
-  title: "MtokaaHero",
-  description: "A web application for boking a repair services for your car",
-};
+const inter = Inter({ subsets: ['latin'] });
+import { Toaster } from 'sonner';
+
+
+import { store } from './store/store';
+import { Provider } from 'react-redux';
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <AuthProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          {children}
-          <Toaster
-            richColors
-            expand={true}
-            position="top-center"
-            className="font-primary"
-          />
-        </body>
-      </html>
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <Provider store={store}>
+                <html lang="en">
+                    <body className={inter.className}>
+                        {children}
+                        <Toaster richColors expand={true} position="top-center" className="font-primary" />
+                    </body>
+                </html>
+            </Provider>
+        </AuthProvider>
+    );
 }
