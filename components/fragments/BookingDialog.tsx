@@ -14,7 +14,7 @@ const BookingDialog = ({ isOpen, onClose, item }: BookingDialogProps) => (
             <DialogHeader>
                 <DialogTitle>Book a Session with {item?.name}</DialogTitle>
                 <DialogDescription>
-                    Fill out the form below to book your session. We'll get back to you with a confirmation.
+                    Fill out the form below to book your session. We will get back to you with a confirmation.
                 </DialogDescription>
             </DialogHeader>
             <form className="grid gap-4 py-4">
