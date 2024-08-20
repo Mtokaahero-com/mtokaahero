@@ -1,4 +1,4 @@
-import { JSX, SVGProps } from 'react';
+import { JSX, SVGProps } from 'react'
 
 export function CogIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
     return (
@@ -29,7 +29,7 @@ export function CogIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SV
             <path d="m17 3.34-1 1.73" />
             <path d="m11 13.73-4 6.93" />
         </svg>
-    );
+    )
 }
 
 export function SparkleIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
@@ -48,7 +48,7 @@ export function SparkleIcon(props: React.JSX.IntrinsicAttributes & React.SVGProp
         >
             <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
         </svg>
-    );
+    )
 }
 
 export function WrenchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
@@ -67,7 +67,7 @@ export function WrenchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps
         >
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
         </svg>
-    );
+    )
 }
 
 export function XIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
@@ -87,7 +87,7 @@ export function XIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGS
             <path d="M18 6 6 18" />
             <path d="m6 6 12 12" />
         </svg>
-    );
+    )
 }
 
 export function BatteryIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -107,7 +107,7 @@ export function BatteryIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElem
             <rect width="16" height="10" x="2" y="7" rx="2" ry="2" />
             <line x1="22" x2="22" y1="11" y2="13" />
         </svg>
-    );
+    )
 }
 
 export function BracketsIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -127,7 +127,7 @@ export function BracketsIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGEle
             <path d="M16 3h3v18h-3" />
             <path d="M8 21H5V3h3" />
         </svg>
-    );
+    )
 }
 
 export function FuelIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -149,7 +149,7 @@ export function FuelIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement
             <path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18" />
             <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5" />
         </svg>
-    );
+    )
 }
 
 export function MonitorCheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -171,7 +171,7 @@ export function MonitorCheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSV
             <path d="M12 17v4" />
             <path d="M8 21h8" />
         </svg>
-    );
+    )
 }
 
 export function ServerIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -193,7 +193,7 @@ export function ServerIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGEleme
             <line x1="6" x2="6.01" y1="6" y2="6" />
             <line x1="6" x2="6.01" y1="18" y2="18" />
         </svg>
-    );
+    )
 }
 
 export function CarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -215,7 +215,7 @@ export function CarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
             <path d="M9 17h6" />
             <circle cx="17" cy="17" r="2" />
         </svg>
-    );
+    )
 }
 
 export function CheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -234,5 +234,5 @@ export function CheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElemen
         >
             <path d="M20 6 9 17l-5-5" />
         </svg>
-    );
+    )
 }

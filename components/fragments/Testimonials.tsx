@@ -1,6 +1,6 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card'
 
-import { TestimonialCardProps } from '@/types/uiTypes';
+import { TestimonialCardProps } from '@/types/uiTypes'
 
 const Testimonial = ({ quote, author, role }: TestimonialCardProps) => (
     <Card>
@@ -12,6 +12,6 @@ const Testimonial = ({ quote, author, role }: TestimonialCardProps) => (
             </footer>
         </CardContent>
     </Card>
-);
+)
 
-export default Testimonial;
+export default Testimonial

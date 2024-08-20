@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import * as yup from 'yup'
 
 export const schemaForms = yup.object().shape({
     firstName: yup
@@ -13,9 +13,9 @@ export const schemaForms = yup.object().shape({
         .matches(/^[0-9]+$/, 'Phone number must be a number'),
     address: yup.string().required('Address is required'),
     password: yup.string().required('Password is required'),
-});
+})
 
 export const schemaFormsLogin = yup.object().shape({
     email: yup.string().email('Invalid email'),
     password: yup.string(),
-});
+})

@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import { Button } from '@/components/ui/button';
-import Footer from '@/components/fragments/Footer';
-import { ArrowRight, Play } from 'lucide-react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Button } from '@/components/ui/button'
+import Footer from '@/components/fragments/Footer'
+import { ArrowRight, Play } from 'lucide-react'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
 import {
     BatteryIcon,
     BracketsIcon,
@@ -13,8 +13,8 @@ import {
     ServerIcon,
     WrenchIcon,
     CheckIcon,
-} from '@/components/ui/icons';
-import Navbar from '@/components/fragments/Navbar';
+} from '@/components/ui/icons'
+import Navbar from '@/components/fragments/Navbar'
 
 export default function Home() {
     return (
@@ -29,7 +29,7 @@ export default function Home() {
             <GuideSection />
             <Footer />
         </main>
-    );
+    )
 }
 
 function HeroSection() {
@@ -102,7 +102,7 @@ function HeroSection() {
                 </motion.div>
             </div>
         </section>
-    );
+    )
 }
 
 function StatsSection() {
@@ -130,7 +130,7 @@ function StatsSection() {
                 </Button>
             </div>
         </section>
-    );
+    )
 }
 
 function OurServices() {
@@ -183,7 +183,7 @@ function OurServices() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
 function WhyChooseUs() {
@@ -242,7 +242,7 @@ function WhyChooseUs() {
                 </section>
             </main>
         </div>
-    );
+    )
 }
 
 function GuideSection() {
@@ -289,5 +289,5 @@ function GuideSection() {
                 </div>
             </div>
         </section>
-    );
+    )
 }

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 
-import Link from 'next/link';
+import Link from 'next/link'
 
 export default function Component() {
     return (
@@ -34,5 +34,5 @@ export default function Component() {
                 </div>
             </div>
         </section>
-    );
+    )
 }
