@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import { Button } from '@/components/ui/button';
-import Footer from '@/components/fragments/Footer';
-import { ArrowRight, Play } from 'lucide-react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Button } from '@/components/ui/button'
+import Footer from '@/components/fragments/Footer'
+import { ArrowRight, Play } from 'lucide-react'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
 import {
     BatteryIcon,
     BracketsIcon,
@@ -13,8 +13,8 @@ import {
     ServerIcon,
     WrenchIcon,
     CheckIcon,
-} from '@/components/ui/icons';
-import Navbar from '@/components/fragments/Navbar';
+} from '@/components/ui/icons'
+import Navbar from '@/components/fragments/Navbar'
 
 export default function Home() {
     return (
@@ -29,7 +29,7 @@ export default function Home() {
             <GuideSection />
             <Footer />
         </main>
-    );
+    )
 }
 
 function HeroSection() {
@@ -76,17 +76,19 @@ function HeroSection() {
                     </h1>
 
                     <p className="text-xl text-white/80 max-w-xl">
-                        From spare parts to vehicle repairs, we ve got you covered.
+                        Register your garage or find the best mechanics in your area. MtokaaHero is the ultimate platform
                     </p>
 
                     <div className="flex flex-wrap gap-4 mt-8">
-                        <Button
-                            variant="outline"
-                            className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300"
-                        >
-                            Register your Garage
-                        </Button>
-                        <Link href="/auth/customers/signin">
+                        <Link href="/auth/garges/register ">
+                            <Button
+                                variant="outline"
+                                className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300"
+                            >
+                                Start Your Free Trial
+                            </Button>
+                        </Link>
+                        <Link href="/services">
                             <Button className="w-40 bg-brand_blue hover:bg-brand_pink transition-colors duration-300">
                                 Get Started
                             </Button>
@@ -102,7 +104,7 @@ function HeroSection() {
                 </motion.div>
             </div>
         </section>
-    );
+    )
 }
 
 function StatsSection() {
@@ -122,15 +124,17 @@ function StatsSection() {
                 <p className="text-white font-light text-sm md:text-base">
                     Revolutionizing the Way You Experience Automotive Services
                 </p>
-                <Button
-                    variant={'secondary'}
-                    className="hover:border-brand_blue rounded-xl w-36 border border-white p-2 hover:bg-_brand_pink hover:bg-brand_blue transition-all duration-300 ease-linear hover:text-white"
-                >
-                    Discover More
-                </Button>
+                <Link href="/services">
+                    <Button
+                        variant={'secondary'}
+                        className="hover:border-brand_blue rounded-xl w-36 border border-white p-2 hover:bg-_brand_pink hover:bg-brand_blue transition-all duration-300 ease-linear hover:text-white"
+                    >
+                        Discover More
+                    </Button>
+                </Link>
             </div>
         </section>
-    );
+    )
 }
 
 function OurServices() {
@@ -183,7 +187,7 @@ function OurServices() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
 function WhyChooseUs() {
@@ -191,12 +195,14 @@ function WhyChooseUs() {
         <div className="flex flex-col  w-full  items-center justify-center">
             <main className="flex-1 grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center bg-slate-300">
                 <section className="space-y-4">
-                    <h2 className="text-2xl font-bold">Create a Mechanic/Garage Account</h2>
+                    <h2 className="text-2xl font-bold">Register Or Start A free Trial</h2>
                     <p className="text-muted-foreground">
                         Streamline your automotive services with our powerful tools and features:
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2">
-                        <Button variant="outline">Sign In</Button>
+                        <Link href={'/auth/service-accounts/mechanic/signup'}>
+                            <Button variant="outline">Sign Up</Button>
+                        </Link>
                         <Button>Create Account</Button>
                     </div>
                     <ul className="space-y-2 text-muted-foreground">
@@ -242,7 +248,7 @@ function WhyChooseUs() {
                 </section>
             </main>
         </div>
-    );
+    )
 }
 
 function GuideSection() {
@@ -289,5 +295,5 @@ function GuideSection() {
                 </div>
             </div>
         </section>
-    );
+    )
 }

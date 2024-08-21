@@ -1,9 +1,9 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { JSX, SVGProps } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { JSX, SVGProps } from 'react'
 
 export default function Component() {
     return (
@@ -49,7 +49,7 @@ export default function Component() {
                 </Card>
             </div>
         </div>
-    );
+    )
 }
 
 function WrenchIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -68,7 +68,7 @@ function WrenchIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
         >
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
         </svg>
-    );
+    )
 }
 
 function XIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -88,5 +88,5 @@ function XIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
             <path d="M18 6 6 18" />
             <path d="m6 6 12 12" />
         </svg>
-    );
+    )
 }

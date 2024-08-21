@@ -1,18 +1,15 @@
-"use client"
+'use client'
 
-
-import { RootState } from '@/app/store/store';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { MenuIcon } from 'lucide-react';
-import { useSelector } from 'react-redux';
-import CartComponent from './cart';
-import Link from 'next/link';
-
+import { RootState } from '@/app/store/store'
+import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { MenuIcon } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import CartComponent from './cart'
+import Link from 'next/link'
 
 const Navigation = () => {
-
-    const [items, totalItems] = useSelector((state: RootState) => state.cart.items);
+    const [items, totalItems] = useSelector((state: RootState) => state.cart.items)
 
     return (
         <nav className="sticky top-0 z-10 flex items-center justify-between flex-wrap bg-gray-800 p-6">
@@ -25,13 +22,22 @@ const Navigation = () => {
                     <Link href="/" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Home
                     </Link>
-                    <Link href="/services" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    <Link
+                        href="/services"
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
+                    >
                         Services
                     </Link>
-                    <Link href="/mechanics" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    <Link
+                        href="/mechanics"
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
+                    >
                         Mechanics
                     </Link>
-                    <Link href="/products" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
+                    <Link
+                        href="/products"
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
+                    >
                         Products
                     </Link>
                     <Link href="/contact" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400">
@@ -75,7 +81,7 @@ const Navigation = () => {
                 </Sheet>
             </div>
         </nav>
-    );
-};
+    )
+}
 
-export default Navigation;
+export default Navigation

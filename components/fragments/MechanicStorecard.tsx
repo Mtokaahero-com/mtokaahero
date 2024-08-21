@@ -1,12 +1,8 @@
-
-
-import React from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { StarIcon } from 'lucide-react';
-import { MechanicStoreCardProps } from '@/types/uiTypes';
-
-
+import React from 'react'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { StarIcon } from 'lucide-react'
+import { MechanicStoreCardProps } from '@/types/uiTypes'
 
 const MechanicStoreCard = ({ item, onProfileClick, onBookSession }: MechanicStoreCardProps) => (
     <Card className="h-full flex flex-col">
@@ -37,7 +33,6 @@ const MechanicStoreCard = ({ item, onProfileClick, onBookSession }: MechanicStor
             <Button onClick={() => onBookSession(item)}>Book Session</Button>
         </CardFooter>
     </Card>
-);
+)
 
-
-export default MechanicStoreCard;
+export default MechanicStoreCard

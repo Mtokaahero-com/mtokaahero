@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RootState } from '@/app/store/store';
-import { Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { RootState } from '@/app/store/store'
+import { Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const paymentMethods = [
     { id: 'mpesa', name: 'M-Pesa', icon: '📱' },
     { id: 'airtel', name: 'Airtel Money', icon: '📱' },
     { id: 'card', name: 'Credit/Debit Card', icon: '💳' },
     { id: 'bank', name: 'Bank Transfer', icon: '🏦' },
-];
+]
 
 function LoadingOverlay({ isLoading }: { isLoading: boolean }) {
-    if (!isLoading) return null;
+    if (!isLoading) return null
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
@@ -29,32 +29,32 @@ function LoadingOverlay({ isLoading }: { isLoading: boolean }) {
                 <p className="mt-2 text-sm text-muted-foreground">Processing your order...</p>
             </div>
         </div>
-    );
+    )
 }
 
 export default function Component() {
-    const [paymentMethod, setPaymentMethod] = useState('mpesa');
-    const [isLoading, setIsLoading] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('mpesa')
+    const [isLoading, setIsLoading] = useState(false)
 
     // Fetch items from Redux store
-    const items = useSelector((state: RootState) => state.cart.items);
+    const items = useSelector((state: RootState) => state.cart.items)
 
-    const subtotal = items.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
-    const shippingCost = 0;
-    const total = subtotal + shippingCost;
+    const subtotal = items.reduce((sum, item) => sum + item.productPrice * item.quantity, 0)
+    const shippingCost = 0
+    const total = subtotal + shippingCost
 
     const handlePlaceOrder = () => {
-        setIsLoading(true);
+        setIsLoading(true)
         // Simulate an API call
         setTimeout(() => {
-            setIsLoading(false);
-            toast.success('Order placed successfully');
+            setIsLoading(false)
+            toast.success('Order placed successfully')
 
             setTimeout(() => {
-                window.location.href = '/';
-            }, 2000);
-        }, 3000);
-    };
+                window.location.href = '/'
+            }, 2000)
+        }, 3000)
+    }
     return (
         <div className="container mx-auto p-4 max-w-4xl">
             <LoadingOverlay isLoading={isLoading} />
@@ -174,5 +174,5 @@ export default function Component() {
                 </div>
             </div>
         </div>
-    );
+    )
 }

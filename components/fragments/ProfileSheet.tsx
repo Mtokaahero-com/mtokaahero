@@ -1,8 +1,7 @@
-
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { ClockIcon, MapPinIcon, PhoneIcon, StarIcon } from 'lucide-react';
-import { Wrench as ToolIcon } from 'lucide-react';
-import { ProfileSheetProps } from '@/types/uiTypes';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet'
+import { ClockIcon, MapPinIcon, PhoneIcon, StarIcon } from 'lucide-react'
+import { Wrench as ToolIcon } from 'lucide-react'
+import { ProfileSheetProps } from '@/types/uiTypes'
 
 const ProfileSheet = ({ item, isOpen, onClose }: ProfileSheetProps) => (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -35,6 +34,6 @@ const ProfileSheet = ({ item, isOpen, onClose }: ProfileSheetProps) => (
             </div>
         </SheetContent>
     </Sheet>
-);
+)
 
-export default ProfileSheet;
+export default ProfileSheet
