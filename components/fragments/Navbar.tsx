@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Menu, X } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const navLinks = [
     { title: 'Home', location: '/' },
@@ -12,39 +12,39 @@ const navLinks = [
     { title: 'Shop', location: '/shop' },
     { title: 'Contact', location: '/contact' },
     { title: 'Help', location: '/help' },
-]
+];
 
 type NavLinkProps = {
-    href: string
-    children: React.ReactNode
-}
+    href: string;
+    children: React.ReactNode;
+};
 
 const NavLink = ({ href, children }: NavLinkProps) => (
     <Link href={href} className="text-black/60 hover:text-black transition-colors duration-200">
         {children}
     </Link>
-)
+);
 
 export default function Navbar() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [scrolled, setScrolled] = useState(false)
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 20)
-        }
+            setScrolled(window.scrollY > 20);
+        };
 
-        window.addEventListener('scroll', handleScroll)
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         if (isMenuOpen) {
-            document.body.style.overflow = 'hidden'
+            document.body.style.overflow = 'hidden';
         } else {
-            document.body.style.overflow = 'unset'
+            document.body.style.overflow = 'unset';
         }
-    }, [isMenuOpen])
+    }, [isMenuOpen]);
 
     return (
         <>
@@ -143,5 +143,5 @@ export default function Navbar() {
                 </div>
             </div>
         </>
-    )
+    );
 }

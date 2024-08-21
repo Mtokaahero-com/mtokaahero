@@ -1,22 +1,22 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
-import Loading from '@/components/ui/loading'
+import Link from 'next/link';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import Loading from '@/components/ui/loading';
 
 export default function Component() {
-    const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState({ email: '', password: '' })
-    const [error, setError] = useState<string>('')
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [error, setError] = useState<string>('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        console.log(formData)
-    }
+        e.preventDefault();
+        console.log(formData);
+    };
 
     return (
         <main>
@@ -52,7 +52,7 @@ export default function Component() {
                                         type="email"
                                         autoComplete="email"
                                         onChange={(e) => {
-                                            setFormData({ ...formData, email: e.target.value })
+                                            setFormData({ ...formData, email: e.target.value });
                                         }}
                                         required
                                         className="block w-full appearance-none rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm focus-visible:ring-primary focus-visible:ring-1 focus-visible:ring-offset-0"
@@ -70,7 +70,7 @@ export default function Component() {
                                         name="password"
                                         type="password"
                                         onChange={(e) => {
-                                            setFormData({ ...formData, password: e.target.value })
+                                            setFormData({ ...formData, password: e.target.value });
                                         }}
                                         autoComplete="current-password"
                                         required
@@ -113,5 +113,5 @@ export default function Component() {
                 </div>
             )}
         </main>
-    )
+    );
 }

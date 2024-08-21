@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import MechanicStoreCard from '@/components/fragments/MechanicStorecard'
-import ProfileSheet from '@/components/fragments/ProfileSheet'
-import BookingDialog from '@/components/fragments/BookingDialog'
-import Navigation from '@/components/fragments/getStartedNavigation'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useState } from 'react'
+import MechanicStoreCard from '@/components/fragments/MechanicStorecard';
+import ProfileSheet from '@/components/fragments/ProfileSheet';
+import BookingDialog from '@/components/fragments/BookingDialog';
+import Navigation from '@/components/fragments/getStartedNavigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from 'react';
 
 // TypeScript types
 type MechanicOrGarage = {
-    id: number
-    name: string
-    type: 'Mechanic' | 'Store'
-    specialty: string
-    rating: number
-    isAvailable: boolean
-}
+    id: number;
+    name: string;
+    type: 'Mechanic' | 'Store';
+    specialty: string;
+    rating: number;
+    isAvailable: boolean;
+};
 
 // Dummy data
 const mechanicsAndGarages: MechanicOrGarage[] = [
@@ -39,25 +39,25 @@ const mechanicsAndGarages: MechanicOrGarage[] = [
         rating: 4.6,
         isAvailable: true,
     },
-]
+];
 
-const mechanics = mechanicsAndGarages.filter((item) => item.type === 'Mechanic')
-const garages = mechanicsAndGarages.filter((item) => item.type === 'Store')
+const mechanics = mechanicsAndGarages.filter((item) => item.type === 'Mechanic');
+const garages = mechanicsAndGarages.filter((item) => item.type === 'Store');
 
 export default function MechanicsStoresPage() {
-    const [selectedItem, setSelectedItem] = useState<MechanicOrGarage | null>(null)
-    const [isProfileOpen, setIsProfileOpen] = useState(false)
-    const [isBookingOpen, setIsBookingOpen] = useState(false)
+    const [selectedItem, setSelectedItem] = useState<MechanicOrGarage | null>(null);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isBookingOpen, setIsBookingOpen] = useState(false);
 
     const handleProfileClick = (item: MechanicOrGarage) => {
-        setSelectedItem(item)
-        setIsProfileOpen(true)
-    }
+        setSelectedItem(item);
+        setIsProfileOpen(true);
+    };
 
     const handleBookSession = (item: MechanicOrGarage) => {
-        setSelectedItem(item)
-        setIsBookingOpen(true)
-    }
+        setSelectedItem(item);
+        setIsBookingOpen(true);
+    };
 
     const renderContent = (items: MechanicOrGarage[]) => (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -70,7 +70,7 @@ export default function MechanicsStoresPage() {
                 />
             ))}
         </div>
-    )
+    );
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -95,5 +95,5 @@ export default function MechanicsStoresPage() {
                 </>
             )}
         </div>
-    )
+    );
 }

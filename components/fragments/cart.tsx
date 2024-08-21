@@ -1,23 +1,23 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { ShoppingCart } from 'lucide-react'
-import { RootState } from '@/app/store/store'
-import { removeFromCart, updateQuantity } from '@/app/features/cartActions'
-import Image from 'next/image'
-import Link from 'next/link'
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { ShoppingCart } from 'lucide-react';
+import { RootState } from '@/app/store/store';
+import { removeFromCart, updateQuantity } from '@/app/features/cartActions';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface CartItemProps {
     item: {
-        id: number
-        productName: string
-        productImage: string
-        productPrice: number
-        quantity: number
-    }
-    onUpdateQuantity: (id: number, quantity: number) => void
-    onRemove: (id: number) => void
+        id: number;
+        productName: string;
+        productImage: string;
+        productPrice: number;
+        quantity: number;
+    };
+    onUpdateQuantity: (id: number, quantity: number) => void;
+    onRemove: (id: number) => void;
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove }) => (
@@ -54,26 +54,26 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
         </div>
         <p className="font-medium">${(item.productPrice * item.quantity).toFixed(2)}</p>
     </div>
-)
+);
 
 export default function CartComponent() {
-    const [isOpen, setIsOpen] = React.useState(false)
-    const dispatch = useDispatch()
-    const { items, totalItems } = useSelector((state: RootState) => state.cart)
+    const [isOpen, setIsOpen] = React.useState(false);
+    const dispatch = useDispatch();
+    const { items, totalItems } = useSelector((state: RootState) => state.cart);
 
     const totalPrice = items.reduce(
         (sum: number, item: { productPrice: number; quantity: number }) => sum + item.productPrice * item.quantity,
         0,
-    )
-    const isCartEmpty = items.length === 0
+    );
+    const isCartEmpty = items.length === 0;
 
     const handleUpdateQuantity = (productId: number, quantity: number) => {
-        dispatch(updateQuantity(productId, quantity))
-    }
+        dispatch(updateQuantity(productId, quantity));
+    };
 
     const handleRemoveFromCart = (productId: number) => {
-        dispatch(removeFromCart(productId))
-    }
+        dispatch(removeFromCart(productId));
+    };
 
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -117,5 +117,5 @@ export default function CartComponent() {
                 </div>
             </SheetContent>
         </Sheet>
-    )
+    );
 }

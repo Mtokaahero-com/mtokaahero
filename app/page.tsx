@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import Footer from '@/components/fragments/Footer'
-import { ArrowRight, Play } from 'lucide-react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button';
+import Footer from '@/components/fragments/Footer';
+import { ArrowRight, Play } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
     BatteryIcon,
     BracketsIcon,
@@ -13,8 +13,8 @@ import {
     ServerIcon,
     WrenchIcon,
     CheckIcon,
-} from '@/components/ui/icons'
-import Navbar from '@/components/fragments/Navbar'
+} from '@/components/ui/icons';
+import Navbar from '@/components/fragments/Navbar';
 
 export default function Home() {
     return (
@@ -29,7 +29,7 @@ export default function Home() {
             <GuideSection />
             <Footer />
         </main>
-    )
+    );
 }
 
 function HeroSection() {
@@ -76,7 +76,8 @@ function HeroSection() {
                     </h1>
 
                     <p className="text-xl text-white/80 max-w-xl">
-                        Register your garage or find the best mechanics in your area. MtokaaHero is the ultimate platform
+                        Register your garage or find the best mechanics in your area. MtokaaHero is the ultimate
+                        platform
                     </p>
 
                     <div className="flex flex-wrap gap-4 mt-8">
@@ -104,7 +105,7 @@ function HeroSection() {
                 </motion.div>
             </div>
         </section>
-    )
+    );
 }
 
 function StatsSection() {
@@ -134,7 +135,7 @@ function StatsSection() {
                 </Link>
             </div>
         </section>
-    )
+    );
 }
 
 function OurServices() {
@@ -187,7 +188,7 @@ function OurServices() {
                 </div>
             </section>
         </div>
-    )
+    );
 }
 
 function WhyChooseUs() {
@@ -248,7 +249,7 @@ function WhyChooseUs() {
                 </section>
             </main>
         </div>
-    )
+    );
 }
 
 function GuideSection() {
@@ -295,5 +296,5 @@ function GuideSection() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

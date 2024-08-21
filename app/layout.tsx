@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { AuthProvider } from './context/context'
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { AuthProvider } from './context/context';
 
-const inter = Inter({ subsets: ['latin'] })
-import { Toaster } from 'sonner'
+const inter = Inter({ subsets: ['latin'] });
+import { Toaster } from 'sonner';
 
-import { store } from './store/store'
-import { Provider } from 'react-redux'
+import { store } from './store/store';
+import { Provider } from 'react-redux';
 
 export default function RootLayout({
     children,
 }: Readonly<{
-    children: React.ReactNode
+    children: React.ReactNode;
 }>) {
     return (
         <AuthProvider>
@@ -26,5 +26,5 @@ export default function RootLayout({
                 </html>
             </Provider>
         </AuthProvider>
-    )
+    );
 }

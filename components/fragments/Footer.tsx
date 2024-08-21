@@ -1,7 +1,7 @@
-import Link from 'next/link'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { JSX, SVGProps } from 'react'
+import Link from 'next/link';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { JSX, SVGProps } from 'react';
 
 export default function Component() {
     const the_links = [
@@ -27,7 +27,7 @@ export default function Component() {
             title: 'User Accounts',
             location: '/',
         },
-    ]
+    ];
 
     return (
         <footer className="border-t-[0.5px] p-10">
@@ -45,17 +45,17 @@ export default function Component() {
                 <p>&copy; 2024 MtokaaHero Auto Parts. All rights reserved.</p>
             </div>
         </footer>
-    )
+    );
 }
 
 interface Link {
-    location: string
-    title: string
+    location: string;
+    title: string;
 }
 
 interface PropData {
-    links: Link[]
-    section_title: string
+    links: Link[];
+    section_title: string;
 }
 
 function QuickLinks({ links, section_title }: PropData) {
@@ -70,5 +70,5 @@ function QuickLinks({ links, section_title }: PropData) {
                 ))}
             </div>
         </div>
-    )
+    );
 }

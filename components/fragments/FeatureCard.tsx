@@ -1,6 +1,6 @@
-import React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { FeatureCardProps } from '@/types/uiTypes'
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { FeatureCardProps } from '@/types/uiTypes';
 
 const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
     <Card>
@@ -14,6 +14,6 @@ const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
             <CardDescription>{description}</CardDescription>
         </CardContent>
     </Card>
-)
+);
 
-export default FeatureCard
+export default FeatureCard;

@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { useState, useMemo } from 'react'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
-import Image from 'next/image'
+import { useState, useMemo } from 'react';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 interface Product {
-    id: number
-    image: string
-    title: string
-    description: string
-    price: number
-    category: string
+    id: number;
+    image: string;
+    title: string;
+    description: string;
+    price: number;
+    category: string;
 }
 
 const products: Product[] = [
@@ -80,25 +80,25 @@ const products: Product[] = [
         price: 99.99,
         category: 'Suspension',
     },
-]
+];
 
-const categories = ['Brakes', 'Engine', 'Accessories', 'Filters', 'Suspension']
+const categories = ['Brakes', 'Engine', 'Accessories', 'Filters', 'Suspension'];
 
 export default function ProductList() {
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
     const filteredProducts = useMemo(() => {
         return products.filter((product) => {
-            if (selectedCategories.length === 0) return true
-            return selectedCategories.includes(product.category)
-        })
-    }, [selectedCategories])
+            if (selectedCategories.length === 0) return true;
+            return selectedCategories.includes(product.category);
+        });
+    }, [selectedCategories]);
 
     const handleCategoryChange = (category: string) => {
         setSelectedCategories((prev) =>
             prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
-        )
-    }
+        );
+    };
 
     return (
         <div className="grid md:grid-cols-[240px_1fr] gap-8 p-6">
@@ -122,11 +122,11 @@ export default function ProductList() {
                 ))}
             </div>
         </div>
-    )
+    );
 }
 
 interface ProductCardProps {
-    product: Product
+    product: Product;
 }
 
 function ProductCard({ product }: ProductCardProps) {
@@ -148,5 +148,5 @@ function ProductCard({ product }: ProductCardProps) {
                 </div>
             </div>
         </div>
-    )
+    );
 }
