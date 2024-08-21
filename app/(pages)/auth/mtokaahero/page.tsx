@@ -1,23 +1,22 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { WrenchIcon, BuildingIcon, UploadIcon } from 'lucide-react'
-import { Loader2 } from 'lucide-react'
-import Link from 'next/link'
-
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { WrenchIcon, BuildingIcon, UploadIcon } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function RegistrationPage() {
-    const [freeTrialGarage, setFreeTrialGarage] = useState(false)
-    const [freeTrialMechanic, setFreeTrialMechanic] = useState(true)
-    const [loading, setLoading] = useState(false)
+    const [freeTrialGarage, setFreeTrialGarage] = useState(false);
+    const [freeTrialMechanic, setFreeTrialMechanic] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -46,7 +45,10 @@ export default function RegistrationPage() {
                             <CardDescription>
                                 Create your garage profile and start attracting more customers
                                 <span className="flex items-center space-x-2">
-                                    <Link href="/auth/mtokaahero/find-profile" className="text-blue-600 hover:underline">
+                                    <Link
+                                        href="/auth/mtokaahero/find-profile"
+                                        className="text-blue-600 hover:underline"
+                                    >
                                         Already have an account? Login here
                                     </Link>
                                 </span>
@@ -127,7 +129,10 @@ export default function RegistrationPage() {
                             <CardDescription>
                                 Create your professional profile and connect with potential clients
                                 <span className="flex items-center space-x-2">
-                                    <Link href="/auth/mtokaahero/find-profile" className="text-blue-600 hover:underline">
+                                    <Link
+                                        href="/auth/mtokaahero/find-profile"
+                                        className="text-blue-600 hover:underline"
+                                    >
                                         Already have an account? Login here
                                     </Link>
                                 </span>
@@ -218,5 +223,5 @@ export default function RegistrationPage() {
                 </TabsContent>
             </Tabs>
         </div>
-    )
+    );
 }

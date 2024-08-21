@@ -1,68 +1,76 @@
-"use client"
+'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Loader2, User, Building2 } from 'lucide-react'
+import { useState, FormEvent, ChangeEvent } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Loader2, User, Building2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Profile {
-    type: 'garage' | 'mechanic'
-    name: string
-    address?: string
-    specialty?: string
+    type: 'garage' | 'mechanic';
+    name: string;
+    address?: string;
+    specialty?: string;
 }
 
 // Mock function to simulate fetching profile
 const fetchProfile = async (email: string): Promise<Profile> => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     const profiles: { [key: string]: Profile } = {
         'garage@example.com': { type: 'garage', name: 'SuperFix Garage', address: '123 Main St' },
         'mechanic@example.com': { type: 'mechanic', name: 'John Doe', specialty: 'Engine Repair' },
-    }
-    if (email in profiles) return profiles[email]
-    throw new Error('Profile not found')
-}
+    };
+    if (email in profiles) return profiles[email];
+    throw new Error('Profile not found');
+};
 
 export default function Component() {
-    const [email, setEmail] = useState<string>('')
-    const [profile, setProfile] = useState<Profile | null>(null)
-    const [password, setPassword] = useState<string>('')
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string>('')
-    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+    const [email, setEmail] = useState<string>('');
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [password, setPassword] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
+    const router = useRouter();
     const handleFetchProfile = async (e: FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
-        setError('')
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
         try {
-            const fetchedProfile = await fetchProfile(email)
-            setProfile(fetchedProfile)
-            setIsDialogOpen(true)
+            const fetchedProfile = await fetchProfile(email);
+            setProfile(fetchedProfile);
+            setIsDialogOpen(true);
         } catch (err) {
-            setError('Failed to fetch profile. Please check your email.')
+            setError('Failed to fetch profile. Please check your email.');
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     const handleLogin = (e: FormEvent) => {
-        e.preventDefault()
-        console.log('Logging in with', { email, password })
-        setIsDialogOpen(false)
-    }
+        e.preventDefault();
+        console.log('Logging in with', { email, password });
+        setIsLoading(true);
+        // Simulate login
+        setTimeout(() => {
+            setIsDialogOpen(false);
+            router.push('/auth/mtokaahero/dashboard/garage/1');
+            //FIXME: await for the role and redirect to the correct dashboard
+        }, 4000);
+    };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
             <header className="text-center mb-8">
                 <h1 className="text-3xl font-bold mb-2">Welcome Back!</h1>
-                <p className="text-gray-600 dark:text-gray-400">Enter your email to fetch your profile and log in.</p>
+                <p className="text-gray-600">Enter your email to fetch your profile and log in.</p>
             </header>
 
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-md border">
                 <CardHeader>
                     <CardTitle>Login</CardTitle>
                     <CardDescription>Fetch your profile to proceed.</CardDescription>
@@ -74,7 +82,7 @@ export default function Component() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="Enter your email"
+                                placeholder="mechanic@example.com"
                                 value={email}
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                                 required
@@ -131,11 +139,11 @@ export default function Component() {
                             />
                         </div>
                         <Button type="submit" className="w-full">
-                            Log In
+                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Log In'}
                         </Button>
                     </form>
                 </DialogContent>
             </Dialog>
         </div>
-    )
+    );
 }
