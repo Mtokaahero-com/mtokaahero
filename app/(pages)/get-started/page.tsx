@@ -1,17 +1,22 @@
 'use client';
-import { useState } from 'react';
+import { addToCart, clearCart, removeFromCart } from '@/app/features/cartActions';
+import Navigation from '@/components/fragments/getStartedNavigation';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ExpectedAsProductTypes, ExpectedMechanicProps } from '@/types/foreignTypes';
 import { CalendarIcon } from 'lucide-react';
-import Navigation from '@/components/fragments/getStartedNavigation';
-import { ExpectedMechanicProps, ExpectedAsProductTypes } from '@/types/foreignTypes';
-import { addToCart, clearCart, removeFromCart } from '@/app/features/cartActions';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Component() {
+
+    const router = useRouter();
+
     const [selectedMechanic, setSelectedMechanic] = useState<ExpectedMechanicProps | null>(null);
 
     const dispatch = useDispatch();
@@ -137,7 +142,9 @@ export default function Component() {
                             ))}
                         </div>
                         <div className="mt-4 text-center">
-                            <Button onClick={() => console.log('View all mechanics')}>View All Mechanics</Button>
+                            <Link href="/mechanics" className="text-blue-500 hover:underline">
+                                <Button>View All Mechanics</Button>
+                            </Link>
                         </div>
                         {selectedMechanic && (
                             <Card className="mt-4">
@@ -169,7 +176,7 @@ export default function Component() {
                             ))}
                         </div>
                         <div className="mt-4 text-center">
-                            <Button onClick={() => console.log('View all products')}>View All Products</Button>
+                            <Button>View All Products</Button>
                         </div>
                     </TabsContent>
                 </Tabs>

@@ -66,7 +66,6 @@ function HeroSection() {
                         className="font-bold text-2xl text-white border-white/40 rounded-full px-6 py-2 bg-transparent hover:bg-white/10 transition-colors duration-300"
                     >
                         <span className="mr-2 ">Drive Your Dreams Forward</span>
-                        <span className="text-brand_blue">Explore</span>
                         <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
 
@@ -81,7 +80,7 @@ function HeroSection() {
                     </p>
 
                     <div className="flex flex-wrap gap-4 mt-8">
-                        <Link href="/auth/garges/register ">
+                        <Link href="/auth/mtokaahero ">
                             <Button
                                 variant="outline"
                                 className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300"
