@@ -3,6 +3,7 @@
 import MechanicStoreCard from '@/components/fragments/MechanicStorecard'
 import ProfileSheet from '@/components/fragments/ProfileSheet'
 import BookingDialog from '@/components/fragments/BookingDialog'
+import Navigation from '@/components/fragments/getStartedNavigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useState } from 'react'
 
@@ -73,6 +74,7 @@ export default function MechanicsStoresPage() {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <Navigation />
             <h1 className="text-4xl font-bold mb-8 text-center">Mechanics and Garages</h1>
             <Tabs defaultValue="all" className="mb-8">
                 <TabsList className="grid w-full grid-cols-3">
