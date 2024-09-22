@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import Footer from '@/components/fragments/Footer'
-import { ArrowRight, Play } from 'lucide-react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button';
+import Footer from '@/components/fragments/Footer';
+import { ArrowRight, Play } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
     BatteryIcon,
     BracketsIcon,
@@ -13,8 +13,10 @@ import {
     ServerIcon,
     WrenchIcon,
     CheckIcon,
-} from '@/components/ui/icons'
-import Navbar from '@/components/fragments/Navbar'
+} from '@/components/ui/icons';
+import Navbar from '@/components/fragments/Navbar';
+
+import { useSession } from 'next-auth/react';
 
 export default function Home() {
     return (
@@ -29,7 +31,7 @@ export default function Home() {
             <GuideSection />
             <Footer />
         </main>
-    )
+    );
 }
 
 function HeroSection() {
@@ -66,7 +68,6 @@ function HeroSection() {
                         className="font-bold text-2xl text-white border-white/40 rounded-full px-6 py-2 bg-transparent hover:bg-white/10 transition-colors duration-300"
                     >
                         <span className="mr-2 ">Drive Your Dreams Forward</span>
-                        <span className="text-brand_blue">Explore</span>
                         <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
 
@@ -76,11 +77,12 @@ function HeroSection() {
                     </h1>
 
                     <p className="text-xl text-white/80 max-w-xl">
-                        Register your garage or find the best mechanics in your area. MtokaaHero is the ultimate platform
+                        Register your garage or find the best mechanics in your area. MtokaaHero is the ultimate
+                        platform
                     </p>
 
                     <div className="flex flex-wrap gap-4 mt-8">
-                        <Link href="/auth/garges/register ">
+                        <Link href="/auth/mtokaahero ">
                             <Button
                                 variant="outline"
                                 className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300"
@@ -104,7 +106,7 @@ function HeroSection() {
                 </motion.div>
             </div>
         </section>
-    )
+    );
 }
 
 function StatsSection() {
@@ -134,7 +136,7 @@ function StatsSection() {
                 </Link>
             </div>
         </section>
-    )
+    );
 }
 
 function OurServices() {
@@ -187,10 +189,11 @@ function OurServices() {
                 </div>
             </section>
         </div>
-    )
+    );
 }
 
 function WhyChooseUs() {
+    const {data: session} = useSession();
     return (
         <div className="flex flex-col  w-full  items-center justify-center">
             <main className="flex-1 grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center bg-slate-300">
@@ -221,14 +224,22 @@ function WhyChooseUs() {
                     </ul>
                 </section>
                 <section className="space-y-4">
+
                     {/* //? CUSTOMERS */}
                     <h2 className="text-2xl font-bold">Our Customers</h2>
                     <p className="text-muted-foreground">Find the best mechanics and schedule services with ease:</p>
                     <div className="flex flex-col sm:flex-row gap-2">
-                        <Link href={'/auth/customers/signin'}>
-                            <Button variant="outline">Sign In</Button>
-                        </Link>
-                        <Button>Find Garages</Button>
+                        {
+                            session && session.user ? (
+                                <Link href={'/shop'}>
+                                    <Button variant="outline">Browse Products</Button>
+                                </Link>
+                            ) : (
+                                <Link href={'/api/auth/signin'}>
+                                    <Button variant="outline">Sign In</Button>
+                                </Link>
+                            )
+                        }
                         <Button>Book Service</Button>
                     </div>
                     <ul className="space-y-2 text-muted-foreground">
@@ -248,7 +259,7 @@ function WhyChooseUs() {
                 </section>
             </main>
         </div>
-    )
+    );
 }
 
 function GuideSection() {
@@ -295,5 +306,5 @@ function GuideSection() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

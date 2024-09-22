@@ -1,32 +1,37 @@
-'use client'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CalendarIcon } from 'lucide-react'
-import Navigation from '@/components/fragments/getStartedNavigation'
-import { ExpectedMechanicProps, ExpectedAsProductTypes } from '@/types/foreignTypes'
-import { addToCart, clearCart, removeFromCart } from '@/app/features/cartActions'
-import { useDispatch } from 'react-redux'
+'use client';
+import { addToCart, clearCart, removeFromCart } from '@/app/features/cartActions';
+import Navigation from '@/components/fragments/getStartedNavigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ExpectedAsProductTypes, ExpectedMechanicProps } from '@/types/foreignTypes';
+import { CalendarIcon } from 'lucide-react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Component() {
-    const [selectedMechanic, setSelectedMechanic] = useState<ExpectedMechanicProps | null>(null)
 
-    const dispatch = useDispatch()
+    const router = useRouter();
+
+    const [selectedMechanic, setSelectedMechanic] = useState<ExpectedMechanicProps | null>(null);
+
+    const dispatch = useDispatch();
 
     const handleAddToCart = (product: ExpectedAsProductTypes) => {
-        dispatch(addToCart(product))
-    }
+        dispatch(addToCart(product));
+    };
 
     const handleRemoveFromCart = (productId: number) => {
-        dispatch(removeFromCart(productId))
-    }
+        dispatch(removeFromCart(productId));
+    };
 
     const handleClearCart = () => {
-        dispatch(clearCart())
-    }
+        dispatch(clearCart());
+    };
 
     const mechanics = [
         {
@@ -58,7 +63,7 @@ export default function Component() {
         },
         { id: 5, name: 'David Lee', specialty: 'Brake Systems', image: '/placeholder.svg?height=100&width=100' },
         { id: 6, name: 'Sarah Wilson', specialty: 'Diagnostics', image: '/placeholder.svg?height=100&width=100' },
-    ]
+    ];
 
     const products = [
         {
@@ -103,7 +108,7 @@ export default function Component() {
             garageId: 1,
             productImage: '/placeholder.svg?height=100&width=100',
         },
-    ]
+    ];
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -137,7 +142,9 @@ export default function Component() {
                             ))}
                         </div>
                         <div className="mt-4 text-center">
-                            <Button onClick={() => console.log('View all mechanics')}>View All Mechanics</Button>
+                            <Link href="/mechanics" className="text-blue-500 hover:underline">
+                                <Button>View All Mechanics</Button>
+                            </Link>
                         </div>
                         {selectedMechanic && (
                             <Card className="mt-4">
@@ -169,7 +176,7 @@ export default function Component() {
                             ))}
                         </div>
                         <div className="mt-4 text-center">
-                            <Button onClick={() => console.log('View all products')}>View All Products</Button>
+                            <Button>View All Products</Button>
                         </div>
                     </TabsContent>
                 </Tabs>
@@ -209,5 +216,5 @@ export default function Component() {
                 </Card>
             </div>
         </div>
-    )
+    );
 }

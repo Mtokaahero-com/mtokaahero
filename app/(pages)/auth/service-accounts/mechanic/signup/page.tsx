@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import React, { useState } from 'react'
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
 
 export default function Component() {
     const [formData, setFormData] = useState({
@@ -16,15 +16,15 @@ export default function Component() {
         phone: '',
         password: '',
         profilePicture: '',
-    })
+    });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
-        }))
-    }
+        }));
+    };
 
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -84,5 +84,5 @@ export default function Component() {
                 </Card>
             </div>
         </div>
-    )
+    );
 }

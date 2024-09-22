@@ -5,12 +5,12 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-import { BookingDialogProps } from '@/types/uiTypes'
+import { BookingDialogProps } from '@/types/uiTypes';
 
 const BookingDialog = ({ isOpen, onClose, item }: BookingDialogProps) => (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -58,6 +58,6 @@ const BookingDialog = ({ isOpen, onClose, item }: BookingDialogProps) => (
             </DialogFooter>
         </DialogContent>
     </Dialog>
-)
+);
 
-export default BookingDialog
+export default BookingDialog;

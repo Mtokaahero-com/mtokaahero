@@ -1,1 +1,1 @@
-const services = {}
+const services = {};
