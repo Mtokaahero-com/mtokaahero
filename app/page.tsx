@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/icons';
 import Navbar from '@/components/fragments/Navbar';
 
-import { useSession } from 'next-auth/react';
 
 export default function Home() {
     return (
@@ -193,7 +192,6 @@ function OurServices() {
 }
 
 function WhyChooseUs() {
-    const {data: session} = useSession();
     return (
         <div className="flex flex-col  w-full  items-center justify-center">
             <main className="flex-1 grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center bg-slate-300">
@@ -229,17 +227,7 @@ function WhyChooseUs() {
                     <h2 className="text-2xl font-bold">Our Customers</h2>
                     <p className="text-muted-foreground">Find the best mechanics and schedule services with ease:</p>
                     <div className="flex flex-col sm:flex-row gap-2">
-                        {
-                            session && session.user ? (
-                                <Link href={'/shop'}>
-                                    <Button variant="outline">Browse Products</Button>
-                                </Link>
-                            ) : (
-                                <Link href={'/api/auth/signin'}>
-                                    <Button variant="outline">Sign In</Button>
-                                </Link>
-                            )
-                        }
+                       
                         <Button>Book Service</Button>
                     </div>
                     <ul className="space-y-2 text-muted-foreground">

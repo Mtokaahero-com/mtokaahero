@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -11,7 +12,7 @@ const navLinks = [
     { title: 'Services', location: '/services' },
     { title: 'Shop', location: '/shop' },
     { title: 'Contact', location: '/contact' },
-    { title: 'Help', location: '/help' },
+    { title: 'Imports ', location: '/help' },
 ];
 
 type NavLinkProps = {
@@ -61,11 +62,11 @@ export default function Navbar() {
                             </Link>
                         </div>
                         <div className="hidden md:block ">
-                            <div className="ml-10 flex items-baseline space-x-4">
+                            <div className="ml-10 flex items-baseline space-x-4 text:sm">
                                 {navLinks.map((link) => (
                                     <NavLink key={link.title} href={link.location}>
                                         <span
-                                            className={` text-2xl font-bold ${scrolled ? ' text-black' : 'text-white'}  }`}
+                                            className={`  ${scrolled ? ' text-black' : 'text-white'}  }`}
                                         >
                                             {link.title}
                                         </span>
