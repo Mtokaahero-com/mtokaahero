@@ -9,8 +9,16 @@ export type LoginResponse = {
     id: string;
 }
 
-const setAuthCookie = (token: string, role: string) => {
+const setAuthCookie = (token: string, userRole: string) => {
     const tobase64 = Buffer.from(token).toString('base64');
+
+    setCookie(userRole, tobase64, {
+        maxAge: 60 * 60 * 24 * 7,
+        path: '/',
+        sameSite: true,
+        httpOnly: true
+    });
+
 }
 
 
