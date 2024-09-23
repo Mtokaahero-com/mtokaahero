@@ -30,8 +30,8 @@ export default function Component() {
                             className="bg-background p-6 md:p-8 lg:p-10 rounded-lg shadow-lg hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col items-center justify-center gap-2"
                             prefetch={false}>
                             <BuildingIcon className="h-8 w-8 text-primary" />
-                            <h2 className="text-2xl font-bold text-primary-foreground">Sign up as Garage Owner</h2>
-                            <p className="text-sm text-muted-foreground">Create an account to manage your garage.</p>
+                            <h2 className="text-2xl font-bold text-black">Sign up as Garage Owner</h2>
+                            <p className="text-sm text-primary">Create an account to manage your garage.</p>
                         </Link>
                     </div>
                 </div>
