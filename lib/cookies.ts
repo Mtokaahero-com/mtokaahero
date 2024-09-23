@@ -13,4 +13,8 @@ const getAuthCookie = (cookieName: string) => {
 
 export const getValidAuthTokens = () => {
     const token = getAuthCookie('auth_token');
+
+
+    const now = new Date();
+    const tokenDate = new Date(token || 0);
 }
