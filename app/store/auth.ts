@@ -9,6 +9,8 @@ export type LoginResponse = {
     id: string;
 }
 
+const setAuthCookie = (token: string, role: string) => {}
+
 
 const initialState: Partial<LoginResponse> = {}
 
