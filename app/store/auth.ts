@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {setCookie } from 'cookies-next';
+import { authApi } from './authApi';
 
 export type LoginResponse = {
     token: string;
@@ -28,7 +29,19 @@ const slice = createSlice({
     name: 'auth',
     initialState,
     reducers: {},
-    extraReducers: (builder) => {}
-})
+    extraReducers: (builder) => {
+        builder
+            .addMatcher(authApi.endpoints.login.matchFulfilled, (_state, { payload }) => {
+                // set the token in the cookies
+                setAuthCookie(payload.token, 'auth_token');
+                return payload;
+            })
+            .addMatcher(authApi.endpoints.getAuthData.matchFulfilled, (_state, { payload }) => {
+                // in case we receive a new token when refetching the details
+                setAuthCookie(payload.token, 'auth_token');
+                return payload;
+            });
+    },
+});
 
 export const authReducer = slice.reducer;
