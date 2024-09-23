@@ -1,4 +1,4 @@
-
+import { createSlice } from '@reduxjs/toolkit';
 
 type LoginResponse = {
     token: string;
@@ -9,4 +9,10 @@ type LoginResponse = {
 }
 
 
-const initialState :Partial <LoginResponse> ={}
+const initialState: Partial<LoginResponse> = {}
+
+const slice = createSlice({
+    name: 'auth',
+    initialState,
+    reducers: {}
+})
