@@ -9,3 +9,6 @@ const getAuthCookie = (cookieName: string) => {
 
     return Buffer.from(cookie, 'base64').toString('ascii');
 }
+
+
+export const getValidAuthTokens=()=>{}
