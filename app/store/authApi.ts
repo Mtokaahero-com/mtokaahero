@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { LoginResponse } from './auth';
 
 
 export const authApi = createApi({
@@ -6,5 +7,13 @@ export const authApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: typeof window === 'undefined' ? 'http://localhost:3000' : window.location.origin
     }),
-    endpoints: (builder) => ({})
+    endpoints: (builder) => ({
+        login: builder.mutation<LoginResponse, { email: string, password: string }>({
+            query: ({ email, password }) => ({
+                url: '/api/auth/login',
+                method: 'POST',
+                body: { email, password }
+            })
+        })
+    }),
 })

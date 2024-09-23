@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-type LoginResponse = {
+export type LoginResponse = {
     token: string;
     userEmail: string;
     userName: string;
