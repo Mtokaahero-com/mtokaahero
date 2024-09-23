@@ -12,7 +12,7 @@ const navLinks = [
     { title: 'Services', location: '/services' },
     { title: 'Shop', location: '/shop' },
     { title: 'Contact', location: '/contact' },
-    { title: 'Imports ', location: '/help' },
+    { title: 'Imports ', location: '/imports' },
 ];
 
 type NavLinkProps = {
