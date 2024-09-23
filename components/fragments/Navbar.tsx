@@ -75,7 +75,7 @@ export default function Navbar() {
                             </div>
                         </div>
                         <div className="hidden md:block">
-                            <Link href="/get-started">
+                            <Link href="/services">
                                 <Button
                                     variant="default"
                                     size="default"
