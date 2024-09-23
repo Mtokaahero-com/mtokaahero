@@ -9,7 +9,9 @@ export type LoginResponse = {
     id: string;
 }
 
-const setAuthCookie = (token: string, role: string) => {}
+const setAuthCookie = (token: string, role: string) => {
+    const tobase64 = Buffer.from(token).toString('base64');
+}
 
 
 const initialState: Partial<LoginResponse> = {}
