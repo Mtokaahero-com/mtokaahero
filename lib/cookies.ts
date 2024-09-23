@@ -11,4 +11,6 @@ const getAuthCookie = (cookieName: string) => {
 }
 
 
-export const getValidAuthTokens=()=>{}
+export const getValidAuthTokens = () => {
+    const token = getAuthCookie('auth_token');
+}
