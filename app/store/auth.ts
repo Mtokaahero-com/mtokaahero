@@ -28,6 +28,7 @@ const slice = createSlice({
     name: 'auth',
     initialState,
     reducers: {},
+    extraReducers: (builder) => {}
 })
 
 export const authReducer = slice.reducer;
