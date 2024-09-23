@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import {setCookie } from 'cookies-next';
 
 export type LoginResponse = {
     token: string;
