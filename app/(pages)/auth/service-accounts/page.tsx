@@ -4,7 +4,7 @@ import { WrenchIcon, BuildingIcon } from '@/components/ui/icons';
 export default function Component() {
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-primary to-primary-foreground">
-            <div className="container mx-auto px-4 py-12 md:py-24 lg:py-32 xl:py-40 ">
+            <div className="container mx-auto px-4 py-12 md:py-24 lg:py-32 xl:py-40 backdrop-blur-sm bg-white/30">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                     <div className="space-y-4 md:space-y-6">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground">
