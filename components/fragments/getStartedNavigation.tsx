@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MenuIcon } from 'lucide-react';
-import { useSelector } from 'react-redux';
 import Link from 'next/link';
 
 const Navigation = () => {
