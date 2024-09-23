@@ -1,11 +1,10 @@
 import FeatureCard from '@/components/fragments/FeatureCard';
-import Testimonial from '@/components/fragments/Testimonials';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChartIcon, GlobeIcon, MessageSquareIcon, PackageIcon, ShieldIcon, UsersIcon } from 'lucide-react';
-
 import Navigation from '@/components/fragments/getStartedNavigation';
+import Link from 'next/link';
 
 export default function ServicesPage() {
     return (
@@ -63,7 +62,9 @@ export default function ServicesPage() {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-center">
-                                <Button size="lg">Start Your Free Trial</Button>
+                                <Link href="/auth/service-accounts" className="text-primary">
+                                    <Button size="lg">Start Your Free Trial</Button>
+                                </Link>
                             </CardFooter>
                         </Card>
                     </TabsContent>
@@ -141,21 +142,6 @@ export default function ServicesPage() {
                     </div>
                 </section>
 
-                <section className="mb-12">
-                    <h2 className="text-2xl font-bold mb-6">What Our Clients Say</h2>
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <Testimonial
-                            quote="MtokaaHero's platform has revolutionized how we manage our garage. We've seen a 30% increase in efficiency since we started using it."
-                            author="John Smith"
-                            role="Owner, Smith's Auto Repair"
-                        />
-                        <Testimonial
-                            quote="The car importing service was flawless. They handled everything, and I got my dream car without any hassle."
-                            author="Emily Johnson"
-                            role="Satisfied Customer"
-                        />
-                    </div>
-                </section>
 
                 <section className="text-center">
                     <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>

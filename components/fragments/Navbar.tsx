@@ -12,7 +12,7 @@ const navLinks = [
     { title: 'Services', location: '/services' },
     { title: 'Shop', location: '/shop' },
     { title: 'Contact', location: '/contact' },
-    { title: 'Imports ', location: '/help' },
+    { title: 'Imports ', location: '/imports' },
 ];
 
 type NavLinkProps = {
@@ -75,7 +75,7 @@ export default function Navbar() {
                             </div>
                         </div>
                         <div className="hidden md:block">
-                            <Link href="/get-started">
+                            <Link href="/services">
                                 <Button
                                     variant="default"
                                     size="default"
