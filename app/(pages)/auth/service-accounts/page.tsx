@@ -5,7 +5,7 @@ export default function Component() {
     return (
         <div
             className="w-full min-h-screen bg-cover bg-center bg-no-repeat opacity-90"
-            style={{ backgroundImage: "url('/bg.png')" }}>
+            style={{ backgroundImage: "url('/bg.jpg')" }}>
             <div className="container  mx-auto px-4 py-12 md:py-24 lg:py-32 xl:py-40 isolate  rounded-xl bg-white/30 shadow-lg ring-1 ring-black/5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                     <div className="space-y-4 md:space-y-6">
