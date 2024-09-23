@@ -19,7 +19,6 @@ const setAuthCookie = (token: string, userRole: string) => {
         sameSite: true,
         httpOnly: true
     });
-
 }
 
 
