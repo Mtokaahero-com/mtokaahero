@@ -97,7 +97,7 @@ export default function Component() {
                 </CardContent>
                 <CardFooter className="flex justify-center">
                     <p className="text-sm text-gray-500">
-                        Don't have an account?{' '}
+                        Dont have an account?{' '}
                         <a href="#" className="text-blue-500 hover:underline">
                             Sign up
                         </a>
