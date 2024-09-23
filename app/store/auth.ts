@@ -16,3 +16,5 @@ const slice = createSlice({
     initialState,
     reducers: {}
 })
+
+export const authReducer = slice.reducer;
