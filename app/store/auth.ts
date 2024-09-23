@@ -27,7 +27,7 @@ const initialState: Partial<LoginResponse> = {}
 const slice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {}
+    reducers: {},
 })
 
 export const authReducer = slice.reducer;
