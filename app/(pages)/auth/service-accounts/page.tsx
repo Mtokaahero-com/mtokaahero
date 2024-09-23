@@ -8,7 +8,7 @@ export default function Component() {
             style={{ backgroundImage: "url('/bg.png')" }}>
             <div className="container mx-auto px-4 py-12 md:py-24 lg:py-32 xl:py-40">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-                    <div className="space-y-4 md:space-y-6 bg-white/30 backdrop-blur-md p-6 md:p-8 rounded-lg shadow-lg">
+                    <div className="space-y-4 md:space-y-6">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground">
                             Choose Your Account Type
                         </h1>
@@ -19,7 +19,7 @@ export default function Component() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Link
                             href="/auth/service-accounts/mechanic/signup"
-                            className="bg-background/30 backdrop-blur-md p-6 md:p-8 lg:p-10 rounded-lg shadow-lg hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col items-center justify-center gap-2"
+                            className="bg-background p-6 md:p-8 lg:p-10 rounded-lg shadow-lg hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col items-center justify-center gap-2"
                             prefetch={false}>
                             <WrenchIcon className="h-8 w-8 text-primary" />
                             <h2 className="text-2xl font-bold text-primary-foreground">Sign up as Mechanic</h2>
@@ -27,7 +27,7 @@ export default function Component() {
                         </Link>
                         <Link
                             href="/auth/service-accounts/garage/signup"
-                            className="bg-background/30 backdrop-blur-md p-6 md:p-8 lg:p-10 rounded-lg shadow-lg hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col items-center justify-center gap-2"
+                            className="bg-background p-6 md:p-8 lg:p-10 rounded-lg shadow-lg hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col items-center justify-center gap-2"
                             prefetch={false}>
                             <BuildingIcon className="h-8 w-8 text-primary" />
                             <h2 className="text-2xl font-bold text-primary-foreground">Sign up as Garage Owner</h2>
