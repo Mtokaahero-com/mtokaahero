@@ -10,7 +10,7 @@ import { WrenchIcon } from '@/components/ui/icons';
 
 
 export default function Component() {
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-primary to-primary-foreground">
             <div className="container mx-auto px-4 py-12 md:py-24 lg:py-32 xl:py-40">
@@ -55,9 +55,14 @@ export default function Component() {
                             </form>
                         </CardContent>
                         <CardFooter>
-                            <Button type="submit" className="w-full"                         
-                            >
-                                {loading ? "finding your garage..." : "Sign In"}
+                            <Button
+                                className="w-full flex justify-center items-center space-x-2"
+                                disabled={loading}>
+                                {loading ? (
+                                    <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-white cursor-not-allowed"></div>
+                                ) : (
+                                    'Sign Up'
+                                )}
                             </Button>
                         </CardFooter>
                         <div className="mt-4 text-center">
