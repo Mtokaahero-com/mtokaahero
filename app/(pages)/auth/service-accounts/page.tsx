@@ -31,7 +31,7 @@ export default function Component() {
                             prefetch={false}>
                             <BuildingIcon className="h-8 w-8 text-primary" />
                             <h2 className="text-2xl font-bold text-black">Sign up as Garage Owner</h2>
-                            <p className="text-sm text-primary">Create an account to manage your garage.</p>
+                            <p className="text-sm text-black">Create an account to manage your garage.</p>
                         </Link>
                     </div>
                 </div>
