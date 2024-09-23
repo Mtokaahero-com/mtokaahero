@@ -1,11 +1,10 @@
 import FeatureCard from '@/components/fragments/FeatureCard';
-import Testimonial from '@/components/fragments/Testimonials';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChartIcon, GlobeIcon, Link, MessageSquareIcon, PackageIcon, ShieldIcon, UsersIcon } from 'lucide-react';
-
+import { BarChartIcon, GlobeIcon, MessageSquareIcon, PackageIcon, ShieldIcon, UsersIcon } from 'lucide-react';
 import Navigation from '@/components/fragments/getStartedNavigation';
+import Link from 'next/link';
 
 export default function ServicesPage() {
     return (
