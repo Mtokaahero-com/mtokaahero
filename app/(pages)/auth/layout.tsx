@@ -10,5 +10,6 @@ type Props = {
 };
 
 export default function AuthWrapper({ children }: Props) {
-    
+    const dispacth = useDispatch();
+    const {push} = useRouter();
 }
