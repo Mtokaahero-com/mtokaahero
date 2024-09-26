@@ -8,6 +8,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 
+import { useLoginMutation } from '@/app/store/servces/authApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/app/store';
+
 export default function Component() {
     const [formData, setFormData] = useState({
         name: '',
@@ -25,7 +29,8 @@ export default function Component() {
             [name]: value,
         }));
     };
-
+    const dispatch = useDispatch();
+    const [signIn, {isLoading}] = useLoginMutation();
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
             <div className="w-full max-w-md space-y-6">
@@ -78,7 +83,7 @@ export default function Component() {
                     </CardContent>
                     <CardFooter>
                         <Button type="submit" className="w-full">
-                            Sign Up
+                            <span>{isLoading ? 'Logging in...' : 'Login'}</span>
                         </Button>
                     </CardFooter>
                 </Card>

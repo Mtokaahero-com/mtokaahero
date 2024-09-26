@@ -13,7 +13,7 @@ export default function Component() {
                             Choose Your Account Type
                         </h1>
                         <p className="text-lg md:text-xl text-primary-foreground/80">
-                            Select whether you would like to sign up as a mechanic or a garage owner.
+                            Select whether you would like to sign up as a freelance mechanic or a garage owner.
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
