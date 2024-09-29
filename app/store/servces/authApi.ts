@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { AUTH_TOKEN, AUTH_REFRESH_TOKEN, setAuthCookie, getAuthCookie, removeCookies } from '@/lib/cookies';
-
+import { AUTH_TOKEN, getAuthCookie, } from '@/lib/cookies';
+import { LoginResponse, RegisterResponse } from '@/types/authTypes';
 // API call structure
 export const authApi = createApi({
     reducerPath: 'authApi',
@@ -12,10 +12,18 @@ export const authApi = createApi({
             return headers;
         },
     }),
-    endpoints: (builder) => ({
+  endpoints: (builder) => ({
+  
         login: builder.mutation<LoginResponse, { email: string; password: string }>({
             query: (credentials) => ({
                 url: 'api/auth/login',
+                method: 'POST',
+                body: credentials,
+            }),
+        }),
+    register: builder.mutation<RegisterResponse, { email: string; password:string }>({
+            query: (credentials) => ({
+                url: 'api/auth/register',
                 method: 'POST',
                 body: credentials,
             }),
@@ -37,43 +45,3 @@ export const { useLoginMutation, useRefreshAuthTokenMutation, useGetAuthDataQuer
 
 
 // Define the structure for a successful login response
-export interface LoginResponse {
-  profile: ProfileResponse;
-  tokens: AuthTokens;
-}
-
-// Structure for profile data
-interface ProfileResponse {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  profilePicture: string;
-  address: string;
-  phoneNumber: string;
-  role: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Structure for authentication tokens
-interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-}
-
-// Define the structure for an error response
-export interface ErrorResponse {
-  response: {
-    message: string;
-    error: string;
-    statusCode: number;
-  };
-  status: number;
-  message: string;
-  name: string;
-}
-
-// A union type to handle both success and error cases
-export type AuthApiResponse = LoginResponse | ErrorResponse;
