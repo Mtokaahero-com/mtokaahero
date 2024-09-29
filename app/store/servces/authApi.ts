@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { AUTH_TOKEN, getAuthCookie, } from '@/lib/cookies';
-import { LoginResponse, RegisterResponse } from '@/types/authTypes';
+import { LoginResponse, RegisterResponse } from '@/types/responseTypes';
 // API call structure
 export const authApi = createApi({
     reducerPath: 'authApi',
@@ -13,7 +13,6 @@ export const authApi = createApi({
         },
     }),
   endpoints: (builder) => ({
-  
         login: builder.mutation<LoginResponse, { email: string; password: string }>({
             query: (credentials) => ({
                 url: 'api/auth/login',

@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { setAuthCookie, removeCookies, AUTH_TOKEN, AUTH_REFRESH_TOKEN } from '@/lib/cookies';
+import { AUTH_REFRESH_TOKEN, AUTH_TOKEN, removeCookies, setAuthCookie } from '@/lib/cookies';
+import { LoginResponse } from '@/types/responseTypes';
+import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from '../servces/authApi';
-import { LoginResponse } from '@/types/authTypes';
 const initialState: Partial<LoginResponse> = {};
 
 const authSlice = createSlice({

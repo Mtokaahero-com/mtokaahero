@@ -1,8 +1,3 @@
-
-
-
-
-
 export interface LoginResponse {
     profile: ProfileResponse;
     backendTokens: AuthTokens;
@@ -37,7 +32,32 @@ interface AuthTokens {
     refreshToken: string;
 }
 
-
-
-
 export interface RegisterResponse extends Partial<LoginResponse> {}
+
+export interface CloudinaryUploadResponse {
+    public_id: string;
+    version: number;
+    signature: string;
+    width: number;
+    height: number;
+    format: string;
+    resource_type: string;
+    created_at: string;
+    tags: [];
+    bytes: number;
+    type: string;
+    etag: string;
+    placeholder: boolean;
+    url: string;
+    secure_url: string;
+    original_filename: string;
+    eager: [];
+    eager_async: boolean;
+    eager_notification_url: string;
+    customCoordinates: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
+}
