@@ -1,11 +1,17 @@
-
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { useEffect, useState } from 'react';
+
+
+type Props = {
+    tokenExpiryDate?: string;
+    refreshTokenExpiryDate?: string;
+}
 
 const navLinks = [
     { title: 'Home', location: '/' },
@@ -26,7 +32,7 @@ const NavLink = ({ href, children }: NavLinkProps) => (
     </Link>
 );
 
-export default function Navbar() {
+export default function Navbar({tokenExpiryDate, refreshTokenExpiryDate}: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
@@ -52,8 +58,7 @@ export default function Navbar() {
             <nav
                 className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 h-29 ${
                     scrolled ? 'shadow-lg bg-white' : 'bg-transparent'
-                }`}
-            >
+                }`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between  h-24">
                         <div className="flex items-center">
@@ -65,9 +70,7 @@ export default function Navbar() {
                             <div className="ml-10 flex items-baseline space-x-4 text:sm">
                                 {navLinks.map((link) => (
                                     <NavLink key={link.title} href={link.location}>
-                                        <span
-                                            className={`  ${scrolled ? ' text-black' : 'text-white'}  }`}
-                                        >
+                                        <span className={`  ${scrolled ? ' text-black' : 'text-white'}  }`}>
                                             {link.title}
                                         </span>
                                     </NavLink>
@@ -79,8 +82,7 @@ export default function Navbar() {
                                 <Button
                                     variant="default"
                                     size="default"
-                                    className="bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
-                                >
+                                    className="bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200">
                                     Get Started
                                 </Button>
                             </Link>
@@ -88,8 +90,7 @@ export default function Navbar() {
                         <div className="md:hidden">
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-                            >
+                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                                 <span className="sr-only">Open main menu</span>
                                 <Menu className="block h-6 w-6" />
                             </button>
@@ -110,13 +111,11 @@ export default function Navbar() {
             <div
                 className={`fixed top-0 right-0 w-64 h-full bg-white z-50 transform transition-transform duration-300 ease-in-out ${
                     isMenuOpen ? 'translate-x-0' : 'translate-x-full'
-                }`}
-            >
+                }`}>
                 <div className="flex justify-end p-4">
                     <button
                         onClick={() => setIsMenuOpen(false)}
-                        className="text-gray-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-                    >
+                        className="text-gray-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                         <span className="sr-only">Close menu</span>
                         <X className="h-6 w-6" />
                     </button>
@@ -127,8 +126,7 @@ export default function Navbar() {
                             key={link.title}
                             href={link.location}
                             className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 transition-colors duration-200"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
+                            onClick={() => setIsMenuOpen(false)}>
                             {link.title}
                         </Link>
                     ))}
@@ -136,8 +134,7 @@ export default function Navbar() {
                         <Button
                             variant="default"
                             size="default"
-                            className="w-full bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
-                        >
+                            className="w-full bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200">
                             Get Started
                         </Button>
                     </div>
