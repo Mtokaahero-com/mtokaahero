@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { AUTH_TOKEN, getAuthCookie } from '@/lib/cookies';
 import { CloudinaryUploadResponse } from '@/types/responseTypes';
 
 
@@ -28,3 +27,5 @@ export const cloudinaryApi = createApi({
         }),
     })
 })
+
+export const { useUploadMutation, useDeleteMutation } = cloudinaryApi;

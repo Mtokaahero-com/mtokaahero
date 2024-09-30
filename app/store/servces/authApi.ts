@@ -20,7 +20,16 @@ export const authApi = createApi({
                 body: credentials,
             }),
         }),
-    register: builder.mutation<RegisterResponse, { email: string; password:string }>({
+      register: builder.mutation<RegisterResponse, {
+            firstName: string;
+            lastName: string;
+            email: string;
+            phoneNumber: string;
+            role: string;
+            address: string;
+            password: string;
+            profilePicture: string
+     }>({
             query: (credentials) => ({
                 url: 'api/auth/register',
                 method: 'POST',
@@ -40,7 +49,12 @@ export const authApi = createApi({
     }),
 });
 
-export const { useLoginMutation, useRefreshAuthTokenMutation, useGetAuthDataQuery } = authApi;
+export const {
+    useLoginMutation,
+    useRefreshAuthTokenMutation,
+    useGetAuthDataQuery,
+    useRegisterMutation
+} = authApi;
 
 
 // Define the structure for a successful login response
