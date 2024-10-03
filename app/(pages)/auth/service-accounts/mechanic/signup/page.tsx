@@ -19,7 +19,7 @@ export default function Component() {
 const [formData, setFormData] = useState({
     firstName: 'John',
     lastName: 'Doe',
-    email: 'john)@example.com',
+    email: 'john@example.com',
     phoneNumber: '+254712345678',
     role: 'mechanic',
     address: '123-street',
@@ -27,7 +27,8 @@ const [formData, setFormData] = useState({
     profilePicture: '',
 });
 const [fileData, setFileData] = useState<File | null>(null);
-const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+    const[public_id, setPublicId] = useState<string | null>(null);
 
 const [register] = useRegisterMutation();
 const [upload] = useUploadMutation();
@@ -114,15 +115,21 @@ const uploadPF = async (): Promise<CloudinaryUploadResponse> => {
     const handleRegister = async () => {
         setLoading(true);
         try {
-            const profilePicture = await uploadPF();
-            const response = await register({ ...formData, profilePicture: profilePicture.url });
+            const { secure_url, public_id } = await uploadPF();
+            setPublicId(public_id);
+            
+            const response = await register({ ...formData, profilePicture: secure_url });
             if (response.data) {
-                toast.success(response.data.message);
-            } else {
-                toast.error("An error occurred while registering your account");
+                toast.success('Account created successfully, please login');
+            }
+            if (response.error?.status === 409) {
+                toast.error(response.error.data.message);
             }
         } catch (error) {
             toast.error('An error occurred while registering your account');
+            if(public_id){
+                await invokeImageDelete(public_id);
+            }
         } finally {
             setLoading(false);
         }
