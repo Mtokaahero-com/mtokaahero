@@ -10,82 +10,124 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useRegisterMutation } from '@/app/store/servces/authApi';
-import { useUploadMutation, useDeleteMutation } from '@/app/store/servces/http.services';
+import { useDeleteMutation, useUploadMutation } from '@/app/store/servces/http.services';
+
+
+import { CloudinaryUploadResponse } from '@/types/responseTypes';
 
 export default function Component() {
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        role: 'mechanic',
-        address: '',
-        password: '',
-        profilePicture: '',
-    });
-    const [fileData, setFileData] = useState<File | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [register, { isLoading }] = useRegisterMutation();
-    const [upload, { isLoading: isUploading }] = useUploadMutation();
-    const [deleteImage] = useDeleteMutation();
+const [formData, setFormData] = useState({
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john)@example.com',
+    phoneNumber: '+254712345678',
+    role: 'mechanic',
+    address: '123-street',
+    password: 'mechanic',
+    profilePicture: '',
+});
+const [fileData, setFileData] = useState<File | null>(null);
+const [loading, setLoading] = useState<boolean>(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files) {
-            setFileData(files[0]);
-        }
-    };
+const [register] = useRegisterMutation();
+const [upload] = useUploadMutation();
+const [deleteImage] = useDeleteMutation();
 
-    // const handleUpload = async () => {
-    //     try {
-    //         if (fileData === null) {
-    //             toast.error('No file selected');
-    //             return;
-    //         } else {
-    //             const payload = await upload({ file: fileData }).unwrap();
-    //             return payload;
-    //         }
-    //     } catch (error) {
-    //         console.error('Upload failed:', error);
-    //     }
-    // };
+// Handle input changes
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+    }));
+};
 
-
-    const handleRegister = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            switch (fileData) {
-                case null:
-                    toast.error('No file selected');
-                    break;
-                case undefined:
-                    toast.error('No file selected');
-                    break;
-                default:
-                    setLoading(true);
-                    const payload = await upload({ file: fileData }).unwrap();
-                    const response = await register({ ...formData, profilePicture: payload.url }).unwrap();
-                    if (response.status === 201) {
-                        toast.success(response.message);
-                        setLoading(false);
-                    } else {
-                        toast.error(response.message);
-                        setLoading(false);
-                        break;
-                    }
+// Handle file input changes
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+        setFileData(files[0]);
+    }
+};
+    
+const uploadPF = async (): Promise<CloudinaryUploadResponse> => {
+        return new Promise(async (resolve, reject) => {
+            if (fileData) {
+                uploadImageToCloudinary(fileData)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            } else {
+                reject('Please select an image to upload');
             }
-
-        } catch (error) {
-            console.error('Registration failed:', error);
-        }
+        });
     };
+
+    // to be handled in issue #24
+    const uploadImageToCloudinary = async (file: File): Promise<CloudinaryUploadResponse> => {
+         const formData = new FormData();
+         formData.append('file', file);
+         return new Promise(async (resolve, reject) => {
+             try {
+                 const response = await fetch('http://localhost:8900/api/image/upload', {
+                     method: 'POST',
+                     body: formData,
+                 });
+                 const data: CloudinaryUploadResponse = await response.json();
+                 if (data) {
+                     resolve(data);
+                 } else {
+                     reject('An error occurred while uploading the image');
+                 }
+             } catch (error) {
+                 reject('An error occurred while uploading the image');
+             }
+         });
+     };
+    
+     const invokeImageDelete = async (publicId: string): Promise<CloudinaryUploadResponse> => {
+         return new Promise(async (resolve, reject) => {
+             try {
+                 const response = await fetch('http://localhost:8900/api/image/delete', {
+                     method: 'DELETE',
+                     headers: {
+                         'Content-Type': 'application/json',
+                     },
+                     body: JSON.stringify({ publicId }),
+                 });
+                 const data = await response.json();
+                 if (data) {
+                     resolve(data);
+                 } else {
+                     reject('An error occurred while deleting the image');
+                 }
+             } catch (error) {
+                 reject('An error occurred while deleting the image');
+             }
+         });
+     };
+
+    
+    const handleRegister = async () => {
+        setLoading(true);
+        try {
+            const profilePicture = await uploadPF();
+            const response = await register({ ...formData, profilePicture: profilePicture.url });
+            if (response.data) {
+                toast.success(response.data.message);
+            } else {
+                toast.error("An error occurred while registering your account");
+            }
+        } catch (error) {
+            toast.error('An error occurred while registering your account');
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -108,6 +150,7 @@ export default function Component() {
                                         required
                                         onChange={handleChange}
                                         name="firstName"
+                                        value={formData.firstName}
                                     />
                                 </div>
 
@@ -119,6 +162,7 @@ export default function Component() {
                                         required
                                         onChange={handleChange}
                                         name="lastName"
+                                        value={formData.lastName}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -130,6 +174,7 @@ export default function Component() {
                                         required
                                         onChange={handleChange}
                                         name="email"
+                                        value={formData.email}
                                     />
                                 </div>
                             </div>
@@ -142,6 +187,7 @@ export default function Component() {
                                     required
                                     onChange={handleChange}
                                     name="address"
+                                    value={formData.address}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -153,11 +199,17 @@ export default function Component() {
                                     required
                                     onChange={handleChange}
                                     name="phoneNumber"
+                                    value={formData.phoneNumber}
                                 />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="password">Password</Label>
-                                <Input id="password" type="password" required onChange={handleChange} name="password" />
+                                <Input id="password"
+                                    type="password"
+                                    required onChange={handleChange}
+                                    name="password"
+                                    value={formData.password}
+                                />
                             </div>
                             {/* profile picture */}
                             <div className="space-y-2">
@@ -185,6 +237,7 @@ export default function Component() {
                     <CardFooter>
                         <Button
                             onClick={handleRegister}
+                            type='submit'
                             className="w-full flex justify-center items-center space-x-2"
                             disabled={loading}>
                             {loading ? (

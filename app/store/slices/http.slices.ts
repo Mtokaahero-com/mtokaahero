@@ -14,6 +14,7 @@ const httpSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addMatcher(cloudinaryApi.endpoints.upload.matchFulfilled, (_state, { payload }) => {
+                console.log(payload);
                 return payload;
             })
             .addMatcher(cloudinaryApi.endpoints.delete.matchFulfilled, (_state, { payload }) => {
