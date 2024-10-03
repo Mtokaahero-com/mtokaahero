@@ -32,7 +32,10 @@ interface AuthTokens {
     refreshToken: string;
 }
 
-export interface RegisterResponse extends Partial<LoginResponse> {}
+export interface RegisterResponse {
+        message: string;
+        statusCode: number;
+}
 
 export interface CloudinaryUploadResponse {
     public_id: string;
