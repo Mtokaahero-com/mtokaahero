@@ -121,9 +121,16 @@ const uploadPF = async (): Promise<CloudinaryUploadResponse> => {
             const response = await register({ ...formData, profilePicture: secure_url });
             if (response.data) {
                 toast.success('Account created successfully, please login');
+                //standby function check issue #27
+                setTimeout(() => {
+                    window.location.href = '/auth/mechanic/login';
+                }
+                , 2000);
             }
+            //@ts-ignore
             if (response.error?.status === 409) {
-                toast.error(response.error.data.message);
+                //@ts-ignore
+                toast.error(response.error.data.message || "Please try a different email address");
             }
         } catch (error) {
             toast.error('An error occurred while registering your account');
