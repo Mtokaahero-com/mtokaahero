@@ -123,7 +123,7 @@ const uploadPF = async (): Promise<CloudinaryUploadResponse> => {
                 toast.success('Account created successfully, please login');
                 //standby function check issue #27
                 setTimeout(() => {
-                    window.location.href = '/auth/mechanic/login';
+                    window.location.href = '/auth/service-accounts/mechanic/signin';
                 }
                 , 2000);
             }
@@ -144,7 +144,7 @@ const uploadPF = async (): Promise<CloudinaryUploadResponse> => {
 
 
     return (
-        <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="flex h-screen w-full items-center justify-center bg-gradient-to-br from-primary to-primary-foreground">
             <div className="w-full max-w-md space-y-6">
                 <div className="space-y-2 text-center">
                     <h1 className="text-3xl font-bold">Sign Up for Mechanic Account</h1>

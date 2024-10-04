@@ -34,7 +34,7 @@ export default function Component() {
                                         <Input id="garage-name" placeholder="MtokaaHero Auto Repair" required />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="owner-name">Owner Name</Label>
+                                        <Label htmlFor="owner-name">Owner Full Names</Label>
                                         <Input id="owner-name" placeholder="John Doe" required />
                                     </div>
                                 </div>
