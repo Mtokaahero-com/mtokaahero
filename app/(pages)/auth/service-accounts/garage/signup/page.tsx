@@ -11,7 +11,7 @@ export default function Component() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                     <div className="space-y-4 md:space-y-6">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground">
-                            Set up Your Garage Account
+                            Set up Your Garage Account 
                         </h1>
                         <p className="text-lg md:text-xl text-primary-foreground/80">
                             Join our network of trusted automotive repair services and connect with customers in your
