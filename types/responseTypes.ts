@@ -32,10 +32,7 @@ interface AuthTokens {
     refreshToken: string;
 }
 
-export interface RegisterResponse {
-        message: string;
-        statusCode: number;
-}
+export interface RegisterResponse  extends LoginResponse {}
 
 export interface CloudinaryUploadResponse {
     public_id: string;
