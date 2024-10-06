@@ -39,6 +39,12 @@ const authSlice = createSlice({
 
                 return payload;
             })
+            .addMatcher(authApi.endpoints.garageRegistration.matchFulfilled, (_state, { payload }) => {
+                if (!payload) return initialState;
+                if (payload.response?.error || payload.response?.statusCode != 201) {
+                    return { response: payload.response };
+                }
+            })
             .addMatcher(authApi.endpoints.getAuthData.matchRejected, (state, { error }) => {
                 if (error?.code === '401') {
                     // Handle 401 unauthorized by logging out

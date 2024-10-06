@@ -1,9 +1,42 @@
-import React from 'react';
-
-
 import { Button } from '@/components/ui/button';
+import React from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+
+const useVisibleOnScroll = () => {
+    const [isVisible, setIsVisible] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect(); // Stop observing after it becomes visible
+                }
+            },
+            { threshold: 0.1 }, // Trigger when 10% is visible
+        );
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        return () => {
+            if (ref.current) {
+                observer.unobserve(ref.current);
+            }
+        };
+    }, []);
+
+    return { ref, isVisible };
+};
+
+
 function GuideSection() {
+    const { ref, isVisible } = useVisibleOnScroll();
     return (
+        <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
         <section className="md:mt-0 mt-20 items-center justify-center w-full md:h-[70vh] h-auto flex md:flex-row flex-col bg-white ">
             <div className="md:w-[50%] w-full h-full md:p-20 p-2 flex items-center justify-end">
                 <div className="w-full md:h-full h-80 md:w-[60%] bg-black/10 border border-black/20">{/* Image */}</div>
@@ -44,7 +77,8 @@ function GuideSection() {
                     </Button>
                 </div>
             </div>
-        </section>
+            </section>
+        </div>
     );
 }
 

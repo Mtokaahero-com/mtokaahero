@@ -39,6 +39,22 @@ export const authApi = createApi({
                 body: credentials,
             }),
         }),
+
+        garageRegistration: builder.mutation<LoginResponse, {
+            garageName: string,
+            garageEmail: string,
+            garagePhone: string,
+            garageLocation: string,
+            garageAddress: string,
+            garageLogo: string,
+            password: string,
+        }>({
+            query: (credentials) => ({
+                url: 'api/auth/garage/register',
+                method: 'POST',
+                body: credentials,
+            }),
+        }),
         refreshAuthToken: builder.mutation<LoginResponse, { refreshToken: string }>({
             query: (refreshToken) => ({
                 url: 'api/auth/refresh',
