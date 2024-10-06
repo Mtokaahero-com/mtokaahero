@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Loader2, User, Building2, Wrench } from 'lucide-react';
 
 interface Profile {
-    type: 'garage' | 'mechanic';
+    type: 'garage' | 'mechanic' | 'vendor';
     name: string;
     address?: string;
     specialty?: string;
@@ -28,14 +28,14 @@ const fetchProfile = async (email: string): Promise<Profile> => {
 };
 
 export default function Component() {
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState<string>('');
     const [profile, setProfile] = useState<Profile | null>(null);
     const [password, setPassword] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-    const [accountType, setAccountType] = useState<'mechanic' | 'garage' | null>(null);
+    const [accountType, setAccountType] = useState<'mechanic' | 'garage' | 'vendor' | null>(null);
 
     const router = useRouter();
 
@@ -66,7 +66,7 @@ export default function Component() {
         setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
-            router.push(`/auth/service-accounts/${accountType}/signup`);
+            router.push(`/auth/newaccounts/${accountType}/signup`);
         }, 2000);
     };
 
@@ -121,7 +121,15 @@ export default function Component() {
                                         onClick={() => setAccountType('garage')}>
                                         <Building2 className="mr-2 h-4 w-4" />
                                         Garage
-                                    </Button>
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant={accountType === 'vendor' ? 'default' : 'outline'}
+                                            className="w-full"
+                                            onClick={() => setAccountType('vendor')}>
+                                            <User className="mr-2 h-4 w-4" />
+                                            Vendor
+                                        </Button>
                                 </div>
                             </div>
                             <Button type="submit" disabled={isLoading || !accountType} className="w-full">

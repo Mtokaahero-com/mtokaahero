@@ -15,10 +15,8 @@ type Props = {
 
 const navLinks = [
     { title: 'Home', location: '/' },
-    { title: 'Services', location: '/services' },
     { title: 'Shop', location: '/shop' },
     { title: 'Contact', location: '/contact' },
-    { title: 'Imports ', location: '/imports' },
 ];
 
 type NavLinkProps = {
@@ -32,7 +30,7 @@ const NavLink = ({ href, children }: NavLinkProps) => (
     </Link>
 );
 
-export default function Navbar({tokenExpiryDate, refreshTokenExpiryDate}: Props) {
+export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 

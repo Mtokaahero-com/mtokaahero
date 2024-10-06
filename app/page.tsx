@@ -20,7 +20,6 @@ export default function Home() {
             <Suspense fallback={<div>Loading...</div>}>
                 <HeroSection />
                 <OurServices />
-                {/* <WhyChooseUs /> */}
                 <PricingSection />
             </Suspense>
             <Footer />
