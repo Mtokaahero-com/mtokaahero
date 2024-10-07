@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Loader2, User, Building2, Wrench } from 'lucide-react';
+import { Building2, Loader2, User } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 interface Profile {
     type: 'garage' | 'mechanic' | 'vendor';
@@ -35,7 +35,6 @@ export default function Component() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-    const [accountType, setAccountType] = useState<'mechanic' | 'garage' | 'vendor' | null>(null);
 
     const router = useRouter();
 
