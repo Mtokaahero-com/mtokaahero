@@ -1,37 +1,41 @@
-
-
 import { Button } from '@/components/ui/button';
 import { CheckIcon } from '@/components/ui/icons';
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 
-import { useLoginMutation } from '@/app/store/servces/authApi';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/app/store';
-import { useEffect, useState } from 'react';
-
-
-type Props = {
-    tokenExpiryDate?: string;
-    refreshTokenExpiryDate?: string;
-};
-
-function WhyChooseUs({ tokenExpiryDate, refreshTokenExpiryDate }: Props) {
-
-    const dispatch = useDispatch();
-    const { userEmail } = useSelector((state: RootState) => state.auth);
-    const [redirectTo, setRedirectTo] = useState<string | null>(null);
-
+const useVisibleOnScroll = () => {
+    const [isVisible, setIsVisible] = useState(false);
+    const ref = useRef(null);
 
     useEffect(() => {
-        if (userEmail) {
-            setRedirectTo('/dashboard');
-        } else {
-            setRedirectTo(null);
-        }
-    }, [userEmail]);
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect(); // Stop observing after it becomes visible
+                }
+            },
+            { threshold: 0.1 }, // Trigger when 10% is visible
+        );
 
-    
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        return () => {
+            if (ref.current) {
+                observer.unobserve(ref.current);
+            }
+        };
+    }, []);
+
+    return { ref, isVisible };
+};
+
+function WhyChooseUs() {
+    const { ref, isVisible } = useVisibleOnScroll();
     return (
+        <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
         <div className="flex flex-col  w-full  items-center justify-center">
             <main className="flex-1 grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center bg-slate-300">
                 <section className="space-y-4">
@@ -40,17 +44,9 @@ function WhyChooseUs({ tokenExpiryDate, refreshTokenExpiryDate }: Props) {
                         Streamline your automotive services with our powerful tools and features:
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2">
-                        {!userEmail ? (
-                            <Link href={'/auth/service-accounts/'}>
-                                <Button variant="outline">Sign In</Button>
-                            </Link>
-                        ) : (
-                            <Link href="/dashboard">
-                                <a>
-                                    <Button variant={'secondary'}>Dashboard</Button>
-                                </a>
-                            </Link>
-                        )}
+                        <Link href={'/auth/service-accounts/'}>
+                            <Button variant="outline">Sign In</Button>
+                        </Link>
                         <Button>Create Account</Button>
                     </div>
                     <ul className="space-y-2 text-muted-foreground">
@@ -69,9 +65,9 @@ function WhyChooseUs({ tokenExpiryDate, refreshTokenExpiryDate }: Props) {
                     </ul>
                 </section>
             </main>
+            </div>
         </div>
     );
 }
-
 
 export default WhyChooseUs;
