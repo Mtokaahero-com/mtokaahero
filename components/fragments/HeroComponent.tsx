@@ -81,16 +81,11 @@ function HeroSection() {
                         </p>
 
                         <div className="flex flex-wrap gap-4 mt-8">
-                            <Link href="/auth/mtokaahero ">
+                            <Link href="/auth ">
                                 <Button
                                     variant="outline"
                                     className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300">
                                     Start Your Free Trial
-                                </Button>
-                            </Link>
-                            <Link href="/services">
-                                <Button className="w-40 bg-brand_blue hover:bg-brand_pink transition-colors duration-300">
-                                    Get Started
                                 </Button>
                             </Link>
                         </div>
