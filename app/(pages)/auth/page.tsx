@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { HelpCircle, Home, LogOut, Menu, Settings } from 'lucide-react';
 import { Loader2, User, Building2, Wrench } from 'lucide-react';
-import NavbarAuth from '@/components/fragments/AuthNavbar';
 
 interface Profile {
     type: 'garage' | 'mechanic' | 'vendor';
@@ -73,7 +74,39 @@ export default function Component() {
 
     return (
         <>
-            <NavbarAuth />
+            <div className="absolute top-4 right-4 z-50">
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <Menu className="h-6 w-6 text-white" />
+                            <span className="sr-only">Open menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                        <SheetHeader>
+                            <SheetTitle>Menu</SheetTitle>
+                        </SheetHeader>
+                        <nav className="flex flex-col space-y-4 mt-4 ">
+                            <Link href="/" className="flex items-center space-x-2 text-sm">
+                                <Home className="h-5 w-5" />
+                                <span>Home</span>
+                            </Link>
+                            <Link href="/settings" className="flex items-center space-x-2 text-sm">
+                                <Settings className="h-5 w-5" />
+                                <span>Settings</span>
+                            </Link>
+                            <Link href="/help" className="flex items-center space-x-2 text-sm">
+                                <HelpCircle className="h-5 w-5" />
+                                <span>Help</span>
+                            </Link>
+                            <Button variant="ghost" className="justify-start px-2">
+                                <LogOut className="h-5 w-5 mr-2" />
+                                <span>Logout</span>
+                            </Button>
+                        </nav>
+                    </SheetContent>
+                </Sheet>
+            </div>
             <div
                 className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat p-4"
                 style={{ backgroundImage: "url('/bg.jpg')" }}>

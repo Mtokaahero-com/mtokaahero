@@ -42,10 +42,6 @@ export default function GarageSignupWithNavbar() {
                                 <HelpCircle className="h-5 w-5" />
                                 <span>Help</span>
                             </Link>
-                            <Button variant="ghost" className="justify-start px-2">
-                                <LogOut className="h-5 w-5 mr-2" />
-                                <span>Logout</span>
-                            </Button>
                         </nav>
                     </SheetContent>
                 </Sheet>

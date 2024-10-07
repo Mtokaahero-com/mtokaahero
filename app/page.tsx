@@ -4,7 +4,6 @@ import Footer from '@/components/fragments/Footer';
 import { lazy, Suspense } from 'react';
 
 
-// Lazy load components
 const HeroSection = lazy(() => import('@/components/fragments/HeroComponent'));
 const OurServices = lazy(() => import('@/components/fragments/Services'));
 const PricingSection = lazy(() => import('@/components/fragments/Pricing'));

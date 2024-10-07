@@ -88,11 +88,6 @@ function HeroSection() {
                                     Start Your Free Trial
                                 </Button>
                             </Link>
-                            <Link href="/services">
-                                <Button className="w-40 bg-brand_blue hover:bg-brand_pink transition-colors duration-300">
-                                    Get Started
-                                </Button>
-                            </Link>
                         </div>
 
                         <motion.div
