@@ -6,13 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useEffect, useState } from 'react';
-
-
-type Props = {
-    tokenExpiryDate?: string;
-    refreshTokenExpiryDate?: string;
-}
-
 const navLinks = [
     { title: 'Home', location: '/' },
     { title: 'Shop', location: '/shop' },
