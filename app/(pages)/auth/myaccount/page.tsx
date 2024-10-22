@@ -9,6 +9,9 @@ import { Building2, Loader2, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { HelpCircle, Home, LogOut, Menu, Settings } from 'lucide-react';
+
 
 interface Profile {
     type: 'garage' | 'mechanic' | 'vendor';
@@ -28,7 +31,6 @@ const fetchProfile = async (email: string): Promise<Profile> => {
 };
 
 export default function Component() {
-    const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState<string>('');
     const [profile, setProfile] = useState<Profile | null>(null);
     const [password, setPassword] = useState<string>('');
@@ -64,6 +66,39 @@ export default function Component() {
         <div
             className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat p-4"
             style={{ backgroundImage: "url('/bg.jpg')" }}>
+            <div className="absolute top-4 right-4 z-50">
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon">
+                            <Menu className="h-6 w-6" />
+                            <span className="sr-only">Open menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                        <SheetHeader>
+                            <SheetTitle>Menu</SheetTitle>
+                        </SheetHeader>
+                        <nav className="flex flex-col space-y-4 mt-4">
+                            <Link href="/" className="flex items-center space-x-2 text-sm">
+                                <Home className="h-5 w-5" />
+                                <span>Home</span>
+                            </Link>
+                            <Link href="/settings" className="flex items-center space-x-2 text-sm">
+                                <Settings className="h-5 w-5" />
+                                <span>Settings</span>
+                            </Link>
+                            <Link href="/help" className="flex items-center space-x-2 text-sm">
+                                <HelpCircle className="h-5 w-5" />
+                                <span>Help</span>
+                            </Link>
+                            <Button variant="ghost" className="justify-start px-2">
+                                <LogOut className="h-5 w-5 mr-2" />
+                                <span>Logout</span>
+                            </Button>
+                        </nav>
+                    </SheetContent>
+                </Sheet>
+            </div>
             <Card className="w-full max-w-md border bg-white/90 backdrop-blur-sm shadow-xl">
                 <CardHeader>
                     <CardTitle>Find My Account</CardTitle>
@@ -90,7 +125,7 @@ export default function Component() {
                 </CardContent>
                 <CardFooter className="flex justify-center">
                     <p className="text-sm text-gray-500">
-                        "Don't have an account? " 
+                        "Don't have an account? "
                         <Button variant="link" className="p-0">
                             <Link href="/auth">Sign Up</Link>
                         </Button>
