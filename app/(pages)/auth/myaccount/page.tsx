@@ -31,7 +31,6 @@ const fetchProfile = async (email: string): Promise<Profile> => {
 };
 
 export default function Component() {
-    const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState<string>('');
     const [profile, setProfile] = useState<Profile | null>(null);
     const [password, setPassword] = useState<string>('');

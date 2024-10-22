@@ -18,27 +18,29 @@ const useVisibleOnScroll = () => {
     const [isVisible, setIsVisible] = useState(false);
     const ref = useRef(null);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect(); // Stop observing after it becomes visible
-                }
-            },
-            { threshold: 0.1 }, // Trigger when 10% is visible
-        );
+   useEffect(() => {
+       const node = ref.current;
 
-        if (ref.current) {
-            observer.observe(ref.current);
-        }
+       const observer = new IntersectionObserver(
+           ([entry]) => {
+               if (entry.isIntersecting) {
+                   setIsVisible(true);
+                   observer.disconnect();
+               }
+           },
+           { threshold: 0.1 },
+       );
 
-        return () => {
-            if (ref.current) {
-                observer.unobserve(ref.current);
-            }
-        };
-    }, []);
+       if (node) {
+           observer.observe(node);
+       }
+
+       return () => {
+           if (node) {
+               observer.unobserve(node);
+           }
+       };
+   }, []);
 
     return { ref, isVisible };
 };
