@@ -68,7 +68,7 @@ export default function Component() {
         setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
-            router.push(`/auth/newaccounts/${accountType}/signup`);
+            router.push(`/auth/newaccounts/${accountType}`);
         }, 2000);
     };
 
