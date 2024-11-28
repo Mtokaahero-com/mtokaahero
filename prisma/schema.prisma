@@ -25,21 +25,21 @@ model User {
 }
 
 model GarageOwner {
-  id          String @id @default(uuid())
-  userId      String 
-  fullNames   String
-  phoneNumber String
-  address     String
+  id             String  @id @default(uuid())
+  userId         String
+  fullNames      String
+  phoneNumber    String
+  address        String
   supportEmail   String
   password       String
   profilePicture String?
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Garage    Garage[]
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Garage Garage[]
 }
 
 model Garage {
-  id          String  @id @default(uuid())
+  id          String @id @default(uuid())
   garageName  String @unique
   location    String
   phoneNumber String
@@ -50,7 +50,7 @@ model Garage {
   garageOwner   GarageOwner @relation(fields: [garageOwnerId], references: [id], onDelete: Cascade)
   garageOwnerId String
   services      Service[]
-  Products       Product[]
+  Products      Product[]
 }
 
 model Mechanic {
@@ -66,8 +66,8 @@ model Mechanic {
 
   password String
 
-  userId   String       @unique
-  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String    @unique
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   garageId String?
   services Service[]
 }
@@ -81,9 +81,9 @@ model ShopOwner {
   profilePicture String?
   password       String
 
-  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String  @unique
-  Shop Shop[]
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  Shop   Shop[]
 }
 
 model Shop {
@@ -130,17 +130,28 @@ model Service {
   price       Float
   createdAt   DateTime @default(now())
 
-  mechanic Mechanic    @relation(fields: [mechanicId], references: [id])
-  Garage   Garage      @relation(fields: [garageId], references: [id])
+  mechanic Mechanic @relation(fields: [mechanicId], references: [id])
+  Garage   Garage   @relation(fields: [garageId], references: [id])
+}
+
+model Plan {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  createdAt   DateTime @default(now())
+
+  subscriptions Subscription[]
 }
 
 model Subscription {
   id        String   @id @default(uuid())
   userId    String
-  plan      String // E.g., Free, Basic, Pro, etc.
   startDate DateTime @default(now())
   endDate   DateTime
   isActive  Boolean  @default(true)
+  Plan      Plan?    @relation(fields: [planId], references: [id])
+  planId    String?
 }
 
 // Enum for user roles
