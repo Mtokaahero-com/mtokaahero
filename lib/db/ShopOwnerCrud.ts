@@ -19,7 +19,7 @@ export const createShopOwner = async (data: CreateShopOwnerInput) => {
             email: data.email,
             password: await bcrypt.hash(data.password, 10),
             profilePicture: data.profilePicture,
-            user: {
+            User: {
                 create: {
                     role: 'SHOP_OWNER'
                 }
