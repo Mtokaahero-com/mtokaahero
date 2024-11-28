@@ -82,9 +82,9 @@ model ShopOwner {
   profilePicture String?
   password       String
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @unique
   Shop   Shop[]
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
 }
 
 model Shop {
@@ -153,9 +153,8 @@ model Subscription {
   userId    String
   planId    String?
 
-  Plan      Plan?    @relation(fields: [planId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
+  Plan Plan? @relation(fields: [planId], references: [id])
+  user User  @relation(fields: [userId], references: [id])
 }
 
 // Enum for user roles
