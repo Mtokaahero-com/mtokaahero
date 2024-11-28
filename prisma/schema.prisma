@@ -1,0 +1,160 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("LOCALHOST_URL") // uses connection pooling
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  role UserRole
+
+  garageOwner        GarageOwner?
+  garageOwnerId String?
+  mechanic      Mechanic?
+  mechanicId    String?
+  shopOwner     ShopOwner?
+  shopOwnerId   String?
+}
+
+model GarageOwner {
+  id          String @id @default(uuid())
+  userId      String @unique
+  fullNames   String
+  phoneNumber String
+  address     String
+  supportEmail   String
+  password       String
+  profilePicture String?
+
+  user      User       @relation(fields: [userId], references: [id])
+  Garage    Garage[]
+}
+
+model Garage {
+  id          String  @id @default(uuid())
+  garageName  String @unique
+  location    String
+  phoneNumber String
+  email       String
+  logo        String
+  address     String
+
+  garageOwner   GarageOwner @relation(fields: [garageOwnerId], references: [id])
+  garageOwnerId String
+  services      Service[]
+  Products       Product[]
+}
+
+model Mechanic {
+  id              String  @id @default(uuid())
+  fullNames       String
+  email           String
+  phoneNumber     String
+  specialization  String
+  experienceYears Int
+  address         String
+  location        String
+  profilePicture  String?
+
+  password String
+
+  userId   String       @unique
+  user     User         @relation(fields: [userId], references: [id])
+  garageId String?
+  services Service[]
+}
+
+model ShopOwner {
+  id             String  @id @default(uuid())
+  fullNames      String
+  phoneNumber    String
+  email          String
+  address        String
+  profilePicture String?
+  password       String
+
+  user User   @relation(fields: [userId], references: [id])
+  userId         String  @unique
+  Shop Shop[]
+}
+
+model Shop {
+  id       String    @id @default(uuid())
+  shopName String
+  shopLogo String?
+  location String
+  products Product[]
+
+  shopOwner   ShopOwner @relation(fields: [shopOwnerId], references: [id])
+  shopOwnerId String
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  price       Float
+  description String?
+  createdAt   DateTime @default(now())
+
+  orders   Order[]
+  Shop     Shop?   @relation(fields: [shopId], references: [id])
+  Garage   Garage? @relation(fields: [garageid], references: [id])
+  shopId   String?
+  garageid String?
+}
+
+model Order {
+  id         String   @id @default(uuid())
+  productId  String
+  userId     String
+  quantity   Int
+  totalPrice Float
+  createdAt  DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  mechanicId  String
+  garageId    String
+  description String
+  price       Float
+  createdAt   DateTime @default(now())
+
+  mechanic Mechanic    @relation(fields: [mechanicId], references: [id])
+  Garage   Garage      @relation(fields: [garageId], references: [id])
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  userId    String
+  plan      String // E.g., Free, Basic, Pro, etc.
+  startDate DateTime @default(now())
+  endDate   DateTime
+  isActive  Boolean  @default(true)
+}
+
+// Enum for user roles
+enum UserRole {
+  MECHANIC
+  GARAGE_OWNER
+  SHOP_OWNER
+}
+
+model EarlyAccess {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  inviteUrl String?  @unique
+  validTill DateTime
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
