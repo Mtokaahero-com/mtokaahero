@@ -15,17 +15,18 @@ model User {
 
   role UserRole
 
-  garageOwner        GarageOwner?
   garageOwnerId String?
-  mechanic      Mechanic?
   mechanicId    String?
-  shopOwner     ShopOwner?
   shopOwnerId   String?
+
+  garageOwners GarageOwner[]
+  mechanics    Mechanic[]
+  shopOwners   ShopOwner[]
 }
 
 model GarageOwner {
   id          String @id @default(uuid())
-  userId      String @unique
+  userId      String 
   fullNames   String
   phoneNumber String
   address     String
@@ -33,7 +34,7 @@ model GarageOwner {
   password       String
   profilePicture String?
 
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   Garage    Garage[]
 }
 
@@ -46,7 +47,7 @@ model Garage {
   logo        String
   address     String
 
-  garageOwner   GarageOwner @relation(fields: [garageOwnerId], references: [id])
+  garageOwner   GarageOwner @relation(fields: [garageOwnerId], references: [id], onDelete: Cascade)
   garageOwnerId String
   services      Service[]
   Products       Product[]
@@ -66,7 +67,7 @@ model Mechanic {
   password String
 
   userId   String       @unique
-  user     User         @relation(fields: [userId], references: [id])
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   garageId String?
   services Service[]
 }
@@ -80,7 +81,7 @@ model ShopOwner {
   profilePicture String?
   password       String
 
-  user User   @relation(fields: [userId], references: [id])
+  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String  @unique
   Shop Shop[]
 }
@@ -92,7 +93,7 @@ model Shop {
   location String
   products Product[]
 
-  shopOwner   ShopOwner @relation(fields: [shopOwnerId], references: [id])
+  shopOwner   ShopOwner @relation(fields: [shopOwnerId], references: [id], onDelete: Cascade)
   shopOwnerId String
 }
 
