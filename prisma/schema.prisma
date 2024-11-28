@@ -22,6 +22,7 @@ model User {
   garageOwners GarageOwner[]
   mechanics    Mechanic[]
   shopOwners   ShopOwner[]
+  Subscription Subscription[]
 }
 
 model GarageOwner {
@@ -146,12 +147,15 @@ model Plan {
 
 model Subscription {
   id        String   @id @default(uuid())
-  userId    String
   startDate DateTime @default(now())
   endDate   DateTime
   isActive  Boolean  @default(true)
-  Plan      Plan?    @relation(fields: [planId], references: [id])
+  userId    String
   planId    String?
+
+  Plan      Plan?    @relation(fields: [planId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
 }
 
 // Enum for user roles
