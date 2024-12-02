@@ -1,3 +1,5 @@
+'use server'
+
 import { getUserByEmail } from "../db/UserCrud";
 
 

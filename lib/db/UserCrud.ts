@@ -1,32 +1,5 @@
 import { prisma } from '../prisma';
 
-interface CreateUserInput {
-    fullNames: string;
-    phoneNumber: string;
-    address: string;
-    supportEmail: string;
-    password: string;
-    profilePicture?: string;
-}
-
-export const createUser = async (data: CreateUserInput) => {
-    return await prisma.user.create({
-        data: {
-            role: 'GARAGE_OWNER',
-            garageOwners: {
-                create: {
-                    fullNames: data.fullNames,
-                    phoneNumber: data.phoneNumber,
-                    address: data.address,
-                    supportEmail: data.supportEmail,
-                    password: data.password,
-                    profilePicture: data.profilePicture,
-                },
-            },
-        },
-    });
-};
-
 
 
 export const getUserById = async (id: string) => {
@@ -35,41 +8,49 @@ export const getUserById = async (id: string) => {
     });
 }
 
-export const getUserByEmail = async (email: string) => {
-    return await prisma.user.findFirst({
-        include: {
-            garageOwners: true,
-            mechanics: true,
-            shopOwners: true,
-        },
-        where: {
-            OR: [
-                {
-                    garageOwners: {
-                        some: {
-                            supportEmail: email,
-                        },
-                    },
-                },
-                {
-                    mechanics: {
-                        some: {
-                            supportEmail: email,
-                        },
-                    },
-                },
-                {
-                    shopOwners: {
-                        some: {
-                            supportEmail: email,
-                        }
-                    },
-                },
-            ],
-        },
-    });
-}
+// export const getUserByEmail = async (email: string) => {
+//     return await prisma.user.findFirst({
+//         include: {
+//             garageOwners: true,
+//             mechanics: true,
+//             shopOwners: true,
+//         },
+//         where: {
+//             OR: [
+//                 {
+//                     garageOwners: {
+//                         some: {
+//                             supportEmail: email,
+//                         },
+//                     },
+//                 },
+//                 {
+//                     mechanics: {
+//                         some: {
+//                             supportEmail: email,
+//                         },
+//                     },
+//                 },
+//                 {
+//                     shopOwners: {
+//                         some: {
+//                             supportEmail: email,
+//                         }
+//                     },
+//                 },
+//             ],
+//         },
+//     });
+// }
 
+
+export const getUserByEmail = async(email: string)=>{
+    return prisma.user.findUnique({
+        where: {
+            email
+        }
+    })
+}
 
 export const getUsers = async () => {
     return await prisma.user.findMany({
