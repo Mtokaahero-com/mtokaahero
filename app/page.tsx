@@ -3,7 +3,6 @@
 import Footer from '@/components/fragments/Footer';
 import { lazy, Suspense } from 'react';
 
-
 const HeroSection = lazy(() => import('@/components/fragments/HeroComponent'));
 const OurServices = lazy(() => import('@/components/fragments/Services'));
 const PricingSection = lazy(() => import('@/components/fragments/Pricing'));
@@ -12,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { HelpCircle, Home, LogOut, Menu, Settings } from 'lucide-react';
 import Link from 'next/link';
-
 
 export default function HomePage() {
     return (
@@ -44,7 +42,7 @@ export default function HomePage() {
                             </Link>
                             <Button variant="ghost" className="justify-start px-2">
                                 <LogOut className="h-5 w-5 mr-2" />
-                                <span>Logout</span>
+                                <span>Login</span>
                             </Button>
                         </nav>
                     </SheetContent>

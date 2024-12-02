@@ -55,12 +55,6 @@ export default function Component() {
         }
     };
 
-    const handleLogin = (e: FormEvent) => {
-        setTimeout(() => {
-            setIsDialogOpen(false);
-            router.push('/auth/mtokaahero/dashboard/garage/1');
-        }, 2000);
-    };
 
     return (
         <div
@@ -154,7 +148,7 @@ export default function Component() {
                             </div>
                         </div>
                     )}
-                    <form onSubmit={handleLogin} className="space-y-4">
+                    <form className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="password">Password</Label>
                             <Input
