@@ -35,6 +35,41 @@ export const getUserById = async (id: string) => {
     });
 }
 
+export const getUserByEmail = async (email: string) => {
+    return await prisma.user.findFirst({
+        include: {
+            garageOwners: true,
+            mechanics: true,
+            shopOwners: true,
+        },
+        where: {
+            OR: [
+                {
+                    garageOwners: {
+                        some: {
+                            supportEmail: email,
+                        },
+                    },
+                },
+                {
+                    mechanics: {
+                        some: {
+                            supportEmail: email,
+                        },
+                    },
+                },
+                {
+                    shopOwners: {
+                        some: {
+                            supportEmail: email,
+                        }
+                    },
+                },
+            ],
+        },
+    });
+}
+
 
 export const getUsers = async () => {
     return await prisma.user.findMany({

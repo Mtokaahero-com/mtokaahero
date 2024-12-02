@@ -1,23 +1,21 @@
-'use client'
 
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+import { AuthProviders } from '@/providers/auth-provider';
 
 
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+
+export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
     return (
         <html lang="en">
-                <body className={inter.className}>
-                {children}
-                <Toaster richColors expand={true} position="top-center" className="font-primary" />
-                </body>
+          <body>
+            <Toaster expand={true} position='top-left'/>
+            <AuthProviders>
+              {children}
+            </AuthProviders>
+          </body>
         </html>
     );
 }
