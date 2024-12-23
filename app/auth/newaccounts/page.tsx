@@ -99,10 +99,6 @@ export default function Component() {
                                 <HelpCircle className="h-5 w-5" />
                                 <span>Help</span>
                             </Link>
-                            <Button variant="ghost" className="justify-start px-2">
-                                <LogOut className="h-5 w-5 mr-2" />
-                                <span>Logout</span>
-                            </Button>
                         </nav>
                     </SheetContent>
                 </Sheet>
@@ -164,7 +160,7 @@ export default function Component() {
                                             className="w-full"
                                             onClick={() => setAccountType('vendor')}>
                                             <User className="mr-2 h-4 w-4" />
-                                            Vendor
+                                            Shop
                                         </Button>
                                     </div>
                                 </div>

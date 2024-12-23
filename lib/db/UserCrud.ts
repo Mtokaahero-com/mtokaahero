@@ -1,63 +1,48 @@
+'use server'
+
 import { prisma } from '../prisma';
+import { UserRole } from '@prisma/client/edge';
 
 
+interface User {
+    password: string;
+    email: string;
+    phoneNumber: string;
+    role: UserRole;
+}
 
-export const getUserById = async (id: string) => {
-    return await prisma.user.findUnique({
-        where: { id },
+
+export const createUser = async (user: User) => {
+    return prisma.user.create({
+        data: {
+            email: user.email,
+            password: user.password,
+            phoneNumber: user.phoneNumber,
+            role: user.role
+        }
     });
 }
 
-// export const getUserByEmail = async (email: string) => {
-//     return await prisma.user.findFirst({
-//         include: {
-//             garageOwners: true,
-//             mechanics: true,
-//             shopOwners: true,
-//         },
-//         where: {
-//             OR: [
-//                 {
-//                     garageOwners: {
-//                         some: {
-//                             supportEmail: email,
-//                         },
-//                     },
-//                 },
-//                 {
-//                     mechanics: {
-//                         some: {
-//                             supportEmail: email,
-//                         },
-//                     },
-//                 },
-//                 {
-//                     shopOwners: {
-//                         some: {
-//                             supportEmail: email,
-//                         }
-//                     },
-//                 },
-//             ],
-//         },
-//     });
-// }
 
-
-export const getUserByEmail = async(email: string)=>{
+export const findUserByEmail = async (email: string) => {
     return prisma.user.findUnique({
         where: {
             email
-        }
-    })
-}
-
-export const getUsers = async () => {
-    return await prisma.user.findMany({
+        }, 
         include: {
             garageOwners: true,
             mechanics: true,
             shopOwners: true
+        }
+    });
+}
+
+
+
+export const fetchUsersByEmail = async (email: string) => {
+    return prisma.user.findUnique({
+        where: {
+            email: email
         }
     });
 }

@@ -1,13 +1,12 @@
 import { type NextAuthOptions } from 'next-auth';
 import  CredentialsProvider from 'next-auth/providers/credentials';
 import bcryptjs from 'bcryptjs';
-import { fetchUsers } from './FetchUsers';
-
+import { fetchUsersByEmail } from '../db/UserCrud';
 
 
 export const authOptions: NextAuthOptions = {
     session: { strategy: 'jwt' }, 
-    providers: [
+    providers: [    
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
@@ -21,13 +20,13 @@ export const authOptions: NextAuthOptions = {
                         throw new Error("missing email or password")
                     }
 
-                    const user = await fetchUsers(credentials.email);
+                    const user = await fetchUsersByEmail(credentials.email);
 
                     if (!user) {
                         throw new Error("No user was found with provided credentials");
                     }
 
-                    const passwordMatches = await bcryptjs.compare(credentials.password, user.password)
+                    const passwordMatches = await bcryptjs.compare(credentials.password, user.password);
 
                     if (!passwordMatches) {
                         throw new Error("Invalid password");

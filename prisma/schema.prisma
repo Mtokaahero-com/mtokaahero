@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("LOCALHOST_URL") // uses connection pooling
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // uses connection pooling
 }
 
 model User {
@@ -15,21 +15,14 @@ model User {
   phoneNumber String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
   role UserRole
 
-  garageOwnerId String?
-  mechanicId    String?
-  shopOwnerId   String?
 
   garageOwners GarageOwner[]
   mechanics    Mechanic[]
   shopOwners   ShopOwner[]
   Subscription Subscription[]
 
-  @@index([garageOwnerId], name: "garageOwnerId")
-  @@index([mechanicId], name: "mechanicId")
-  @@index([shopOwnerId], name: "shopOwnerId")
 }
 
 model GarageOwner {
@@ -45,6 +38,7 @@ model GarageOwner {
 
   @@index([userId], name: "userId")
 }
+
 
 model Garage {
   id         String @id @default(uuid())
@@ -66,7 +60,7 @@ model Mechanic {
   id              String  @id @default(uuid())
   fiestName       String
   lastName        String
-  specialization  String  @db.LongText
+  specialization  String  @db.Text
   experienceYears Int
   address         String
   location        String
