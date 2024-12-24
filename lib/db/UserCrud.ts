@@ -1,47 +1,48 @@
+'use server'
+
 import { prisma } from '../prisma';
+import { UserRole } from '@prisma/client/edge';
 
-interface CreateUserInput {
-    fullNames: string;
-    phoneNumber: string;
-    address: string;
-    supportEmail: string;
+
+interface User {
     password: string;
-    profilePicture?: string;
+    email: string;
+    phoneNumber: string;
+    role: UserRole;
 }
 
-export const createUser = async (data: CreateUserInput) => {
-    return await prisma.user.create({
+
+export const createUser = async (user: User) => {
+    return prisma.user.create({
         data: {
-            role: 'GARAGE_OWNER',
-            garageOwners: {
-                create: {
-                    fullNames: data.fullNames,
-                    phoneNumber: data.phoneNumber,
-                    address: data.address,
-                    supportEmail: data.supportEmail,
-                    password: data.password,
-                    profilePicture: data.profilePicture,
-                },
-            },
-        },
-    });
-};
-
-
-
-export const getUserById = async (id: string) => {
-    return await prisma.user.findUnique({
-        where: { id },
+            email: user.email,
+            password: user.password,
+            phoneNumber: user.phoneNumber,
+            role: user.role
+        }
     });
 }
 
 
-export const getUsers = async () => {
-    return await prisma.user.findMany({
+export const findUserByEmail = async (email: string) => {
+    return prisma.user.findUnique({
+        where: {
+            email
+        }, 
         include: {
             garageOwners: true,
             mechanics: true,
             shopOwners: true
+        }
+    });
+}
+
+
+
+export const fetchUsersByEmail = async (email: string) => {
+    return prisma.user.findUnique({
+        where: {
+            email: email
         }
     });
 }
