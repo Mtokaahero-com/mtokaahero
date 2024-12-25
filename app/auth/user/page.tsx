@@ -1,17 +1,15 @@
-'use client'
+'use client';
 
-
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast, useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
+import { useToast } from '@/hooks/use-toast';
 import { RoleInterface } from '@/interfaces/returnTypes';
+import { useEffect, useState } from 'react';
 
-
+import { getRoles } from '@/lib/db/roles';
 
 export default function UserCreationPage() {
     const [roles, setRoles] = useState<RoleInterface[]>([]);
@@ -20,7 +18,7 @@ export default function UserCreationPage() {
         password: '',
         phoneNumber: '',
         userName: '',
-        role: '',
+        roleId: '',
     });
     const [errors, setErrors] = useState<Errors>({});
     const { toast } = useToast();
@@ -30,7 +28,7 @@ export default function UserCreationPage() {
         password: string;
         phoneNumber: string;
         userName: string;
-        role: string;
+        roleId: string;
     }
 
     interface Errors {
@@ -38,7 +36,7 @@ export default function UserCreationPage() {
         password?: string;
         phoneNumber?: string;
         userName?: string;
-        role?: string;
+        roleId?: string;
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -50,10 +48,11 @@ export default function UserCreationPage() {
         }
     };
 
-    const handleRoleChange = (value: string): void => {
-        setFormData((prev: FormData) => ({ ...prev, role: value }));
-        if (errors.role) {
-            setErrors((prev: Errors) => ({ ...prev, role: '' }));
+    const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = e.target;
+        setFormData((prev: FormData) => ({ ...prev, roleId: value }));
+        if (errors.roleId) {
+            setErrors((prev: Errors) => ({ ...prev, roleId: '' }));
         }
     };
 
@@ -63,7 +62,7 @@ export default function UserCreationPage() {
         if (!formData.password) newErrors.password = 'Password is required';
         if (!formData.phoneNumber) newErrors.phoneNumber = 'Phone number is required';
         if (!formData.userName) newErrors.userName = 'Username is required';
-        if (!formData.role) newErrors.role = 'Role is required';
+        if (!formData.roleId) newErrors.roleId = 'Role is required';
 
         // Basic email validation
         if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
@@ -89,7 +88,7 @@ export default function UserCreationPage() {
                 description: "We've created your account for you.",
             });
             // Reset form after successful submission
-            setFormData({ email: '', password: '', phoneNumber: '', userName: '', role: '' });
+            setFormData({ email: '', password: '', phoneNumber: '', userName: '', roleId: '' });
         } else {
             toast({
                 title: 'Error',
@@ -98,6 +97,18 @@ export default function UserCreationPage() {
             });
         }
     };
+
+    useEffect(() => {
+        async function fetchRoles() {
+            await getRoles()
+                .then((res) => {
+                    setRoles(res);
+                })
+                .catch((error) => console.log(error));
+        }
+
+        fetchRoles();
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -158,17 +169,15 @@ export default function UserCreationPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="role">Role</Label>
-                            <Select onValueChange={handleRoleChange} value={formData.role}>
-                                <SelectTrigger id="role">
-                                    <SelectValue placeholder="Select a role" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="user">User</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                    <SelectItem value="moderator">Moderator</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            {errors.role && <p className="text-sm text-red-500">{errors.role}</p>}
+                            <select className="w-full rounded border p-2" name="serviceId" onChange={handleRoleChange}>
+                                <option value="">Select a service</option>
+                                {roles.map((role) => (
+                                    <option key={role.id} value={role.id}>
+                                        {role.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.roleId && <p className="text-sm text-red-500">{errors.roleId}</p>}
                         </div>
                     </CardContent>
                     <CardFooter>
