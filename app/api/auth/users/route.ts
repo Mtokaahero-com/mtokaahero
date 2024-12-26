@@ -29,14 +29,13 @@ export async function POST(req: NextRequest) {
                 userName: userName,
                 password: password,
                 email: email,
-                phoneNumber: (await bcryptjs.hashSync(password, 20)),
+                phoneNumber: await bcryptjs.hashSync(password, 20),
                 roleId: roleId,
             },
         })
-        .then((user) => {
-            return user;
-        })
         .catch((error) => {
-            return NextResponse.json({ err: error }, { status: 400 });
+            return NextResponse.json({ error: error }, { status: 400 });
         });
+
+    return user;
 }

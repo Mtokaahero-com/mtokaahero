@@ -8,6 +8,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { RoleInterface } from '@/interfaces/returnTypes';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { validateEmail } from '@/lib/validators/users';
 
 import { getRoles } from '@/lib/db/roles';
 
@@ -22,6 +24,8 @@ export default function UserCreationPage() {
     });
     const [errors, setErrors] = useState<Errors>({});
     const { toast } = useToast();
+
+    const router = useRouter();
 
     interface FormData {
         email: string;
@@ -70,25 +74,52 @@ export default function UserCreationPage() {
         }
 
         // Password strength check (example: at least 8 characters)
-        if (formData.password && formData.password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long';
+        if (formData.password && formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters long';
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (validateForm()) {
-            // Here you would typically send the data to your backend
-            console.log('Form submitted:', formData);
-            toast({
-                title: 'Account created',
-                description: "We've created your account for you.",
-            });
-            // Reset form after successful submission
-            setFormData({ email: '', password: '', phoneNumber: '', userName: '', roleId: '' });
+            await fetch('/api/auth/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            }).then(async (res) => {
+                toast({
+                    title: 'Account created',
+                    description: "We've created your account for you.",
+                });
+                const user = await res.json()
+                if (user.role === 'garage') {
+                    router.push(`/auth/garage/${user.id}`)
+                } else if (user.role === 'mechanic') {
+                    router.push(`/auth/mechanic/${user.id}`)
+                } else if (user.role === 'shop') {
+                     router.push(`/auth/shop/${user.id}`);
+                } else {
+                    toast({
+                        title: 'Base Permission Failed',
+                        description: 'Process failed when Asigning your account, please ty again',
+                        variant: 'destructive'
+                    })
+                }
+                setFormData({ email: '', password: '', phoneNumber: '', userName: '', roleId: '' });    
+            }).catch((error) => {
+                console.error(error);
+                return toast({
+                    title: 'Form Submition failed',
+                    description: "failed to submit the form",
+                    variant: 'destructive'
+                })
+            })
+            
         } else {
             toast({
                 title: 'Error',
@@ -170,7 +201,7 @@ export default function UserCreationPage() {
                         <div className="space-y-2">
                             <Label htmlFor="role">Role</Label>
                             <select className="w-full rounded border p-2" name="serviceId" onChange={handleRoleChange}>
-                                <option value="">Select a service</option>
+                                <option value="">Select account type</option>
                                 {roles.map((role) => (
                                     <option key={role.id} value={role.id}>
                                         {role.name}
