@@ -85,8 +85,8 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                     <Card className="bg-background p-6 md:p-8 lg:p-10 shadow-lg">
                         <CardHeader>
                             <CardTitle className="text-2xl font-bold">Set Up Your Garage Account</CardTitle>
-                            <Link href="/auth/garage/signin" prefetch={false} className="text-center block mt-2">
-                                <span className="text-red-600 hover:text-primary/90">Sign in to your account</span>
+                            <Link href="/auth/myaccount" prefetch={false} className="text-center block mt-2">
+                                <span className="text-red-600 hover:text-primary/90">Find Your Account</span>
                             </Link>
                             <CardDescription>Fill out the form below to get started.</CardDescription>
                         </CardHeader>
