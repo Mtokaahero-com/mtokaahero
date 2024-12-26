@@ -1,15 +1,18 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
-
+import { toast, useToast } from '@/hooks/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 
 import { UserInterface } from '@/interfaces/returnTypes';
 import { getUserByid } from '@/lib/db/users';
@@ -17,15 +20,26 @@ import { getUserByid } from '@/lib/db/users';
 export interface GarageSignupWithNavbarProps {
     params: {
         userId: string;
-    }
+    };
 }
-
-
 
 const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
     const [freeTrialGarage, setFreeTrialGarage] = useState(false);
     const [user, setUser] = useState<UserInterface | null>(null);
     const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
+
+    const [formData, setFormData] = useState({
+        garageName: '',
+        ownerName: '',
+        address: '',
+        phone: '',
+        email: '',
+        description: '',
+        specialties: '',
+        openingHours: '',
+        yearsInBusiness: '',
+    });
 
     const userId = params.userId;
 
@@ -36,6 +50,49 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
             });
         }
     }, [userId]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSelectChange = (name: string) => (value: string) => {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            // Here you would typically send the data to your backend
+            console.log('Form submitted:', { ...formData, freeTrialGarage });
+            toast({
+                title: freeTrialGarage ? 'Free trial started' : 'Garage registered',
+                description: 'Your garage account has been set up successfully.',
+            });
+            // Reset form after successful submission
+            setFormData({
+                garageName: '',
+                ownerName: '',
+                address: '',
+                phone: '',
+                email: '',
+                description: '',
+                specialties: '',
+                openingHours: '',
+                yearsInBusiness: '',
+            });
+            setFreeTrialGarage(false);
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: 'There was a problem setting up your garage account. Please try again.',
+                variant: 'destructive',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-primary to-primary-foreground relative">
@@ -91,58 +148,140 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                             <CardDescription>Fill out the form below to get started.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form className="grid gap-4">
+                            <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="garage-name">Garage Name</Label>
-                                        <Input id="garage-name" placeholder="MtokaaHero Auto Repair" required />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="garageName">Garage Name</Label>
+                                        <Input
+                                            id="garageName"
+                                            name="garageName"
+                                            value={formData.garageName}
+                                            onChange={handleInputChange}
+                                            placeholder="MtokaaHero Auto Repair"
+                                            required
+                                        />
                                     </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="owner-name">Owner Full Names</Label>
-                                        <Input id="owner-name" placeholder="John Doe" required />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="ownerName">Owner Full Names</Label>
+                                        <Input
+                                            id="ownerName"
+                                            name="ownerName"
+                                            value={formData.ownerName}
+                                            onChange={handleInputChange}
+                                            placeholder="John Doe"
+                                            required
+                                        />
                                     </div>
                                 </div>
-                                <div className="grid gap-2">
+                                <div className="space-y-2">
                                     <Label htmlFor="address">Address</Label>
-                                    <Input id="address" placeholder="123 Main St, Anytown Kenya" required />
+                                    <Input
+                                        id="address"
+                                        name="address"
+                                        value={formData.address}
+                                        onChange={handleInputChange}
+                                        placeholder="123 Main St, Anytown Kenya"
+                                        required
+                                    />
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="grid gap-2">
+                                    <div className="space-y-2">
                                         <Label htmlFor="phone">Phone Number</Label>
-                                        <Input id="phone" type="tel" placeholder="(555) 555-5555" required />
+                                        <Input
+                                            id="phone"
+                                            name="phone"
+                                            type="tel"
+                                            value={formData.phone}
+                                            onChange={handleInputChange}
+                                            placeholder="(555) 555-5555"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            placeholder="garage@example.com"
+                                            required
+                                        />
                                     </div>
                                 </div>
-                            </form>
-                            <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4 mt-6">
-                                <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
-                                <p>Experience all features for 30 days, no credit card required.</p>
-                                <div className="flex items-center space-x-2">
-                                    <Switch
-                                        id="free-trial"
-                                        checked={freeTrialGarage}
-                                        onCheckedChange={setFreeTrialGarage}
+                                <div className="space-y-2">
+                                    <Label htmlFor="description">Garage Description</Label>
+                                    <Textarea
+                                        id="description"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleInputChange}
+                                        placeholder="Tell us about your garage and services..."
+                                        rows={3}
                                     />
-                                    <Label htmlFor="free-trial">Enable Free Trial</Label>
                                 </div>
-                            </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="specialties">Specialties</Label>
+                                    <Input
+                                        id="specialties"
+                                        name="specialties"
+                                        value={formData.specialties}
+                                        onChange={handleInputChange}
+                                        placeholder="e.g., Brake repair, Engine diagnostics"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="openingHours">Opening Hours</Label>
+                                    <Input
+                                        id="openingHours"
+                                        name="openingHours"
+                                        value={formData.openingHours}
+                                        onChange={handleInputChange}
+                                        placeholder="e.g., Mon-Fri: 8am-6pm, Sat: 9am-3pm"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="yearsInBusiness">Years in Business</Label>
+                                    <Select onValueChange={handleSelectChange('yearsInBusiness')}>
+                                        <SelectTrigger id="yearsInBusiness">
+                                            <SelectValue placeholder="Select years in business" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="0-1">Less than 1 year</SelectItem>
+                                            <SelectItem value="1-5">1-5 years</SelectItem>
+                                            <SelectItem value="5-10">5-10 years</SelectItem>
+                                            <SelectItem value="10+">10+ years</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4">
+                                    <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
+                                    <p>Experience all features for 30 days, no credit card required.</p>
+                                    <div className="flex items-center space-x-2">
+                                        <Switch
+                                            id="free-trial"
+                                            checked={freeTrialGarage}
+                                            onCheckedChange={setFreeTrialGarage}
+                                        />
+                                        <Label htmlFor="free-trial">Enable Free Trial</Label>
+                                    </div>
+                                </div>
+                                <Button type="submit" className="w-full" disabled={loading}>
+                                    {loading
+                                        ? 'Processing...'
+                                        : freeTrialGarage
+                                          ? 'Start Free Trial'
+                                          : 'Register Garage'}
+                                </Button>
+                            </form>
                         </CardContent>
-                        <CardFooter>
-                            <button
-                                type="submit"
-                                className={`mt-4 w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                                    loading ? 'opacity-50 cursor-not-allowed' : ''
-                                }`}
-                                disabled={loading}>
-                                {freeTrialGarage ? 'Start Free Trial' : 'Register Garage'}
-                            </button>
-                        </CardFooter>
                     </Card>
                 </div>
             </div>
+            <Toaster />
         </div>
     );
 };
-
-
 
 export default GarageSignupWithNavbar;
