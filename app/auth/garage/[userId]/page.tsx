@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,20 +10,31 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Button } from '@/components/ui/button';
 import { Menu, Home, Settings, HelpCircle, LogOut } from 'lucide-react';
 
+import { Metadata } from 'next';
+
 import { UserInterface } from '@/interfaces/returnTypes';
 
 import { getUserByid } from '@/lib/db/users';
 
-interface GarageSignupWithNavbarProps {
-    userId: string;
+export interface GarageSignupWithNavbarProps {
+    params: {
+        userId: string;
+    }
 }
 
+export async function getMetadata(): Promise<Metadata> {
+    return {
+        title: 'Garage Signup',
+        description: 'Sign up for a garage account to start connecting with customers in your area.',
+    };
+}
 
-export default function GarageSignupWithNavbar({ userId }: GarageSignupWithNavbarProps) {
+const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
     const [freeTrialGarage, setFreeTrialGarage] = useState(false);
     const [user, setUser] = useState<UserInterface | null>(null);
     const [loading, setLoading] = useState(false);
 
+    const userId = params.userId;
 
     useEffect(() => {
         if (userId) {
@@ -33,8 +44,7 @@ export default function GarageSignupWithNavbar({ userId }: GarageSignupWithNavba
         }
     }, [userId]);
 
-    
-   return (
+    return (
         <div className="w-full min-h-screen bg-gradient-to-br from-primary to-primary-foreground relative">
             {/* Navbar Trigger */}
             <div className="absolute top-4 right-4 z-50">
@@ -138,4 +148,8 @@ export default function GarageSignupWithNavbar({ userId }: GarageSignupWithNavba
             </div>
         </div>
     );
-}
+};
+
+
+
+export default GarageSignupWithNavbar;
