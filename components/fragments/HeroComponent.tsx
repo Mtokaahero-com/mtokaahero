@@ -83,7 +83,7 @@ function HeroSection() {
                         </p>
 
                         <div className="flex flex-wrap gap-4 mt-8">
-                            <Link href="/auth ">
+                            <Link href="/auth/newaccounts">
                                 <Button
                                     variant="outline"
                                     className="w-40 text-black border-white/40 hover:bg-white hover:text-black transition-colors duration-300">

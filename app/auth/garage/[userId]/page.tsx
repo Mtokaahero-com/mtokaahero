@@ -1,18 +1,41 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Menu, Home, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
-export default function GarageSignupWithNavbar() {
+
+import { UserInterface } from '@/interfaces/returnTypes';
+import { getUserByid } from '@/lib/db/users';
+
+export interface GarageSignupWithNavbarProps {
+    params: {
+        userId: string;
+    }
+}
+
+
+
+const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
     const [freeTrialGarage, setFreeTrialGarage] = useState(false);
+    const [user, setUser] = useState<UserInterface | null>(null);
     const [loading, setLoading] = useState(false);
+
+    const userId = params.userId;
+
+    useEffect(() => {
+        if (userId) {
+            getUserByid(userId).then((data) => {
+                setUser(data);
+            });
+        }
+    }, [userId]);
 
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-primary to-primary-foreground relative">
@@ -52,7 +75,7 @@ export default function GarageSignupWithNavbar() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                     <div className="space-y-4 md:space-y-6 hidden sm:block">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground">
-                            Set up Your Garage Account
+                            {user ? `Welcome, ${user.userName}!` : 'Welcome!'}
                         </h1>
                         <p className="text-lg md:text-xl text-primary-foreground/80">
                             Join our network of trusted automotive repair services and connect with customers in your
@@ -62,8 +85,8 @@ export default function GarageSignupWithNavbar() {
                     <Card className="bg-background p-6 md:p-8 lg:p-10 shadow-lg">
                         <CardHeader>
                             <CardTitle className="text-2xl font-bold">Set Up Your Garage Account</CardTitle>
-                            <Link href="/auth/garage/signin" prefetch={false} className="text-center block mt-2">
-                                <span className="text-red-600 hover:text-primary/90">Sign in to your account</span>
+                            <Link href="/auth/myaccount" prefetch={false} className="text-center block mt-2">
+                                <span className="text-red-600 hover:text-primary/90">Find Your Account</span>
                             </Link>
                             <CardDescription>Fill out the form below to get started.</CardDescription>
                         </CardHeader>
@@ -92,7 +115,7 @@ export default function GarageSignupWithNavbar() {
                             </form>
                             <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4 mt-6">
                                 <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
-                                <p>Experience all features for 7 days, no credit card required.</p>
+                                <p>Experience all features for 30 days, no credit card required.</p>
                                 <div className="flex items-center space-x-2">
                                     <Switch
                                         id="free-trial"
@@ -118,4 +141,8 @@ export default function GarageSignupWithNavbar() {
             </div>
         </div>
     );
-}
+};
+
+
+
+export default GarageSignupWithNavbar;

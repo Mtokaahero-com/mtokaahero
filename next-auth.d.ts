@@ -1,3 +1,4 @@
+// Type Declarations for NextAuth and JWT
 import { DefaultSession, DefaultUser } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
@@ -6,7 +7,10 @@ declare module 'next-auth' {
         user: {
             id: string;
             email: string;
-            role: string;
+            role: {
+                id: string;
+                name: string;
+            };
             mobileNumber?: string;
         } & DefaultSession['user'];
     }
@@ -14,8 +18,12 @@ declare module 'next-auth' {
     interface User extends DefaultUser {
         id: string;
         email: string;
-        role: string;
+        roleId: string;
         mobileNumber?: string;
+        role: {
+            id: string;
+            name: string;
+        };
     }
 }
 
@@ -23,7 +31,11 @@ declare module 'next-auth/jwt' {
     interface JWT {
         id: string;
         email: string;
-        role: string;
+        roleId: string;
         mobileNumber?: string;
+        role: {
+            id: string;
+            name: string;
+        };
     }
 }

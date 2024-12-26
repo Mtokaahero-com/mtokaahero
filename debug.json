@@ -1,0 +1,14 @@
+{
+    "id": "7d27bbe2-3051-4585-9d20-99e4b5bcd487",
+    "userName": "John",
+    "password": "$2a$12$pLE.rKT.0sBDQCoA1n0BRulxfeOWe/Ygi.BO6qYeS8sew2APORujK",
+    "email": "gibsonsgibson88@gmail.com",
+    "phoneNumber": "0759097030",
+    "createdAt": "2024-12-26T07:15:53.482Z",
+    "updatedAt": "2024-12-26T07:15:53.482Z",
+    "roleId": "1d27b3f3-1d16-47f1-ac18-a5d78ff163b0",
+    "Role": {
+        "id": "1d27b3f3-1d16-47f1-ac18-a5d78ff163b0",
+        "name": "garage"
+    }
+}
