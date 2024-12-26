@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Menu, Home, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
-import { Metadata } from 'next';
 
 import { UserInterface } from '@/interfaces/returnTypes';
 
@@ -22,12 +21,7 @@ export interface GarageSignupWithNavbarProps {
     }
 }
 
-export async function getMetadata(): Promise<Metadata> {
-    return {
-        title: 'Garage Signup',
-        description: 'Sign up for a garage account to start connecting with customers in your area.',
-    };
-}
+
 
 const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
     const [freeTrialGarage, setFreeTrialGarage] = useState(false);
