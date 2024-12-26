@@ -1,3 +1,5 @@
+'use server'
+
 import { PrismaService as prisma } from "../prisma";
 
 export const validateEmail= async(email: string): Promise<Boolean> =>{
@@ -11,7 +13,7 @@ export const validateEmail= async(email: string): Promise<Boolean> =>{
 
 
 export async function getRole(roleId: string) {
-    return await prisma.user.findFirst({
-        where: {roleId}, include: {Role: true}
+    return await prisma.roles.findUnique({
+        where: {id: roleId}, 
     })
 }

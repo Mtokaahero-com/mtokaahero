@@ -101,7 +101,7 @@ export default function UserCreationPage() {
                 body: JSON.stringify(formData),
             });
             const user = await response.json();
-            const role = await getRole(user.user.roleId) as unknown as RoleInterface;
+            const role = await getRole(user.user.roleId) as RoleInterface;
             if (role.name === 'garage') {
                 router.push(`/auth/garage/${user.user.id}`);
             } else if (role.name === 'mechanic') {
