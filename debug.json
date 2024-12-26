@@ -1,0 +1,10 @@
+{
+    "message": "User created successfully.",
+    "user": {
+        "id": "89df70c8-f2b8-4eb0-8d9a-bc2ce1727d9c",
+        "userName": "John",
+        "email": "gibsonsgibson88@gmail.com",
+        "phoneNumber": "254759097030",
+        "roleId": "d037510c-d88c-429e-a06a-661fac5f6a2b"
+    }
+}

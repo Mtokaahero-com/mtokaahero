@@ -2,7 +2,7 @@ import { PrismaService } from '@/lib/prisma';
 import { NextResponse, NextRequest } from 'next/server';
 import * as bcryptjs from 'bcryptjs';
 
-interface userProps {
+interface UserProps {
     userName: string;
     password: string;
     email: string;
@@ -11,31 +11,54 @@ interface userProps {
 }
 
 export async function POST(req: NextRequest) {
-    const { password, email, phoneNumber, roleId, userName }: userProps = await req.json();
+    try {
+        // Parse and validate request body
+        const { password, email, phoneNumber, roleId, userName }: UserProps = await req.json();
 
-    if (!email || !phoneNumber || !roleId || !password || !userName) {
-        return NextResponse.json({ error: 'missing fields' }, { status: 400 });
-    }
+        if (!email || !phoneNumber || !roleId || !password || !userName) {
+            return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
+        }
 
-    const uniqueEmail = await PrismaService.user.findUnique({ where: { email } });
-    const uniquePhone = await PrismaService.user.findUnique({ where: { phoneNumber } });
-
-    if (uniqueEmail || uniquePhone) {
-        return NextResponse.json({ error: 'Phone or Email already registered' }, { status: 400 });
-    }
-    const user = await PrismaService.user
-        .create({
-            data: {
-                userName: userName,
-                password: password,
-                email: email,
-                phoneNumber: await bcryptjs.hashSync(password, 20),
-                roleId: roleId,
+        // Check for existing user by email or phone number
+        const existingUser = await PrismaService.user.findFirst({
+            where: {
+                OR: [{ email }, { phoneNumber }],
             },
-        })
-        .catch((error) => {
-            return NextResponse.json({ error: error }, { status: 400 });
         });
 
-    return user;
+        if (existingUser) {
+            return NextResponse.json({ error: 'Email or phone number already registered.' }, { status: 400 });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcryptjs.hash(password, 12);
+
+        // Create the new user
+        const newUser = await PrismaService.user.create({
+            data: {
+                userName,
+                email,
+                phoneNumber,
+                password: hashedPassword,
+                roleId,
+            },
+            include: {
+                Role: true
+            }
+        });
+
+        return NextResponse.json({
+            message: 'User created successfully.',
+            user: {
+                id: newUser.id,
+                userName: newUser.userName,
+                email: newUser.email,
+                phoneNumber: newUser.phoneNumber,
+                roleId: newUser.roleId,
+            },
+        });
+    } catch (error: any) {
+        console.error('Error creating user:', error);
+        return NextResponse.json({ error: 'Failed to create user. Please try again later.' }, { status: 500 });
+    }
 }

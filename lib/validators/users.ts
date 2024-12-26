@@ -8,3 +8,10 @@ export const validateEmail= async(email: string): Promise<Boolean> =>{
     } 
     return true;
 }
+
+
+export async function getRole(roleId: string) {
+    return await prisma.user.findFirst({
+        where: {roleId}, include: {Role: true}
+    })
+}
