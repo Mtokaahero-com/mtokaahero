@@ -115,7 +115,7 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                             </form>
                             <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4 mt-6">
                                 <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
-                                <p>Experience all features for 7 days, no credit card required.</p>
+                                <p>Experience all features for 30 days, no credit card required.</p>
                                 <div className="flex items-center space-x-2">
                                     <Switch
                                         id="free-trial"
