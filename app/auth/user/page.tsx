@@ -2,15 +2,14 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { RoleInterface } from '@/interfaces/returnTypes';
-import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { validateEmail } from '@/lib/validators/users';
+import { useEffect, useState } from 'react';
 
 import { getRoles } from '@/lib/db/roles';
 import { getRole } from '@/lib/validators/users';
@@ -133,18 +132,6 @@ export default function UserCreationPage() {
             }
         })();
     }, []);
-
-    //  useEffect(() => {
-    //      const timeout = setTimeout(async () => {
-    //          if (formData.email && !errors.email) {
-    //              const isEmailValid = await validateEmail(formData.email);
-    //              if (!isEmailValid) {
-    //                  setErrors((prev) => ({ ...prev, email: 'Email already in use' }));
-    //              }
-    //          }
-    //      }, 500); // debounce interval
-    //      return () => clearTimeout(timeout);
-    //  }, [formData.email, errors.email]);
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

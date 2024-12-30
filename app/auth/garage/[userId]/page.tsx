@@ -12,9 +12,11 @@ import { useToast } from '@/hooks/use-toast';
 import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-
+import { useRouter } from 'next/navigation';
 import { UserInterface } from '@/interfaces/returnTypes';
 import { getUserByid } from '@/lib/db/users';
+
+import { GarageInterface } from '@/interfaces/returnTypes';
 
 export interface GarageSignupWithNavbarProps {
     params: {
@@ -27,6 +29,8 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
     const [user, setUser] = useState<UserInterface | null>(null);
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
+
+    const router = useRouter();
 
     const [formData, setFormData] = useState({
         garageName: 'MtokaaHero Auto Repair',
@@ -57,8 +61,22 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
         e.preventDefault();
         setLoading(true);
         try {
-            // Here you would typically send the data to your backend
             console.log('Form submitted:', { ...formData, freeTrialGarage });
+            const response = await fetch('/api/auth/garage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...formData, freeTrialGarage }),
+            });
+
+            if (!response.ok) {
+                throw new Error('There was a problem setting up your garage account. Please try again.');
+            }
+
+            const garage = (await response.json()) as GarageInterface;
+            router.push(`/garage/${garage.id}`);
+
             toast({
                 title: freeTrialGarage ? 'Free trial started' : 'Garage registered',
                 description: 'Your garage account has been set up successfully.',
@@ -223,13 +241,7 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="yearsInBusiness">Logo</Label>
-                                    <Input
-                                        id="logo"
-                                        name="logo"
-                                        type='file'
-                                        accept='image/*'
-                                        placeholder="Your Logo"
-                                    />
+                                    <Input id="logo" name="logo" type="file" accept="image/*" placeholder="Your Logo" />
                                 </div>
                                 <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4">
                                     <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
