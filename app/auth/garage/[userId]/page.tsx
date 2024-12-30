@@ -1,5 +1,9 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,13 +14,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { UserInterface } from '@/interfaces/returnTypes';
+import { UserInterface, GarageInterface } from '@/interfaces/returnTypes';
 import { getUserByid } from '@/lib/db/users';
-import { useSessionStorage } from '@uidotdev/usehooks';
-import { GarageInterface } from '@/interfaces/returnTypes';
 
 export interface GarageSignupWithNavbarProps {
     params: {
@@ -27,11 +26,10 @@ export interface GarageSignupWithNavbarProps {
 const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
     const [freeTrialGarage, setFreeTrialGarage] = useState(true);
     const [user, setUser] = useState<UserInterface | null>(null);
-    const [garageId, setGarageId] = useSessionStorage('garageId', '');
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
-
     const router = useRouter();
+    const { data: session, update } = useSession();
 
     const [formData, setFormData] = useState({
         garageName: 'MtokaaHero Auto Repair',
@@ -62,7 +60,6 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
         e.preventDefault();
         setLoading(true);
         try {
-            console.log('Form submitted:', { ...formData, freeTrialGarage });
             const response = await fetch('/api/auth/garage', {
                 method: 'POST',
                 headers: {
@@ -79,7 +76,16 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
             if (!garage) {
                 throw new Error('There was a problem setting up your garage account. Please try again.');
             }
-            setGarageId(garage.id);
+
+            // Update the session with the new garage details
+            await update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    garage: garage,
+                },
+            });
+
             router.push(`/garage/${garage.id}`);
 
             toast({
@@ -97,6 +103,7 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
             });
             setFreeTrialGarage(false);
         } catch (error) {
+            console.error(error);
             toast({
                 title: 'Error',
                 description: 'There was a problem setting up your garage account. Please try again.',
@@ -245,7 +252,7 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="yearsInBusiness">Logo</Label>
+                                    <Label htmlFor="logo">Logo</Label>
                                     <Input id="logo" name="logo" type="file" accept="image/*" placeholder="Your Logo" />
                                 </div>
                                 <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4">

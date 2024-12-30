@@ -1,7 +1,12 @@
+'use server';
+
 import { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcryptjs from 'bcryptjs';
 import { getUserByEmail } from '../db/users';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
     session: { strategy: 'jwt' },
@@ -27,11 +32,21 @@ export const authOptions: NextAuthOptions = {
                     throw new Error('Invalid password.');
                 }
 
+                // Fetch role-specific information
+                const garageOwner = await prisma.garageOwner.findFirst({ where: { userId: user.id } });
+                const mechanic = await prisma.mechanic.findUnique({ where: { userId: user.id } });
+                const shopOwner = await prisma.shopOwner.findFirst({ where: { userId: user.id } });
+
                 return {
                     id: user.id,
                     email: user.email,
+                    userName: user.userName,
+                    phoneNumber: user.phoneNumber,
                     roleId: user.roleId,
                     role: user.Role,
+                    garageOwner: garageOwner || undefined,
+                    mechanic: mechanic || undefined,
+                    shopOwner: shopOwner || undefined,
                 };
             },
         }),
@@ -42,7 +57,12 @@ export const authOptions: NextAuthOptions = {
                 session.user = {
                     id: token.id,
                     email: token.email,
+                    userName: token.userName,
+                    phoneNumber: token.phoneNumber,
                     role: token.role,
+                    garageOwner: token.garageOwner,
+                    mechanic: token.mechanic,
+                    shopOwner: token.shopOwner,
                 };
             }
             return session;
@@ -51,7 +71,12 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
+                token.userName = user.userName;
+                token.phoneNumber = user.phoneNumber;
                 token.role = user.role;
+                token.garageOwner = user.garageOwner;
+                token.mechanic = user.mechanic;
+                token.shopOwner = user.shopOwner;
             }
             return token;
         },
