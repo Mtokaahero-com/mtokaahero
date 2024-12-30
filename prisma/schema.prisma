@@ -18,30 +18,16 @@ model User {
   updatedAt   DateTime @updatedAt
   roleId      String
 
-  garageOwners GarageOwner[]
-  mechanics    Mechanic[]
-  shopOwners   ShopOwner[]
-  Role         Roles         @relation(fields: [roleId], references: [id])
+  mechanics  Mechanic[]
+  shopOwners ShopOwner[]
+  Role       Roles       @relation(fields: [roleId], references: [id])
+  Garage     Garage[]
 }
 
 model Roles {
   id   String @id @default(uuid())
   name String
   User User[]
-}
-
-model GarageOwner {
-  id             String  @id @default(uuid())
-  userId         String
-  firstName      String
-  lastName       String
-  address        String
-  profilePicture String?
-
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Garage Garage[]
-
-  @@index([userId], name: "userId")
 }
 
 model Garage {
@@ -56,7 +42,7 @@ model Garage {
   logo              String
 
   garageOwnerId String
-  garageOwner   GarageOwner @relation(fields: [garageOwnerId], references: [id], onDelete: Cascade)
+  garageOwner   User   @relation(fields: [garageOwnerId], references: [id], onDelete: Cascade)
 
   contact      Contact[]
   services     Service[]
@@ -65,14 +51,14 @@ model Garage {
 }
 
 model Mechanic {
-  id              String  @id @default(uuid())
+  id              String @id @default(uuid())
   fiestName       String
   lastName        String
-  specialization  String  @db.Text
+  specialization  String @db.Text
   experienceYears Int
   address         String
   location        String
-  profilePicture  String?
+  profilePicture  String
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -167,9 +153,9 @@ model Plan {
 }
 
 model Subscription {
-  id                       String   @id @default(uuid())
+  id                       String  @id @default(uuid())
   subscriptionUniqueString String
-  isActive                 Boolean  @default(true)
+  isActive                 Boolean @default(true)
   garageId                 String
   planId                   String?
 

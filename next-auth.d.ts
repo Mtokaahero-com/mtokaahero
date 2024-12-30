@@ -1,5 +1,3 @@
-// next-auth.d.ts
-
 import { DefaultSession, DefaultUser } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
@@ -13,13 +11,6 @@ declare module 'next-auth' {
             role: {
                 id: string;
                 name: string;
-            };
-            garageOwner?: {
-                id: string;
-                firstName: string;
-                lastName: string;
-                address: string;
-                profilePicture?: string;
             };
             mechanic?: {
                 id: string;
