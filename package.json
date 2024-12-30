@@ -39,6 +39,7 @@
         "cookies-next": "^4.2.1",
         "framer-motion": "^11.3.21",
         "js-cookie": "^3.0.5",
+        "jsonwebtoken": "^9.0.2",
         "jwt-decode": "^4.0.0",
         "lucide-react": "^0.401.0",
         "motion": "^10.18.0",
@@ -59,10 +60,11 @@
         "zod": "^3.23.8"
     },
     "devDependencies": {
+        "@types/jsonwebtoken": "^9.0.7",
         "@types/node": "^20.14.10",
         "@types/react": "^18",
         "@types/react-dom": "^18",
-        "eslint": "^8",
+        "eslint": "^9.17.0",
         "eslint-config-next": "14.2.4",
         "formik": "^2.4.6",
         "postcss": "^8",

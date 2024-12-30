@@ -1,18 +1,17 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
-import { toast, useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
+import { useToast } from '@/hooks/use-toast';
+import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
 import { UserInterface } from '@/interfaces/returnTypes';
 import { getUserByid } from '@/lib/db/users';
@@ -24,21 +23,19 @@ export interface GarageSignupWithNavbarProps {
 }
 
 const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
-    const [freeTrialGarage, setFreeTrialGarage] = useState(false);
+    const [freeTrialGarage, setFreeTrialGarage] = useState(true);
     const [user, setUser] = useState<UserInterface | null>(null);
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
 
     const [formData, setFormData] = useState({
-        garageName: '',
-        ownerName: '',
-        address: '',
-        phone: '',
-        email: '',
-        description: '',
-        specialties: '',
-        openingHours: '',
-        yearsInBusiness: '',
+        garageName: 'MtokaaHero Auto Repair',
+        ownerName: 'John Doe',
+        address: '123 Main St, Anytown Kenya',
+        phone: '(555) 555-5555',
+        email: 'mtokaahero@mail.com',
+        description: 'We are a full-service auto repair shop specializing in brake repair and engine diagnostics.',
+        specialties: 'Brake repair, Engine diagnostics',
     });
 
     const userId = params.userId;
@@ -56,10 +53,6 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSelectChange = (name: string) => (value: string) => {
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -70,7 +63,6 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                 title: freeTrialGarage ? 'Free trial started' : 'Garage registered',
                 description: 'Your garage account has been set up successfully.',
             });
-            // Reset form after successful submission
             setFormData({
                 garageName: '',
                 ownerName: '',
@@ -79,8 +71,6 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                 email: '',
                 description: '',
                 specialties: '',
-                openingHours: '',
-                yearsInBusiness: '',
             });
             setFreeTrialGarage(false);
         } catch (error) {
@@ -232,28 +222,14 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="openingHours">Opening Hours</Label>
+                                    <Label htmlFor="yearsInBusiness">Logo</Label>
                                     <Input
-                                        id="openingHours"
-                                        name="openingHours"
-                                        value={formData.openingHours}
-                                        onChange={handleInputChange}
-                                        placeholder="e.g., Mon-Fri: 8am-6pm, Sat: 9am-3pm"
+                                        id="logo"
+                                        name="logo"
+                                        type='file'
+                                        accept='image/*'
+                                        placeholder="Your Logo"
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="yearsInBusiness">Years in Business</Label>
-                                    <Select onValueChange={handleSelectChange('yearsInBusiness')}>
-                                        <SelectTrigger id="yearsInBusiness">
-                                            <SelectValue placeholder="Select years in business" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="0-1">Less than 1 year</SelectItem>
-                                            <SelectItem value="1-5">1-5 years</SelectItem>
-                                            <SelectItem value="5-10">5-10 years</SelectItem>
-                                            <SelectItem value="10+">10+ years</SelectItem>
-                                        </SelectContent>
-                                    </Select>
                                 </div>
                                 <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4">
                                     <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
