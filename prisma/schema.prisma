@@ -33,7 +33,8 @@ model Roles {
 model Garage {
   id                String   @id @default(uuid())
   garageName        String   @unique
-  ownerFullName     String
+  ownerFirstName     String
+  ownerLastName      String
   address           String
   phoneNumber       String
   email             String
@@ -52,7 +53,7 @@ model Garage {
 
 model Mechanic {
   id              String @id @default(uuid())
-  fiestName       String
+  firstName       String
   lastName        String
   specialization  String @db.Text
   experienceYears Int

@@ -44,7 +44,10 @@ export const authOptions: NextAuthOptions = {
                     roleId: user.roleId,
                     role: user.Role,
                     mechanic: mechanic || undefined,
-                    shopOwner: shopOwner || undefined,
+                    shopOwner: shopOwner ? {
+                        ...shopOwner,
+                        profilePicture: shopOwner.profilePicture || undefined,
+                    } : undefined,
                 };
             },
         }),
@@ -72,4 +75,4 @@ export const authOptions: NextAuthOptions = {
     pages: {
         signIn: '/auth/signin',
     },
-};
+}
