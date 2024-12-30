@@ -15,7 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserInterface } from '@/interfaces/returnTypes';
 import { getUserByid } from '@/lib/db/users';
-
+import { useSessionStorage } from '@uidotdev/usehooks';
 import { GarageInterface } from '@/interfaces/returnTypes';
 
 export interface GarageSignupWithNavbarProps {
@@ -27,6 +27,7 @@ export interface GarageSignupWithNavbarProps {
 const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
     const [freeTrialGarage, setFreeTrialGarage] = useState(true);
     const [user, setUser] = useState<UserInterface | null>(null);
+    const [garageId, setGarageId] = useSessionStorage('garageId', '');
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
 
@@ -75,6 +76,10 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
             }
 
             const garage = (await response.json()) as GarageInterface;
+            if (!garage) {
+                throw new Error('There was a problem setting up your garage account. Please try again.');
+            }
+            setGarageId(garage.id);
             router.push(`/garage/${garage.id}`);
 
             toast({
