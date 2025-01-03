@@ -1,9 +1,7 @@
-'use server'
+'use server';
 
-import { PrismaService } from "../prisma";
+import { PrismaService } from '../prisma';
 
-
-
-export async function getRoles(){
-    return await PrismaService.roles.findMany({})
+export async function getRoles() {
+    return await PrismaService.roles.findMany({});
 }

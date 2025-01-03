@@ -1,21 +1,17 @@
-
-
 export interface RoleInterface {
     id: string;
     name: string;
 }
 
-
-export interface UserInterface{
+export interface UserInterface {
     id: string;
     userName: string;
-    email: string
+    email: string;
     phoneNumber: string;
     roleId: string;
 }
 
-
-export interface GarageInterface{
+export interface GarageInterface {
     id: string;
     garageName: string;
     ownerFullName: string;

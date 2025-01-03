@@ -72,8 +72,7 @@ export default function ContactFAQPage() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-        <Link href
-        ={href} className="text-black/60 hover:text-black transition-colors duration-200">
+        <Link href={href} className="text-black/60 hover:text-black transition-colors duration-200">
             {children}
         </Link>
     );
@@ -84,7 +83,7 @@ export default function ContactFAQPage() {
                 <div className="container mx-auto px-4 flex items-center justify-between h-full">
                     <div>
                         <Link href="/" passHref>
-                                <Image src="/logo.svg" alt="MtokaaHero" width={120} height={40} />
+                            <Image src="/logo.svg" alt="MtokaaHero" width={120} height={40} />
                         </Link>
                     </div>
                     <div className="hidden md:flex items-center space-x-8 text-black">

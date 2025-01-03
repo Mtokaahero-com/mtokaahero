@@ -1,16 +1,13 @@
-
 import React from 'react';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-
 function StatsSection() {
     return (
         <section
             className="relative items-center justify-center w-screen md:h-[70vh] flex md:flex-row flex-col bg-cover bg-center pt-9"
-            style={{ backgroundImage: "url('/stats3.jpg')" }}
-        >
+            style={{ backgroundImage: "url('/stats3.jpg')" }}>
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-50"></div>
 
@@ -25,8 +22,7 @@ function StatsSection() {
                 <Link href="/services">
                     <Button
                         variant={'secondary'}
-                        className="hover:border-brand_blue rounded-xl w-36 border border-white p-2 hover:bg-_brand_pink hover:bg-brand_blue transition-all duration-300 ease-linear hover:text-white"
-                    >
+                        className="hover:border-brand_blue rounded-xl w-36 border border-white p-2 hover:bg-_brand_pink hover:bg-brand_blue transition-all duration-300 ease-linear hover:text-white">
                         Discover More
                     </Button>
                 </Link>
@@ -34,7 +30,5 @@ function StatsSection() {
         </section>
     );
 }
-
-
 
 export default StatsSection;

@@ -23,8 +23,7 @@ const SECRET_KEY = 'your-secret-key'; // Replace with your secret key
 //     }
 // }
 
-
 export const generateSubscriptionString = async (garageId: string, expiryDate: string) => {
     const subscriptionString = jwt.sign({ garageId }, SECRET_KEY, { expiresIn: expiryDate });
     return subscriptionString;
-}
+};

@@ -1,6 +1,3 @@
-
-
-
 export interface GarageRegistrationProps {
     garageName: string;
     garageEmail: string;

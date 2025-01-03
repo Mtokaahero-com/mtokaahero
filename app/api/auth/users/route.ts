@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
                 roleId,
             },
             include: {
-                Role: true
-            }
+                Role: true,
+            },
         });
 
         return NextResponse.json({

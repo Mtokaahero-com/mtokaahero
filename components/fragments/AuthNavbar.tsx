@@ -1,17 +1,12 @@
-
-
 import Link from 'next/link';
 import { useState } from 'react';
 
-
 const NavbarAuth = () => {
-
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <>
-            <nav
-                className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 h-29 bg-white`}>
+            <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 h-29 bg-white`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between  h-24">
                         <div className="flex items-center">
@@ -32,9 +27,7 @@ const NavbarAuth = () => {
                 </div>
             </nav>
         </>
-    )
-}
-
-
+    );
+};
 
 export default NavbarAuth;
