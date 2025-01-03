@@ -49,7 +49,7 @@ function HeroSection() {
                     playsInline
                     className="absolute top-0 left-0 w-full h-full object-cover">
                     <source
-                        src="https://res.cloudinary.com/dazptrvgj/video/upload/v1722592933/7565182-uhd_4096_2160_25fps_zsffdo.mp4"
+                        src="https://res.cloudinary.com/dazptrvgj/video/upload/v1735933361/jlvfwpy8eku9lu8aglxo.mp4"
                         type="video/mp4"
                     />
                     Your browser does not support the video tag.

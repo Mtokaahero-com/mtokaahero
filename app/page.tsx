@@ -1,10 +1,11 @@
 'use client';
 
 import Footer from '@/components/fragments/Footer';
+import CustomerView from '@/components/fragments/CustomerView';
 import { lazy, Suspense } from 'react';
 
 const HeroSection = lazy(() => import('@/components/fragments/HeroComponent'));
-const OurServices = lazy(() => import('@/components/fragments/Services'));
+const customerView = lazy(() => import('@/components/fragments/CustomerView'));
 const PricingSection = lazy(() => import('@/components/fragments/Pricing'));
 
 import { Button } from '@/components/ui/button';
@@ -51,7 +52,8 @@ export default function HomePage() {
             {/* <Navbar /> */}
             <Suspense fallback={<div>Loading...</div>}>
                 <HeroSection />
-                <OurServices />
+                {/* <OurServices /> */}
+                <CustomerView />
                 <PricingSection />
             </Suspense>
             <Footer />

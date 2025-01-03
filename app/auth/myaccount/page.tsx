@@ -12,7 +12,6 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { HelpCircle, Home, LogOut, Menu, Settings } from 'lucide-react';
 
-
 interface Profile {
     type: 'garage' | 'mechanic' | 'vendor';
     name: string;
@@ -54,7 +53,6 @@ export default function Component() {
             setIsLoading(false);
         }
     };
-
 
     return (
         <div

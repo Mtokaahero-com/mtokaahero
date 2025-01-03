@@ -1,31 +1,46 @@
 'use client';
 
+import React, { useEffect, useState, use } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { Toaster } from '@/components/ui/toaster';
+import { useToast } from '@/hooks/use-toast';
 import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
-
-
-import { UserInterface } from '@/interfaces/returnTypes';
+import { UserInterface, GarageInterface } from '@/interfaces/returnTypes';
 import { getUserByid } from '@/lib/db/users';
 
 export interface GarageSignupWithNavbarProps {
-    params: {
+    params: Promise<{
         userId: string;
-    }
+    }>;
 }
 
-
-
-const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
-    const [freeTrialGarage, setFreeTrialGarage] = useState(false);
+const GarageSignupWithNavbar = async (props: GarageSignupWithNavbarProps): Promise<any> => {
+    const params = await props.params;
+    const [freeTrialGarage, setFreeTrialGarage] = useState(true);
     const [user, setUser] = useState<UserInterface | null>(null);
     const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
+    const router = useRouter();
+    const { data: session, update } = useSession();
+
+    const [formData, setFormData] = useState({
+        garageName: 'MtokaaHero Auto Repair',
+        ownerName: 'John Doe',
+        address: '123 Main St, Anytown Kenya',
+        phone: '(555) 555-5555',
+        email: 'mtokaahero@mail.com',
+        description: 'We are a full-service auto repair shop specializing in brake repair and engine diagnostics.',
+        specialties: 'Brake repair, Engine diagnostics',
+    });
 
     const userId = params.userId;
 
@@ -36,6 +51,69 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
             });
         }
     }, [userId]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const response = await fetch('/api/auth/garage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...formData, freeTrialGarage }),
+            });
+
+            if (!response.ok) {
+                throw new Error('There was a problem setting up your garage account. Please try again.');
+            }
+
+            const garage = (await response.json()) as GarageInterface;
+            if (!garage) {
+                throw new Error('There was a problem setting up your garage account. Please try again.');
+            }
+
+            // Update the session with the new garage details
+            await update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    garage: garage,
+                },
+            });
+
+            router.push(`/garage/${garage.id}`);
+
+            toast({
+                title: freeTrialGarage ? 'Free trial started' : 'Garage registered',
+                description: 'Your garage account has been set up successfully.',
+            });
+            setFormData({
+                garageName: '',
+                ownerName: '',
+                address: '',
+                phone: '',
+                email: '',
+                description: '',
+                specialties: '',
+            });
+            setFreeTrialGarage(false);
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: 'Error',
+                description: 'There was a problem setting up your garage account. Please try again.',
+                variant: 'destructive',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-primary to-primary-foreground relative">
@@ -91,58 +169,120 @@ const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params 
                             <CardDescription>Fill out the form below to get started.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form className="grid gap-4">
+                            <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="garage-name">Garage Name</Label>
-                                        <Input id="garage-name" placeholder="MtokaaHero Auto Repair" required />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="garageName">Garage Name</Label>
+                                        <Input
+                                            id="garageName"
+                                            name="garageName"
+                                            value={formData.garageName}
+                                            onChange={handleInputChange}
+                                            placeholder="MtokaaHero Auto Repair"
+                                            required
+                                        />
                                     </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="owner-name">Owner Full Names</Label>
-                                        <Input id="owner-name" placeholder="John Doe" required />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="ownerName">Owner Full Names</Label>
+                                        <Input
+                                            id="ownerName"
+                                            name="ownerName"
+                                            value={formData.ownerName}
+                                            onChange={handleInputChange}
+                                            placeholder="John Doe"
+                                            required
+                                        />
                                     </div>
                                 </div>
-                                <div className="grid gap-2">
+                                <div className="space-y-2">
                                     <Label htmlFor="address">Address</Label>
-                                    <Input id="address" placeholder="123 Main St, Anytown Kenya" required />
+                                    <Input
+                                        id="address"
+                                        name="address"
+                                        value={formData.address}
+                                        onChange={handleInputChange}
+                                        placeholder="123 Main St, Anytown Kenya"
+                                        required
+                                    />
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="grid gap-2">
+                                    <div className="space-y-2">
                                         <Label htmlFor="phone">Phone Number</Label>
-                                        <Input id="phone" type="tel" placeholder="(555) 555-5555" required />
+                                        <Input
+                                            id="phone"
+                                            name="phone"
+                                            type="tel"
+                                            value={formData.phone}
+                                            onChange={handleInputChange}
+                                            placeholder="(555) 555-5555"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            placeholder="garage@example.com"
+                                            required
+                                        />
                                     </div>
                                 </div>
-                            </form>
-                            <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4 mt-6">
-                                <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
-                                <p>Experience all features for 30 days, no credit card required.</p>
-                                <div className="flex items-center space-x-2">
-                                    <Switch
-                                        id="free-trial"
-                                        checked={freeTrialGarage}
-                                        onCheckedChange={setFreeTrialGarage}
+                                <div className="space-y-2">
+                                    <Label htmlFor="description">Garage Description</Label>
+                                    <Textarea
+                                        id="description"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleInputChange}
+                                        placeholder="Tell us about your garage and services..."
+                                        rows={3}
                                     />
-                                    <Label htmlFor="free-trial">Enable Free Trial</Label>
                                 </div>
-                            </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="specialties">Specialties</Label>
+                                    <Input
+                                        id="specialties"
+                                        name="specialties"
+                                        value={formData.specialties}
+                                        onChange={handleInputChange}
+                                        placeholder="e.g., Brake repair, Engine diagnostics"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="logo">Logo</Label>
+                                    <Input id="logo" name="logo" type="file" accept="image/*" placeholder="Your Logo" />
+                                </div>
+                                <div className="bg-gradient-to-r from-blue-500 to-pink-500 p-6 rounded-lg shadow-lg text-white space-y-4">
+                                    <h2 className="text-2xl font-bold">Start Your Free Trial Today!</h2>
+                                    <p>Experience all features for 30 days, no credit card required.</p>
+                                    <div className="flex items-center space-x-2">
+                                        <Switch
+                                            id="free-trial"
+                                            checked={freeTrialGarage}
+                                            onCheckedChange={setFreeTrialGarage}
+                                        />
+                                        <Label htmlFor="free-trial">Enable Free Trial</Label>
+                                    </div>
+                                </div>
+                                <Button type="submit" className="w-full" disabled={loading}>
+                                    {loading
+                                        ? 'Processing...'
+                                        : freeTrialGarage
+                                          ? 'Start Free Trial'
+                                          : 'Register Garage'}
+                                </Button>
+                            </form>
                         </CardContent>
-                        <CardFooter>
-                            <button
-                                type="submit"
-                                className={`mt-4 w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                                    loading ? 'opacity-50 cursor-not-allowed' : ''
-                                }`}
-                                disabled={loading}>
-                                {freeTrialGarage ? 'Start Free Trial' : 'Register Garage'}
-                            </button>
-                        </CardFooter>
                     </Card>
                 </div>
             </div>
+            <Toaster />
         </div>
     );
 };
-
-
 
 export default GarageSignupWithNavbar;

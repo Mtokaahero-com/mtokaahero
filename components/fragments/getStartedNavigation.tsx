@@ -6,7 +6,6 @@ import { MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 
 const Navigation = () => {
-
     return (
         <nav className="sticky top-0 z-10 flex items-center justify-between flex-wrap bg-gray-800 p-6">
             <div className="flex items-center flex-shrink-0 text-white mr-6">
@@ -20,20 +19,17 @@ const Navigation = () => {
                     </Link>
                     <Link
                         href="/services"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
-                    >
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Services
                     </Link>
                     <Link
                         href="/mechanics"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
-                    >
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Mechanics
                     </Link>
                     <Link
                         href="/products"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4"
-                    >
+                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Products
                     </Link>
                     <Link href="/contact" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400">
@@ -42,8 +38,7 @@ const Navigation = () => {
                 </div>
             </div>
             <div className="flex items-center">
-                <div className="mr-4">
-                </div>
+                <div className="mr-4"></div>
             </div>
 
             <div className="block lg:hidden">
