@@ -7,7 +7,7 @@ import { Search, Coffee, Library, Hotel, Users, Monitor, Printer, CoffeeIcon as 
 
 export default function Component() {
     return (
-        <div className="min-h-screen bg-white">
+        <div className=" bg-white">
             {/* Hero Section */}
             <div className="relative h-[300px]">
                 <div className="absolute inset-0">
