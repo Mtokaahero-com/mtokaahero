@@ -5,6 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search, Coffee, Library, Hotel, Users, Monitor, Printer, CoffeeIcon as Coffee2 } from 'lucide-react';
 
+
+
+
 export default function Component() {
     return (
         <div className=" bg-white">

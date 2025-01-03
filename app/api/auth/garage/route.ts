@@ -4,7 +4,9 @@ import { generateSubscriptionString } from '@/services/jwt.service';
 
 interface garageProps {
     garageName: string;
-    ownerFullName: string;
+    // ownerFullName: string;
+    ownerFirstName: string;
+    ownerLastName: string;
     address: string;
     phoneNumber: string;
     email: string;
@@ -18,7 +20,8 @@ export async function POST(req: NextRequest) {
     try {
         const {
             garageName,
-            ownerFullName,
+            ownerFirstName,
+            ownerLastName,
             address,
             phoneNumber,
             email,
@@ -30,7 +33,8 @@ export async function POST(req: NextRequest) {
 
         if (
             !garageName ||
-            !ownerFullName ||
+            !ownerFirstName ||
+            !ownerLastName ||
             !address ||
             !phoneNumber ||
             !email ||
@@ -55,7 +59,8 @@ export async function POST(req: NextRequest) {
         const garage = await PrismaService.garage.create({
             data: {
                 garageName,
-                ownerFullName,
+                ownerFirstName: ownerFirstName,
+                ownerLastName: ownerLastName,
                 address,
                 phoneNumber,
                 email,
@@ -85,7 +90,7 @@ export async function POST(req: NextRequest) {
             garage: {
                 id: garage.id,
                 garageName: garage.garageName,
-                ownerFullName: garage.ownerFullName,
+                // ownerFullName: garage.ownerFullName,
                 address: garage.address,
                 phoneNumber: garage.phoneNumber,
                 email: garage.email,

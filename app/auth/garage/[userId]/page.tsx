@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, use } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -18,12 +18,13 @@ import { UserInterface, GarageInterface } from '@/interfaces/returnTypes';
 import { getUserByid } from '@/lib/db/users';
 
 export interface GarageSignupWithNavbarProps {
-    params: {
+    params: Promise<{
         userId: string;
-    };
+    }>;
 }
 
-const GarageSignupWithNavbar: React.FC<GarageSignupWithNavbarProps> = ({ params }) => {
+const GarageSignupWithNavbar = async (props: GarageSignupWithNavbarProps): Promise<any> => {
+    const params = await props.params;
     const [freeTrialGarage, setFreeTrialGarage] = useState(true);
     const [user, setUser] = useState<UserInterface | null>(null);
     const [loading, setLoading] = useState(false);

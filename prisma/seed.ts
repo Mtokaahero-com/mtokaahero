@@ -5,7 +5,9 @@ async function main() {
         const seedDemoGarage = await PrismaService.garage.create({
             data: {
                 garageName: 'KInungi Garage',
-                ownerFullName: 'John Doe',
+                // ownerFullName: 'John Doe',
+                ownerFirstName: 'John',
+                ownerLastName: 'Doe',
                 address: 'KInungi',
                 phoneNumber: '0712345678',
                 email: 'kinungi@garage.com',
