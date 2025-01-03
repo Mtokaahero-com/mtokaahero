@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,26 +10,26 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Clipboard, DollarSign, Moon, Settings, Sun, User, Wrench } from 'lucide-react'
-import { useState } from 'react'
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Clipboard, DollarSign, Moon, Settings, Sun, User, Wrench } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Component() {
-    const [isDarkMode, setIsDarkMode] = useState(false)
-    const [isActive, setIsActive] = useState(true)
-    const [mechanicName, setMechanicName] = useState('John Doe')
-    const [specialty, setSpecialty] = useState('Engine Repair')
-    const [yearsOfExperience, setYearsOfExperience] = useState('10')
+    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isActive, setIsActive] = useState(true);
+    const [mechanicName, setMechanicName] = useState('John Doe');
+    const [specialty, setSpecialty] = useState('Engine Repair');
+    const [yearsOfExperience, setYearsOfExperience] = useState('10');
 
     const toggleDarkMode = () => {
-        setIsDarkMode(!isDarkMode)
-        document.documentElement.classList.toggle('dark', !isDarkMode)
-    }
+        setIsDarkMode(!isDarkMode);
+        document.documentElement.classList.toggle('dark', !isDarkMode);
+    };
 
     return (
         <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 ${isDarkMode ? 'dark' : ''}`}>
@@ -291,5 +291,5 @@ export default function Component() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

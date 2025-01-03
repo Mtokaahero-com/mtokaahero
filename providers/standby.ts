@@ -1,4 +1,1 @@
-
-
-
-const standByFunction =(mode: string, message: string[], timeout?: number) => {}
+const standByFunction = (mode: string, message: string[], timeout?: number) => {};

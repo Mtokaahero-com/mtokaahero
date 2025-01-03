@@ -1,6 +1,4 @@
-
-
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse, NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
     // Add your middleware here

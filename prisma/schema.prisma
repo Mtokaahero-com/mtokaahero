@@ -18,11 +18,10 @@ model User {
   updatedAt   DateTime @updatedAt
   roleId      String
 
-  garageOwners GarageOwner[]
-  mechanics    Mechanic[]
-  shopOwners   ShopOwner[]
-  Subscription Subscription[]
-  Role         Roles          @relation(fields: [roleId], references: [id])
+  mechanics  Mechanic[]
+  shopOwners ShopOwner[]
+  Role       Roles       @relation(fields: [roleId], references: [id])
+  Garage     Garage[]
 }
 
 model Roles {
@@ -31,45 +30,36 @@ model Roles {
   User User[]
 }
 
-model GarageOwner {
-  id             String  @id @default(uuid())
-  userId         String
-  firstName      String
-  lastName       String
-  address        String
-  profilePicture String?
-
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Garage Garage[]
-
-  @@index([userId], name: "userId")
-}
-
 model Garage {
-  id         String @id @default(uuid())
-  garageName String @unique
-  location   String
-  email      String
-  logo       String
-  address    String
+  id                String   @id @default(uuid())
+  garageName        String   @unique
+  ownerFirstName     String
+  ownerLastName      String
+  address           String
+  phoneNumber       String
+  email             String
+  garageDescription String
+  specialties       String[]
+  logo              String
 
-  garageOwner   GarageOwner @relation(fields: [garageOwnerId], references: [id], onDelete: Cascade)
   garageOwnerId String
+  garageOwner   User   @relation(fields: [garageOwnerId], references: [id], onDelete: Cascade)
 
-  contact  Contact[]
-  services Service[]
-  Products Product[]
+  contact      Contact[]
+  services     Service[]
+  Products     Product[]
+  Subscription Subscription[]
 }
 
 model Mechanic {
-  id              String  @id @default(uuid())
-  fiestName       String
+  id              String @id @default(uuid())
+  firstName       String
   lastName        String
-  specialization  String  @db.Text
+  specialization  String @db.Text
   experienceYears Int
   address         String
   location        String
-  profilePicture  String?
+  profilePicture  String
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -164,24 +154,12 @@ model Plan {
 }
 
 model Subscription {
-  id        String   @id @default(uuid())
-  startDate DateTime @default(now())
-  endDate   DateTime
-  isActive  Boolean  @default(true)
-  userId    String
-  planId    String?
+  id                       String  @id @default(uuid())
+  subscriptionUniqueString String
+  isActive                 Boolean @default(true)
+  garageId                 String
+  planId                   String?
 
-  Plan Plan? @relation(fields: [planId], references: [id])
-  user User  @relation(fields: [userId], references: [id])
-}
-
-
-model EarlyAccess {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  inviteUrl String?  @unique
-  validTill DateTime
-  isActive  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  Plan   Plan?  @relation(fields: [planId], references: [id])
+  garage Garage @relation(fields: [garageId], references: [id])
 }
