@@ -15,7 +15,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { HelpCircle, Home, Menu, Settings } from 'lucide-react';
 import { UserInterface, GarageInterface } from '@/interfaces/returnTypes';
-import { getUserByid } from '@/lib/db/users';
 
 export interface GarageSignupWithNavbarProps {
     params: Promise<{
@@ -42,15 +41,9 @@ const GarageSignupWithNavbar = async (props: GarageSignupWithNavbarProps): Promi
         specialties: 'Brake repair, Engine diagnostics',
     });
 
-    const userId = params.userId;
 
-    useEffect(() => {
-        if (userId) {
-            getUserByid(userId).then((data) => {
-                setUser(data);
-            });
-        }
-    }, [userId]);
+
+    const userId = params.userId;
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
