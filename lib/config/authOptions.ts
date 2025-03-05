@@ -1,9 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
     session: { strategy: 'jwt' },
@@ -19,11 +17,21 @@ export const authOptions: NextAuthOptions = {
                     throw new Error('Missing email or password.');
                 }
 
-                const user = await prisma.user.findUnique({
-                    where: { email: credentials.email },
-                    include: { Role: true },
-                });
 
+
+                let user = {
+                    id: '1',
+                    email: 'user@example.com',
+                    password: '$2a$10$hashOfPassword',
+                    userName: 'user',
+                    phoneNumber: '1234567890',
+                    roleId: '1',
+                    Role: {
+                        id: '1',
+                        name: 'User',
+                    },
+                    
+                };
                 if (!user) {
                     throw new Error('User not found.');
                 }
@@ -33,8 +41,7 @@ export const authOptions: NextAuthOptions = {
                     throw new Error('Invalid password.');
                 }
 
-                const mechanic = await prisma.mechanic.findUnique({ where: { userId: user.id } });
-                const shopOwner = await prisma.shopOwner.findFirst({ where: { userId: user.id } });
+               
 
                 return {
                     id: user.id,
@@ -43,13 +50,6 @@ export const authOptions: NextAuthOptions = {
                     phoneNumber: user.phoneNumber,
                     roleId: user.roleId,
                     role: user.Role,
-                    mechanic: mechanic || undefined,
-                    shopOwner: shopOwner
-                        ? {
-                              ...shopOwner,
-                              profilePicture: shopOwner.profilePicture || undefined,
-                          }
-                        : undefined,
                 };
             },
         }),
