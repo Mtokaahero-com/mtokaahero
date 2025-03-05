@@ -11,8 +11,6 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { getRoles } from '@/lib/db/roles';
-import { getRole } from '@/lib/validators/users';
 
 export default function UserCreationPage() {
     const [roles, setRoles] = useState<RoleInterface[]>([]);
@@ -100,17 +98,17 @@ export default function UserCreationPage() {
                 body: JSON.stringify(formData),
             });
             const user = await response.json();
-            const role = (await getRole(user.user.roleId)) as RoleInterface;
-            if (role.name === 'garage') {
+            const role = 'garage'; // Temporarily using 'mechanic' for testing
+            if (role === 'garage') {
                 router.push(`/auth/garage/${user.user.id}`);
-            } else if (role.name === 'mechanic') {
+            } else if (role === 'mechanic') {
                 router.push(`/auth/mechanic/${user.user.id}`);
-            } else if (role.name === 'shop') {
+            } else if (role === 'shop') {
                 router.push(`/auth/shop/${user.user.id}`);
             } else {
                 toast({
                     title: 'Base Permission Failed',
-                    description: 'Process failed when Asigning your account, please ty again',
+                    description: 'Process failed when assigning your account, please try again',
                     variant: 'destructive',
                 });
             }
@@ -122,16 +120,6 @@ export default function UserCreationPage() {
         }
     };
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const rolesData = await getRoles();
-                setRoles(rolesData);
-            } catch (error) {
-                console.error('Error fetching roles:', error);
-            }
-        })();
-    }, []);
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
