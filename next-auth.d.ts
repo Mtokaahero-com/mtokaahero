@@ -1,71 +1,32 @@
-import { DefaultSession, DefaultUser } from 'next-auth';
+import { DefaultSession } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
+
+// ─── Role enum aligned with the backend ──────────────────────────────────────
+export type UserRole = 'GARAGE' | 'MECHANIC' | 'SHOP' | 'ADMIN' | 'USER';
 
 declare module 'next-auth' {
     interface Session {
         user: {
             id: string;
             email: string;
-            userName: string;
+            firstName: string;
+            lastName: string;
             phoneNumber: string;
-            role: {
-                id: string;
-                name: string;
-            };
-            mechanic?: {
-                id: string;
-                firstName: string;
-                lastName: string;
-                specialization: string;
-                experienceYears: number;
-                address: string;
-                location: string;
-                profilePicture?: string;
-            };
-            shopOwner?: {
-                id: string;
-                firstName: string;
-                lastName: string;
-                address: string;
-                profilePicture?: string;
-            };
+            role: UserRole;
+            accessToken: string;
+            refreshToken: string;
         } & DefaultSession['user'];
     }
 
-    interface User extends DefaultUser {
+    interface User {
         id: string;
         email: string;
-        userName: string;
+        firstName: string;
+        lastName: string;
         phoneNumber: string;
-        roleId: string;
-        role: {
-            id: string;
-            name: string;
-        };
-        garageOwner?: {
-            id: string;
-            firstName: string;
-            lastName: string;
-            address: string;
-            profilePicture?: string;
-        };
-        mechanic?: {
-            id: string;
-            firstName: string;
-            lastName: string;
-            specialization: string;
-            experienceYears: number;
-            address: string;
-            location: string;
-            profilePicture?: string;
-        };
-        shopOwner?: {
-            id: string;
-            firstName: string;
-            lastName: string;
-            address: string;
-            profilePicture?: string;
-        };
+        role: UserRole;
+        accessToken: string;
+        refreshToken: string;
     }
 }
 
@@ -73,36 +34,11 @@ declare module 'next-auth/jwt' {
     interface JWT {
         id: string;
         email: string;
-        userName: string;
+        firstName: string;
+        lastName: string;
         phoneNumber: string;
-        roleId: string;
-        role: {
-            id: string;
-            name: string;
-        };
-        garageOwner?: {
-            id: string;
-            firstName: string;
-            lastName: string;
-            address: string;
-            profilePicture?: string;
-        };
-        mechanic?: {
-            id: string;
-            firstName: string;
-            lastName: string;
-            specialization: string;
-            experienceYears: number;
-            address: string;
-            location: string;
-            profilePicture?: string;
-        };
-        shopOwner?: {
-            id: string;
-            firstName: string;
-            lastName: string;
-            address: string;
-            profilePicture?: string;
-        };
+        role: UserRole;
+        accessToken: string;
+        refreshToken: string;
     }
 }

@@ -37,9 +37,18 @@ const Navigation = () => {
                     </Link>
                 </div>
             </div>
-            <div className="flex items-center">
-                <div className="mr-4"></div>
-            </div>
+            <div className="flex items-center gap-2">
+                    <Link href="/auth/signin">
+                        <Button variant="ghost" className="text-white hover:text-gray-300 hover:bg-white/10">
+                            Sign In
+                        </Button>
+                    </Link>
+                    <Link href="/auth/garage">
+                        <Button className="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-semibold">
+                            Get Started
+                        </Button>
+                    </Link>
+                </div>
 
             <div className="block lg:hidden">
                 <Sheet>

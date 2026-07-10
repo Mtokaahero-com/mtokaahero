@@ -1,140 +1,159 @@
 'use client';
 
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import Link from 'next/link';
-import Cookies from 'js-cookie';
-import React, { useState, useEffect } from 'react';
-import classNames from 'classnames';
-import toast from 'react-hot-toast';
-
-import LoadingComponent from '@/components/ui/loading';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { Loader2, ShoppingBag, MapPin, User, Mail, Phone, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { authApi } from '@/lib/api/auth';
 
-export default function Component() {
-    const [loading, setLoading] = useState(false);
-    const [authToken, setAuthToken] = useState(Cookies.get('storeToken'));
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: 'testing',
-        phone: '',
-    });
+const schema = z.object({
+    firstName: z.string().min(2, 'First name must be at least 2 characters'),
+    lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+    email: z.string().email('Please enter a valid email'),
+    phoneNumber: z.string().min(10, 'Enter a valid phone number'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    address: z.string().min(5, 'Please enter a valid address'),
+});
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        for (let key in formData) {
-            if (key === e.target.id) {
-                setFormData({ ...formData, [key]: e.target.value });
-            }
+type FormValues = z.infer<typeof schema>;
+
+export default function ShopRegisterPage() {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormValues>({ resolver: zodResolver(schema) });
+
+    const onSubmit = async (data: FormValues) => {
+        setIsLoading(true);
+        try {
+            await authApi.registerShop(data);
+            toast.success('Shop registered! Please sign in to continue.');
+            router.push('/auth/signin');
+        } catch (err: any) {
+            toast.error(err.message ?? 'Registration failed. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-    };
-
     return (
-        <div className="w-full min-h-dvh flex flex-col">
-            <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6]">
-                <div className="container px-4 md:px-6 text-center text-white">
-                    <div className="max-w-2xl mx-auto space-y-4">
-                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                            Become a Vendor on Our Marketplace
-                        </h1>
-                        <p className="text-lg md:text-xl">
-                            Join our vibrant community of vendors and start selling your products to a wide audience.
-                        </p>
-                        <div>
-                            <Link
-                                href="#"
-                                className={classNames(
-                                    'inline-flex items-center justify-center h-10 px-6 rounded-md bg-white text-[#6366f1] font-medium transition-colors hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#6366f1]',
-                                    { hidden: loading },
-                                )}
-                                prefetch={false}>
-                                Learn More
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 flex items-center justify-center p-4">
+            <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+                {/* Left panel */}
+                <div className="hidden lg:flex flex-col space-y-6 text-white p-8">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-purple-500 p-3 rounded-xl">
+                            <ShoppingBag className="h-8 w-8" />
+                        </div>
+                        <span className="text-2xl font-bold">MtokaaHero</span>
+                    </div>
+                    <h1 className="text-4xl font-bold leading-tight">
+                        Sell your parts<br />
+                        <span className="text-purple-400">to thousands.</span>
+                    </h1>
+                    <p className="text-slate-300 text-lg">
+                        Register your auto parts shop and reach vehicle owners and garages across Kenya.
+                    </p>
+                    <ul className="space-y-3 text-slate-300">
+                        {['List unlimited products', 'Connect with garages directly', 'Grow your customer base'].map((item) => (
+                            <li key={item} className="flex items-center gap-2">
+                                <div className="h-2 w-2 bg-purple-400 rounded-full" />
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Registration form */}
+                <Card className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm text-white">
+                    <CardHeader className="space-y-1">
+                        <CardTitle className="text-2xl font-bold">Create Your Shop</CardTitle>
+                        <CardDescription className="text-slate-400">
+                            Already have an account?{' '}
+                            <Link href="/auth/signin" className="text-purple-400 hover:underline font-medium">
+                                Sign in
                             </Link>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            {loading ? (
-                <div className=" ">
-                    <LoadingComponent />
-                </div>
-            ) : (
-                <section id="signup-form" className="w-full py-12 md:py-24">
-                    <div className="container px-4 md:px-6">
-                        <div className="max-w-xl mx-auto">
-                            <h2 className="text-3xl font-bold mb-6">Create Your Vendor Account</h2>
-                            <form className="space-y-4" onSubmit={handleSubmit}>
-                                <div>
-                                    <Label htmlFor="firstName">First Name</Label>
-                                    <Input
-                                        id="firstName"
-                                        type="text"
-                                        placeholder="Enter your first name"
-                                        required
-                                        onChange={handleChange}
-                                    />
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                            {/* Name row */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-1">
+                                    <Label htmlFor="firstName" className="text-slate-300 text-sm">First Name</Label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                                        <Input id="firstName" placeholder="Peter" className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-slate-500" {...register('firstName')} />
+                                    </div>
+                                    {errors.firstName && <p className="text-red-400 text-xs">{errors.firstName.message}</p>}
                                 </div>
-                                <div>
-                                    <Label htmlFor="lastName">Last Name</Label>
-                                    <Input
-                                        id="lastName"
-                                        type="text"
-                                        placeholder="Enter your last name"
-                                        required
-                                        onChange={handleChange}
-                                    />
+                                <div className="space-y-1">
+                                    <Label htmlFor="lastName" className="text-slate-300 text-sm">Last Name</Label>
+                                    <Input id="lastName" placeholder="Kamau" className="bg-white/10 border-white/20 text-white placeholder:text-slate-500" {...register('lastName')} />
+                                    {errors.lastName && <p className="text-red-400 text-xs">{errors.lastName.message}</p>}
                                 </div>
-                                <div>
-                                    <Label htmlFor="email">Email</Label>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="Enter your email"
-                                        required
-                                        onChange={handleChange}
-                                    />
+                            </div>
+
+                            {/* Email & Phone */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-1">
+                                    <Label htmlFor="email" className="text-slate-300 text-sm">Email</Label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                                        <Input id="email" type="email" placeholder="peter@shop.com" className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-slate-500" {...register('email')} />
+                                    </div>
+                                    {errors.email && <p className="text-red-400 text-xs">{errors.email.message}</p>}
                                 </div>
-                                <div>
-                                    <Label htmlFor="password">Password</Label>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        placeholder="Enter a password"
-                                        required
-                                        onChange={handleChange}
-                                        value={formData.password}
-                                    />
+                                <div className="space-y-1">
+                                    <Label htmlFor="phoneNumber" className="text-slate-300 text-sm">Phone Number</Label>
+                                    <div className="relative">
+                                        <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                                        <Input id="phoneNumber" type="tel" placeholder="+254722000000" className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-slate-500" {...register('phoneNumber')} />
+                                    </div>
+                                    {errors.phoneNumber && <p className="text-red-400 text-xs">{errors.phoneNumber.message}</p>}
                                 </div>
-                                <div>
-                                    <Label htmlFor="website">Phone Number</Label>
-                                    <Input
-                                        id="phone"
-                                        type="tel"
-                                        placeholder="Enter your phone number"
-                                        required
-                                        onChange={handleChange}
-                                    />
+                            </div>
+
+                            {/* Address */}
+                            <div className="space-y-1">
+                                <Label htmlFor="address" className="text-slate-300 text-sm">Shop Address</Label>
+                                <div className="relative">
+                                    <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                                    <Input id="address" placeholder="Parklands Auto Spares, Nairobi" className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-slate-500" {...register('address')} />
                                 </div>
-                                <Button type="submit" className="w-full">
-                                    Sign Up
-                                </Button>
-                            </form>
-                            <p className="mt-4 text-center text-sm text-muted-foreground">
-                                Already have an account?{' '}
-                                <Link href="/auth/vendors/signin" className="text-primary">
-                                    Log in
-                                </Link>
-                            </p>
-                        </div>
-                    </div>
-                </section>
-            )}
+                                {errors.address && <p className="text-red-400 text-xs">{errors.address.message}</p>}
+                            </div>
+
+                            {/* Password */}
+                            <div className="space-y-1">
+                                <Label htmlFor="password" className="text-slate-300 text-sm">Password</Label>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                                    <Input id="password" type="password" placeholder="Min. 8 characters" className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-slate-500" {...register('password')} />
+                                </div>
+                                {errors.password && <p className="text-red-400 text-xs">{errors.password.message}</p>}
+                            </div>
+
+                            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-semibold h-11" disabled={isLoading}>
+                                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating shop...</> : 'Create Shop Account'}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 }
