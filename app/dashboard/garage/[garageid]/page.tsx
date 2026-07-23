@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Moon, Sun, Settings, Plus, DollarSign, ShoppingCart, Package, Wrench, Users, User } from 'lucide-react';
+import { LogoutButton } from '@/components/fragments/LogoutButton';
 
 // Create a context for the theme
 const ThemeContext = createContext({
@@ -86,6 +87,9 @@ function GarageSaasAdmin() {
                                 <Button variant="ghost" className="w-full justify-start">
                                     <Users className="mr-2 h-4 w-4" /> Customers
                                 </Button>
+                            </li>
+                            <li>
+                                <LogoutButton />
                             </li>
                         </ul>
                     </nav>
