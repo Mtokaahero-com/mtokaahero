@@ -10,7 +10,7 @@ const PricingSection = lazy(() => import('@/components/fragments/Pricing'));
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { HelpCircle, Home, LogOut, Menu, Settings } from 'lucide-react';
+import { HelpCircle, Home, LogOut, Menu } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -33,18 +33,14 @@ export default function HomePage() {
                                 <Home className="h-5 w-5" />
                                 <span>Home</span>
                             </Link>
-                            <Link href="/settings" className="flex items-center space-x-2 text-sm">
-                                <Settings className="h-5 w-5" />
-                                <span>Settings</span>
-                            </Link>
-                            <Link href="/help" className="flex items-center space-x-2 text-sm">
+                            <Link href="/contact" className="flex items-center space-x-2 text-sm">
                                 <HelpCircle className="h-5 w-5" />
-                                <span>Help</span>
+                                <span>Contact</span>
                             </Link>
-                            <Button variant="ghost" className="justify-start px-2">
-                                <LogOut className="h-5 w-5 mr-2" />
+                            <Link href="/auth/signin" className="flex items-center space-x-2 text-sm">
+                                <LogOut className="h-5 w-5" />
                                 <span>Login</span>
-                            </Button>
+                            </Link>
                         </nav>
                     </SheetContent>
                 </Sheet>

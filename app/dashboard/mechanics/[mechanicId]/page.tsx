@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clipboard, DollarSign, Moon, Settings, Sun, User, Wrench } from 'lucide-react';
 import { useState } from 'react';
+import { LogoutButton } from '@/components/fragments/LogoutButton';
 
 export default function Component() {
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -91,10 +92,9 @@ export default function Component() {
                                         <DropdownMenuItem>Account</DropdownMenuItem>
                                         <DropdownMenuItem>Preferences</DropdownMenuItem>
                                         <DropdownMenuItem>Notifications</DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem>Log out</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
+                                <LogoutButton className="w-auto" />
                             </div>
                         </div>
 

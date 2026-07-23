@@ -19,7 +19,7 @@ function StatsSection() {
                 <p className="text-white font-light text-sm md:text-base">
                     Revolutionizing the Way You Experience Automotive Services
                 </p>
-                <Link href="/services">
+                <Link href="/auth/signin">
                     <Button
                         variant={'secondary'}
                         className="hover:border-brand_blue rounded-xl w-36 border border-white p-2 hover:bg-_brand_pink hover:bg-brand_blue transition-all duration-300 ease-linear hover:text-white">
