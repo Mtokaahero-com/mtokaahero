@@ -13,10 +13,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Moon, Sun, Settings, DollarSign, ShoppingCart, Package, Wrench, Users, User } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { LogoutButton } from '@/components/fragments/LogoutButton';
 import { ProductsTab } from '@/components/dashboard/garage/ProductsTab';
 import { CustomersTab } from '@/components/dashboard/garage/CustomersTab';
 import { OrdersTab } from '@/components/dashboard/garage/OrdersTab';
+import { productsApi } from '@/lib/api/products';
+import { customersApi } from '@/lib/api/customers';
+import { ordersApi } from '@/lib/api/orders';
 
 // Create a context for the theme
 const ThemeContext = createContext({
@@ -54,10 +58,39 @@ export default function Component() {
 
 function GarageSaasAdmin() {
     const { theme, toggleTheme } = useTheme();
+    const { data: session } = useSession();
+    const token = session?.user?.accessToken;
     const [productCount, setProductCount] = useState(0);
     const [customerCount, setCustomerCount] = useState(0);
     const [pendingOrders, setPendingOrders] = useState(0);
     const [revenue, setRevenue] = useState(0);
+
+    // Fetch all metrics up-front so the headline cards are correct on first
+    // paint — the tabs only mount (and report their counts) once visited, so
+    // we can't rely on their callbacks alone for the initial numbers.
+    useEffect(() => {
+        if (!token) return;
+        let active = true;
+        (async () => {
+            try {
+                const [products, customers, orders] = await Promise.all([
+                    productsApi.list(token),
+                    customersApi.list(token),
+                    ordersApi.list(token),
+                ]);
+                if (!active) return;
+                setProductCount(products.length);
+                setCustomerCount(customers.length);
+                setPendingOrders(orders.filter((o) => o.status === 'PENDING').length);
+                setRevenue(orders.filter((o) => o.status !== 'CANCELLED').reduce((s, o) => s + o.total, 0));
+            } catch {
+                // metric cards stay at their current values; individual tabs surface errors
+            }
+        })();
+        return () => {
+            active = false;
+        };
+    }, [token]);
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
