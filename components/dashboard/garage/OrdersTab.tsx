@@ -87,9 +87,13 @@ export function OrdersTab({ onStatsChange }: { onStatsChange?: (s: { pending: nu
         }
         const payloadItems: OrderItemInput[] = items
             .filter((it) => it.description.trim().length > 0)
-            .map((it) => it.productId
-                ? { productId: it.productId, description: it.description, quantity: it.quantity }
-                : { description: it.description, quantity: it.quantity, unitPrice: it.unitPrice ?? 0 });
+            .map((it) => {
+                // guard against NaN / cleared inputs before sending to the server
+                const quantity = Math.max(1, Math.floor(Number(it.quantity)) || 1);
+                return it.productId
+                    ? { productId: it.productId, description: it.description, quantity }
+                    : { description: it.description, quantity, unitPrice: Math.max(0, Number(it.unitPrice) || 0) };
+            });
         if (payloadItems.length === 0) {
             toast.error('Add at least one item with a description');
             return;
