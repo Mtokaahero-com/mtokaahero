@@ -2,9 +2,7 @@
 
 import { useState, createContext, useContext, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     DropdownMenu,
@@ -14,9 +12,15 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Moon, Sun, Settings, Plus, DollarSign, ShoppingCart, Package, Wrench, Users, User } from 'lucide-react';
+import { Moon, Sun, Settings, DollarSign, ShoppingCart, Package, Wrench, Users, User } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { LogoutButton } from '@/components/fragments/LogoutButton';
+import { ProductsTab } from '@/components/dashboard/garage/ProductsTab';
+import { CustomersTab } from '@/components/dashboard/garage/CustomersTab';
+import { OrdersTab } from '@/components/dashboard/garage/OrdersTab';
+import { productsApi } from '@/lib/api/products';
+import { customersApi } from '@/lib/api/customers';
+import { ordersApi } from '@/lib/api/orders';
 
 // Create a context for the theme
 const ThemeContext = createContext({
@@ -54,6 +58,39 @@ export default function Component() {
 
 function GarageSaasAdmin() {
     const { theme, toggleTheme } = useTheme();
+    const { data: session } = useSession();
+    const token = session?.user?.accessToken;
+    const [productCount, setProductCount] = useState(0);
+    const [customerCount, setCustomerCount] = useState(0);
+    const [pendingOrders, setPendingOrders] = useState(0);
+    const [revenue, setRevenue] = useState(0);
+
+    // Fetch all metrics up-front so the headline cards are correct on first
+    // paint — the tabs only mount (and report their counts) once visited, so
+    // we can't rely on their callbacks alone for the initial numbers.
+    useEffect(() => {
+        if (!token) return;
+        let active = true;
+        (async () => {
+            try {
+                const [products, customers, orders] = await Promise.all([
+                    productsApi.list(token),
+                    customersApi.list(token),
+                    ordersApi.list(token),
+                ]);
+                if (!active) return;
+                setProductCount(products.length);
+                setCustomerCount(customers.length);
+                setPendingOrders(orders.filter((o) => o.status === 'PENDING').length);
+                setRevenue(orders.filter((o) => o.status !== 'CANCELLED').reduce((s, o) => s + o.total, 0));
+            } catch {
+                // metric cards stay at their current values; individual tabs surface errors
+            }
+        })();
+        return () => {
+            active = false;
+        };
+    }, [token]);
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -148,8 +185,8 @@ function GarageSaasAdmin() {
                                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">$45,231.89</div>
-                                    <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                                    <div className="text-2xl font-bold">{revenue.toLocaleString()}</div>
+                                    <p className="text-xs text-muted-foreground">Gross order value (excl. cancelled)</p>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -158,8 +195,8 @@ function GarageSaasAdmin() {
                                     <ShoppingCart className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">12</div>
-                                    <p className="text-xs text-muted-foreground">3 require attention</p>
+                                    <div className="text-2xl font-bold">{pendingOrders}</div>
+                                    <p className="text-xs text-muted-foreground">Orders awaiting action</p>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -168,8 +205,8 @@ function GarageSaasAdmin() {
                                     <Package className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">145</div>
-                                    <p className="text-xs text-muted-foreground">5 low in stock</p>
+                                    <div className="text-2xl font-bold">{productCount}</div>
+                                    <p className="text-xs text-muted-foreground">In your catalog</p>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -178,8 +215,8 @@ function GarageSaasAdmin() {
                                     <Users className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">573</div>
-                                    <p className="text-xs text-muted-foreground">+201 this week</p>
+                                    <div className="text-2xl font-bold">{customerCount}</div>
+                                    <p className="text-xs text-muted-foreground">Total customers</p>
                                 </CardContent>
                             </Card>
                         </div>
@@ -187,132 +224,31 @@ function GarageSaasAdmin() {
                         {/* Tabs for different sections */}
                         <Tabs defaultValue="orders" className="space-y-4">
                             <TabsList>
-                                <TabsTrigger value="orders">Recent Orders</TabsTrigger>
-                                <TabsTrigger value="services">Completed Services</TabsTrigger>
-                                <TabsTrigger value="products">Manage Products</TabsTrigger>
+                                <TabsTrigger value="orders">Orders</TabsTrigger>
+                                <TabsTrigger value="customers">Customers</TabsTrigger>
+                                <TabsTrigger value="products">Products</TabsTrigger>
                             </TabsList>
-                            <TabsContent value="orders" className="space-y-4">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Recent Orders</CardTitle>
-                                        <CardDescription>You have 12 pending orders.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead>Order ID</TableHead>
-                                                    <TableHead>Customer</TableHead>
-                                                    <TableHead>Status</TableHead>
-                                                    <TableHead>Total</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                <TableRow>
-                                                    <TableCell>#1234</TableCell>
-                                                    <TableCell>John Doe</TableCell>
-                                                    <TableCell>Pending</TableCell>
-                                                    <TableCell>$120.00</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>#1235</TableCell>
-                                                    <TableCell>Jane Smith</TableCell>
-                                                    <TableCell>Processing</TableCell>
-                                                    <TableCell>$85.50</TableCell>
-                                                </TableRow>
-                                                {/* Add more rows as needed */}
-                                            </TableBody>
-                                        </Table>
-                                    </CardContent>
-                                </Card>
+                            <TabsContent value="orders">
+                                <OrdersTab onStatsChange={({ pending, revenue }) => { setPendingOrders(pending); setRevenue(revenue); }} />
                             </TabsContent>
-                            <TabsContent value="services" className="space-y-4">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Completed Services</CardTitle>
-                                        <CardDescription>Recent services completed by your garage.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead>Service ID</TableHead>
-                                                    <TableHead>Customer</TableHead>
-                                                    <TableHead>Service Type</TableHead>
-                                                    <TableHead>Completion Date</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                <TableRow>
-                                                    <TableCell>#S001</TableCell>
-                                                    <TableCell>Alice Johnson</TableCell>
-                                                    <TableCell>Oil Change</TableCell>
-                                                    <TableCell>2023-06-15</TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>#S002</TableCell>
-                                                    <TableCell>Bob Williams</TableCell>
-                                                    <TableCell>Brake Repair</TableCell>
-                                                    <TableCell>2023-06-14</TableCell>
-                                                </TableRow>
-                                                {/* Add more rows as needed */}
-                                            </TableBody>
-                                        </Table>
-                                    </CardContent>
-                                </Card>
+                            <TabsContent value="customers">
+                                <CustomersTab onCountChange={setCustomerCount} />
                             </TabsContent>
-                            <TabsContent value="products" className="space-y-4">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Manage Products</CardTitle>
-                                        <CardDescription>Add or edit products and services.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <form className="space-y-4">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="productName">Product Name</Label>
-                                                    <Input id="productName" placeholder="Enter product name" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="productPrice">Price</Label>
-                                                    <Input id="productPrice" type="number" placeholder="0.00" />
-                                                </div>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="productDescription">Description</Label>
-                                                <Input
-                                                    id="productDescription"
-                                                    placeholder="Enter product description"
-                                                />
-                                            </div>
-                                            <Button type="submit">
-                                                <Plus className="mr-2 h-4 w-4" /> Add Product
-                                            </Button>
-                                        </form>
-                                    </CardContent>
-                                </Card>
+                            <TabsContent value="products">
+                                <ProductsTab onCountChange={setProductCount} />
                             </TabsContent>
                         </Tabs>
 
                         {/* Payment Information */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Payment Information</CardTitle>
-                                <CardDescription>Manage your payment method and view upcoming charges.</CardDescription>
+                                <CardTitle>Payments</CardTitle>
+                                <CardDescription>Payment tracking is coming soon.</CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <div>
-                                        <p className="font-semibold">Current Payment Method</p>
-                                        <p className="text-sm text-muted-foreground">Visa ending in 4242</p>
-                                    </div>
-                                    <Button variant="outline">Update</Button>
-                                </div>
-                                <div>
-                                    <p className="font-semibold">Next Payment Due</p>
-                                    <p className="text-sm text-muted-foreground">$49.99 on July 1, 2023</p>
-                                </div>
+                            <CardContent>
+                                <p className="text-sm text-muted-foreground">
+                                    Recording payments against orders will be available in a future update.
+                                </p>
                             </CardContent>
                         </Card>
                     </div>
