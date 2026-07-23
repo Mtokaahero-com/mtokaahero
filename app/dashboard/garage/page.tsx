@@ -7,10 +7,15 @@ export default async function GarageDashboardIndex() {
     const session = await getServerSession(authOptions);
     if (!session?.user?.accessToken) redirect('/auth/signin');
 
+    let profileId: string;
     try {
         const profile = await getMyProfile('GARAGE', session.user.accessToken);
-        redirect(`/dashboard/garage/${profile.id}`);
+        profileId = profile.id;
     } catch {
         redirect('/auth/signin');
     }
+
+    // redirect() throws NEXT_REDIRECT — keep it outside the try so the catch
+    // above only ever guards the getMyProfile lookup, never this redirect.
+    redirect(`/dashboard/garage/${profileId}`);
 }
