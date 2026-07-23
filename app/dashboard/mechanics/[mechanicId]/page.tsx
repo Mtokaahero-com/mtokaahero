@@ -92,8 +92,6 @@ export default function Component() {
                                         <DropdownMenuItem>Account</DropdownMenuItem>
                                         <DropdownMenuItem>Preferences</DropdownMenuItem>
                                         <DropdownMenuItem>Notifications</DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem>Log out</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                                 <LogoutButton className="w-auto" />
