@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { toast } from 'sonner';
 import { Loader2, Wrench, MapPin, User, Mail, Phone, Lock, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -42,8 +43,18 @@ export default function MechanicRegisterPage() {
         setIsLoading(true);
         try {
             await authApi.registerMechanic(data);
-            toast.success('Account created! Please sign in to continue.');
-            router.push('/auth/signin');
+            const result = await signIn('credentials', {
+                email: data.email,
+                password: data.password,
+                redirect: false,
+            });
+            if (result?.error) {
+                toast.success('Account created! Please sign in to continue.');
+                router.push('/auth/signin');
+                return;
+            }
+            toast.success('Welcome to MtokaaHero!');
+            router.push('/dashboard/mechanics');
         } catch (err: any) {
             toast.error(err.message ?? 'Registration failed. Please try again.');
         } finally {
