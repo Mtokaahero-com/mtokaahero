@@ -53,7 +53,6 @@ export default function HomePage() {
             <Suspense fallback={<div>Loading...</div>}>
                 <HeroSection />
                 {/* <OurServices /> */}
-                <CustomerView />
                 <PricingSection />
             </Suspense>
             <Footer />
