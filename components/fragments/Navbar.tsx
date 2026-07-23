@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 const navLinks = [
     { title: 'Home', location: '/' },
-    { title: 'Shop', location: '/shop' },
     { title: 'Contact', location: '/contact' },
 ];
 
@@ -69,7 +68,7 @@ export default function Navbar() {
                             </div>
                         </div>
                         <div className="hidden md:block">
-                            <Link href="/services">
+                            <Link href="/auth/signin">
                                 <Button
                                     variant="default"
                                     size="default"

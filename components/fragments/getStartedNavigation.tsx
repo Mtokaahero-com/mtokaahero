@@ -17,21 +17,6 @@ const Navigation = () => {
                     <Link href="/" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
                         Home
                     </Link>
-                    <Link
-                        href="/services"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
-                        Services
-                    </Link>
-                    <Link
-                        href="/mechanics"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
-                        Mechanics
-                    </Link>
-                    <Link
-                        href="/products"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400 mr-4">
-                        Products
-                    </Link>
                     <Link href="/contact" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-400">
                         Contact
                     </Link>
@@ -63,16 +48,7 @@ const Navigation = () => {
                             <Link href="/" className="text-gray-800 hover:text-gray-600">
                                 Home
                             </Link>
-                            <Link href="/services" className="text-gray-800 hover:text-gray-600">
-                                Services
-                            </Link>
-                            <Link href="/mechanics" className="text-gray-800 hover:text-gray-600">
-                                Mechanics
-                            </Link>
-                            <Link href="/products" className="text-gray-800 hover:text-gray-600">
-                                Products
-                            </Link>
-                            <Link href="/contacts" className="text-gray-800 hover:text-gray-600">
+                            <Link href="/contact" className="text-gray-800 hover:text-gray-600">
                                 Contact
                             </Link>
                         </div>

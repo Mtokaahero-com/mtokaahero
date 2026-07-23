@@ -5,7 +5,7 @@ export default function Footer() {
     return (
         <footer className="bg-gray-100 text-gray-600 py-12">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="space-y-4">
                         <h2 className="text-2xl font-bold text-primary">MtokaaHero</h2>
                         <p className="text-sm">Empowering automotive businesses with cutting-edge SaaS solutions.</p>
@@ -37,53 +37,8 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/about" className="hover:text-primary">
-                                    About Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/services" className="hover:text-primary">
-                                    Our Services
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/pricing" className="hover:text-primary">
-                                    Pricing
-                                </Link>
-                            </li>
-                            <li>
                                 <Link href="/contact" className="hover:text-primary">
                                     Contact Us
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-lg mb-4">Services</h3>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="/services/garage-management" className="hover:text-primary">
-                                    Garage Management
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/services/mechanic-tools" className="hover:text-primary">
-                                    Mechanic Tools
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/services/inventory-tracking" className="hover:text-primary">
-                                    Inventory Tracking
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/services/appointment-scheduling" className="hover:text-primary">
-                                    Appointment Scheduling
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/services/financial-analytics" className="hover:text-primary">
-                                    Financial Analytics
                                 </Link>
                             </li>
                         </ul>
