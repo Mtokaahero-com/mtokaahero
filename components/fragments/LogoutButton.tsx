@@ -1,16 +1,16 @@
 'use client';
 
 import { LogOut } from 'lucide-react';
-import { signOut, useSession } from 'next-auth/react';
+import { getSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { authApi } from '@/lib/api/account';
 
 export function LogoutButton({ className }: { className?: string }) {
-    const { data: session } = useSession();
-
     const logout = async () => {
-        // Revoke the server session first; sign out locally even if that call fails.
-        if (session?.user.accessToken) await authApi.logout(session.user.accessToken).catch(() => undefined);
+        // Re-read the session so the jwt callback refreshes a stale access token before we
+        // revoke it; sign out locally regardless of whether the API call succeeds.
+        const fresh = await getSession().catch(() => null);
+        if (fresh && !fresh.error) await authApi.logout(fresh.user.accessToken).catch(() => undefined);
         await signOut({ callbackUrl: '/auth/signin' });
     };
 

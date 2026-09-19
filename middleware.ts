@@ -1,5 +1,6 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
+import { safeCallbackPath } from '@/lib/auth/redirect';
 
 const PROTECTED_PREFIXES = ['/dashboard', '/account'];
 const SIGNED_OUT_ONLY = ['/auth/signin', '/auth/signup'];
@@ -16,8 +17,7 @@ export async function middleware(req: NextRequest) {
     }
 
     if (SIGNED_OUT_ONLY.some((page) => pathname.startsWith(page)) && signedIn) {
-        const callbackUrl = searchParams.get('callbackUrl');
-        const target = callbackUrl && callbackUrl.startsWith('/') && !callbackUrl.startsWith('//') ? callbackUrl : '/';
+        const target = safeCallbackPath(searchParams.get('callbackUrl'), req.nextUrl.origin);
         return NextResponse.redirect(new URL(target, req.url));
     }
 

@@ -12,6 +12,7 @@ import { AuthTabs } from '@/components/auth/AuthTabs';
 import { authErrorMessage } from '@/components/auth/authErrors';
 import { FormError } from '@/components/auth/FormError';
 import { PasswordField } from '@/components/auth/PasswordField';
+import { safeCallbackPath } from '@/lib/auth/redirect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,7 +38,7 @@ function SignInForm() {
             setError(authErrorMessage(res?.error ?? 'HTTP_ERROR'));
             return;
         }
-        router.replace(callbackUrl.startsWith('/') && !callbackUrl.startsWith('//') ? callbackUrl : '/');
+        router.replace(safeCallbackPath(callbackUrl, window.location.origin));
         router.refresh();
     };
 
