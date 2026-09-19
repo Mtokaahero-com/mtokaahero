@@ -28,7 +28,7 @@ const Navigation = () => {
                             Sign In
                         </Button>
                     </Link>
-                    <Link href="/auth/garage">
+                    <Link href="/auth/signup">
                         <Button className="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-semibold">
                             Get Started
                         </Button>

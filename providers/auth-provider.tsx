@@ -1,12 +1,18 @@
 'use client';
 
-import React from 'react';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, signOut, useSession } from 'next-auth/react';
+import React, { useEffect } from 'react';
 
-type AuthProviderProps = {
-    children: React.ReactNode;
-};
+function SessionGuard({ children }: { children: React.ReactNode }) {
+    const { data: session } = useSession();
+    useEffect(() => {
+        if (session?.error === 'RefreshFailed') void signOut({ callbackUrl: '/auth/signin' });
+    }, [session?.error]);
+    return <>{children}</>;
+}
 
-export const AuthProviders = ({ children }: AuthProviderProps) => {
-    return <SessionProvider>{children}</SessionProvider>;
-};
+export const AuthProviders = ({ children }: { children: React.ReactNode }) => (
+    <SessionProvider>
+        <SessionGuard>{children}</SessionGuard>
+    </SessionProvider>
+);

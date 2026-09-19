@@ -1,42 +1,29 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
-const PROTECTED_PREFIXES = ['/dashboard'];
-const AUTH_PAGES = ['/auth/signin', '/auth/garage', '/auth/mechanic', '/auth/shop'];
+const PROTECTED_PREFIXES = ['/dashboard', '/account'];
+const SIGNED_OUT_ONLY = ['/auth/signin', '/auth/signup'];
 
 export async function middleware(req: NextRequest) {
-    const { pathname } = req.nextUrl;
+    const { pathname, searchParams } = req.nextUrl;
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const signedIn = Boolean(token) && !token?.error;
 
-    const token = await getToken({
-        req,
-        secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-    const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page));
-
-    // Unauthenticated user trying to access a protected route → redirect to sign-in
-    if (isProtected && !token) {
+    if (PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix)) && !signedIn) {
         const signInUrl = new URL('/auth/signin', req.url);
         signInUrl.searchParams.set('callbackUrl', pathname);
         return NextResponse.redirect(signInUrl);
     }
 
-    // Already authenticated user visiting auth pages → redirect to their dashboard
-    if (isAuthPage && token) {
-        const roleRoutes: Record<string, string> = {
-            GARAGE: '/dashboard/garage',
-            MECHANIC: '/dashboard/mechanics',
-            SHOP: '/dashboard/vendors',
-        };
-        const role = token.role as string;
-        const redirect = roleRoutes[role] ?? '/dashboard';
-        return NextResponse.redirect(new URL(redirect, req.url));
+    if (SIGNED_OUT_ONLY.some((page) => pathname.startsWith(page)) && signedIn) {
+        const callbackUrl = searchParams.get('callbackUrl');
+        const target = callbackUrl && callbackUrl.startsWith('/') && !callbackUrl.startsWith('//') ? callbackUrl : '/';
+        return NextResponse.redirect(new URL(target, req.url));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/auth/:path*'],
+    matcher: ['/dashboard/:path*', '/account/:path*', '/auth/signin', '/auth/signup'],
 };

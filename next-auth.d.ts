@@ -1,44 +1,19 @@
-import { DefaultSession } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
-
-// ─── Role enum aligned with the backend ──────────────────────────────────────
-export type UserRole = 'GARAGE' | 'MECHANIC' | 'SHOP' | 'ADMIN' | 'USER';
+import type { ApiUser, AuthResult } from '@/lib/api/account';
+import type { AuthToken } from '@/lib/auth/tokens';
 
 declare module 'next-auth' {
     interface Session {
-        user: {
-            id: string;
-            email: string;
-            firstName: string;
-            lastName: string;
-            phoneNumber: string;
-            role: UserRole;
-            accessToken: string;
-            refreshToken: string;
-        } & DefaultSession['user'];
+        user: ApiUser & { accessToken: string };
+        error?: 'RefreshFailed';
     }
 
     interface User {
         id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        phoneNumber: string;
-        role: UserRole;
-        accessToken: string;
-        refreshToken: string;
+        authResult: AuthResult;
     }
 }
 
 declare module 'next-auth/jwt' {
-    interface JWT {
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        phoneNumber: string;
-        role: UserRole;
-        accessToken: string;
-        refreshToken: string;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    interface JWT extends AuthToken {}
 }
