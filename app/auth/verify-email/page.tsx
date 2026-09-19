@@ -16,6 +16,8 @@ function Verify() {
     const [resent, setResent] = useState(false);
     // Tokens are single use and React may run effects twice in development, so confirm exactly once.
     const started = useRef(false);
+    // update() changes status/update's identity, which would otherwise re-trigger this effect forever.
+    const refreshed = useRef(false);
 
     useEffect(() => {
         if (!token || started.current) return;
@@ -27,7 +29,10 @@ function Verify() {
     }, [token]);
 
     useEffect(() => {
-        if (state === 'verified' && status === 'authenticated') void update({ refreshUser: true });
+        if (state === 'verified' && status === 'authenticated' && !refreshed.current) {
+            refreshed.current = true;
+            void update({ refreshUser: true });
+        }
     }, [state, status, update]);
 
     if (state === 'verifying') return <StatusCard tone="loading" title="Verifying your email…" />;
