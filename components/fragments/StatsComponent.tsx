@@ -22,7 +22,7 @@ function StatsSection() {
                 <Link href="/auth/signin">
                     <Button
                         variant={'secondary'}
-                        className="hover:border-brand_blue rounded-xl w-36 border border-white p-2 hover:bg-_brand_pink hover:bg-brand_blue transition-all duration-300 ease-linear hover:text-white">
+                        className="hover:border-brand_blue rounded-xl w-36 border border-white p-2 hover:bg-primary-subtle hover:bg-brand_blue transition-all duration-300 ease-linear hover:text-white">
                         Discover More
                     </Button>
                 </Link>

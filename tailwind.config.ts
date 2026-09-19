@@ -8,15 +8,13 @@ const config = {
             fontFamily: {
                 heading: ['var(--font-heading)', ...fontFamily.sans],
                 body: ['var(--font-body)', ...fontFamily.sans],
+                mono: ['var(--font-mono)', ...fontFamily.mono],
             },
             backgroundImage: {
                 'hero-pattern': "url('/public/stats3.jpg')",
             },
             colors: {
                 brand_blue: '#2463EB',
-                brand_pink: '#F7DDDD',
-                brand_violet: '#C4B5FD',
-                brand_gray: '#E3E3E3',
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
@@ -24,8 +22,15 @@ const config = {
                 foreground: 'hsl(var(--foreground))',
                 primary: {
                     DEFAULT: 'hsl(var(--primary))',
+                    hover: 'hsl(var(--primary-hover))',
+                    deep: 'hsl(var(--primary-deep))',
+                    subtle: 'hsl(var(--primary-subtle))',
                     foreground: 'hsl(var(--primary-foreground))',
                 },
+                rescue: { DEFAULT: 'hsl(var(--rescue))', subtle: 'hsl(var(--rescue-subtle))' },
+                warning: { DEFAULT: 'hsl(var(--warning))', subtle: 'hsl(var(--warning-subtle))' },
+                success: { DEFAULT: 'hsl(var(--success))', subtle: 'hsl(var(--success-subtle))' },
+                canvas: 'hsl(var(--background))',
                 secondary: {
                     DEFAULT: 'hsl(var(--secondary))',
                     foreground: 'hsl(var(--secondary-foreground))',
@@ -52,10 +57,15 @@ const config = {
                 },
             },
             borderRadius: {
-                xl: `calc(var(--radius) + 4px)`,
-                lg: `var(--radius)`,
-                md: `calc(var(--radius) - 2px)`,
-                sm: `calc(var(--radius) - 4px)`,
+                xl: '0.75rem',
+                lg: '0.5rem',
+                md: '0.375rem',
+                sm: '0.25rem',
+            },
+            boxShadow: {
+                card: '0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04)',
+                raised: '0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05)',
+                modal: '0 25px 50px -12px rgba(15, 23, 42, 0.22)',
             },
             keyframes: {
                 'accordion-down': {
