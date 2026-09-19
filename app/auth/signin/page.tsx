@@ -48,8 +48,19 @@ function SignInForm() {
             <FormError message={error} />
             <div className="space-y-1.5">
                 <Label htmlFor="identifier">Email or phone</Label>
-                <Input id="identifier" autoComplete="username" placeholder="jane@example.com or 0712 345 678" {...register('identifier')} />
-                {formState.errors.identifier && <p className="text-xs text-rescue">{formState.errors.identifier.message}</p>}
+                <Input
+                    id="identifier"
+                    autoComplete="username"
+                    placeholder="jane@example.com or 0712 345 678"
+                    aria-invalid={Boolean(formState.errors.identifier)}
+                    aria-describedby={formState.errors.identifier ? 'identifier-error' : undefined}
+                    {...register('identifier')}
+                />
+                {formState.errors.identifier && (
+                    <p id="identifier-error" className="text-xs text-rescue">
+                        {formState.errors.identifier.message}
+                    </p>
+                )}
             </div>
             <PasswordField id="password" label="Password" autoComplete="current-password" error={formState.errors.password?.message} {...register('password')} />
             <div className="text-right">

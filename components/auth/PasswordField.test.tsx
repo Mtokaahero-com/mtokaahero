@@ -11,5 +11,6 @@ describe('PasswordField', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Show password' }));
         expect(input).toHaveAttribute('type', 'text');
         expect(screen.getByText('Too short')).toBeInTheDocument();
+        expect(input).toHaveAccessibleDescription('Too short');
     });
 });

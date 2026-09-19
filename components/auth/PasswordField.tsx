@@ -13,7 +13,15 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(({ label, error
         <div className="space-y-1.5">
             <Label htmlFor={id}>{label}</Label>
             <div className="relative">
-                <Input ref={ref} id={id} type={visible ? 'text' : 'password'} className="pr-11" aria-invalid={Boolean(error)} {...props} />
+                <Input
+                    ref={ref}
+                    id={id}
+                    type={visible ? 'text' : 'password'}
+                    className="pr-11"
+                    aria-invalid={Boolean(error)}
+                    aria-describedby={error ? `${id}-error` : undefined}
+                    {...props}
+                />
                 <button
                     type="button"
                     onClick={() => setVisible((v) => !v)}
@@ -23,7 +31,11 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(({ label, error
                     {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
             </div>
-            {error && <p className="text-xs text-rescue">{error}</p>}
+            {error && (
+                <p id={`${id}-error`} className="text-xs text-rescue">
+                    {error}
+                </p>
+            )}
         </div>
     );
 });

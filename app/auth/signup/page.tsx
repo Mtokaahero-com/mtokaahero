@@ -62,8 +62,18 @@ export default function SignUpPage() {
     const field = (name: keyof Values, label: string, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
         <div className="space-y-1.5">
             <Label htmlFor={name}>{label}</Label>
-            <Input id={name} aria-invalid={Boolean(formState.errors[name])} {...props} {...register(name)} />
-            {formState.errors[name] && <p className="text-xs text-rescue">{formState.errors[name]?.message}</p>}
+            <Input
+                id={name}
+                aria-invalid={Boolean(formState.errors[name])}
+                aria-describedby={formState.errors[name] ? `${name}-error` : undefined}
+                {...props}
+                {...register(name)}
+            />
+            {formState.errors[name] && (
+                <p id={`${name}-error`} className="text-xs text-rescue">
+                    {formState.errors[name]?.message}
+                </p>
+            )}
         </div>
     );
 
