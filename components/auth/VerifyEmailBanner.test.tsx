@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const useSession = vi.fn();
-vi.mock('next-auth/react', () => ({ useSession: () => useSession() }));
+const getSession = vi.fn();
+vi.mock('next-auth/react', () => ({ useSession: () => useSession(), getSession: () => getSession() }));
 const resendVerification = vi.fn().mockResolvedValue(undefined);
 vi.mock('@/lib/api/account', () => ({ authApi: { resendVerification: (t: string) => resendVerification(t) } }));
 
@@ -18,6 +19,7 @@ describe('VerifyEmailBanner', () => {
     beforeEach(() => {
         sessionStorage.clear();
         resendVerification.mockClear();
+        getSession.mockReset().mockResolvedValue({ user: { accessToken: 'at' } });
     });
 
     it('renders nothing for verified or signed-out users', () => {
@@ -37,5 +39,14 @@ describe('VerifyEmailBanner', () => {
         expect(await screen.findByText('Link sent to jane@example.com')).toBeInTheDocument();
         await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
         expect(container).toBeEmptyDOMElement();
+    });
+
+    it('re-reads the session before resending and shows the failed state instead of using a stale token', async () => {
+        useSession.mockReturnValue(session(false));
+        getSession.mockResolvedValue({ user: {}, error: 'RefreshFailed' });
+        render(<VerifyEmailBanner />);
+        await userEvent.click(screen.getByRole('button', { name: 'Resend' }));
+        expect(resendVerification).not.toHaveBeenCalled();
+        expect(await screen.findByText('Could not send the link. Try again in a minute.')).toBeInTheDocument();
     });
 });

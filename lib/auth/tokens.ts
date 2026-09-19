@@ -1,5 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import type { ApiUser, AuthResult } from '@/lib/api/account';
+import { ApiError } from '@/lib/api/problem';
 
 export const REFRESH_MARGIN_MS = 60_000;
 
@@ -34,7 +35,10 @@ export async function refreshIfNeeded(
     if (now < token.accessTokenExpiresAt - REFRESH_MARGIN_MS) return token;
     try {
         return tokenFromAuthResult(await refresh(token.refreshToken));
-    } catch {
-        return { ...token, error: 'RefreshFailed' };
+    } catch (err) {
+        // Only a rejected refresh (the token itself invalid/expired) is sticky. Any other failure — a transient
+        // 5xx, a network error — leaves the token as-is so the next request simply retries the refresh.
+        if (err instanceof ApiError && err.status === 401) return { ...token, error: 'RefreshFailed' };
+        return token;
     }
 }

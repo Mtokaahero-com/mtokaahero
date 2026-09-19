@@ -6,6 +6,8 @@ describe('authErrorMessage', () => {
         expect(authErrorMessage('INVALID_CREDENTIALS')).toBe('That email/phone and password do not match.');
         expect(authErrorMessage('EMAIL_ALREADY_REGISTERED')).toBe('An account with this email already exists. Try signing in.');
         expect(authErrorMessage('SOMETHING_NEW')).toBe('Something went wrong. Please try again.');
+        expect(authErrorMessage('RATE_LIMITED')).toBe('Too many attempts. Please wait a minute and try again.');
+        expect(authErrorMessage('SIGN_IN_FAILED')).toBe('We could not reach MtokaaHero. Check your connection and try again.');
     });
 });
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { MailWarning, X } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { authApi } from '@/lib/api/account';
 
@@ -26,8 +26,15 @@ export function VerifyEmailBanner() {
 
     const resend = async () => {
         setState('sending');
+        // Re-read the session so the jwt callback refreshes a stale access token before we send it; skip the
+        // call and show the failed state rather than sending a token we know is stale or invalid.
+        const fresh = await getSession().catch(() => null);
+        if (!fresh?.user.accessToken || fresh.error) {
+            setState('failed');
+            return;
+        }
         try {
-            await authApi.resendVerification(session.user.accessToken);
+            await authApi.resendVerification(fresh.user.accessToken);
             setState('sent');
         } catch {
             setState('failed');

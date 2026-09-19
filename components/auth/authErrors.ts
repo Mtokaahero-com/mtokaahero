@@ -7,6 +7,8 @@ const MESSAGES: Record<string, string> = {
     TOKEN_INVALID: 'This link is invalid or has expired.',
     VALIDATION_FAILED: 'Check the highlighted fields.',
     HTTP_ERROR: 'We could not reach MtokaaHero. Check your connection and try again.',
+    RATE_LIMITED: 'Too many attempts. Please wait a minute and try again.',
+    SIGN_IN_FAILED: 'We could not reach MtokaaHero. Check your connection and try again.',
 };
 
 export function authErrorMessage(code: string): string {
