@@ -1,12 +1,34 @@
-import Link from 'next/link';
-import { AuthShell } from '@/components/auth/AuthShell';
+'use client';
 
-export default function RescuePlaceholderPage() {
+import { Suspense } from 'react';
+import { CheckoutDesktop } from '@/components/rescue/CheckoutDesktop';
+import { CheckoutMobile } from '@/components/rescue/CheckoutMobile';
+import { useCheckout } from '@/components/rescue/useCheckout';
+import { SiteFooter } from '@/components/site/SiteFooter';
+import { SiteHeader } from '@/components/site/SiteHeader';
+
+function Checkout() {
+    const checkout = useCheckout();
     return (
-        <AuthShell title="Roadside rescue" subtitle="Online rescue requests are coming soon." showSos={false}>
-            <p className="text-sm text-muted-foreground">
-                Rescue dispatch through the site is being built. <Link href="/" className="font-semibold text-primary hover:underline">Back to home</Link>
-            </p>
-        </AuthShell>
+        <>
+            <div className="hidden md:block">
+                <SiteHeader />
+                <main className="w-full pt-20 bg-surface min-h-[calc(100vh-80px)]">
+                    <CheckoutDesktop checkout={checkout} />
+                </main>
+                <SiteFooter />
+            </div>
+            <div className="md:hidden bg-surface min-h-screen">
+                <CheckoutMobile checkout={checkout} />
+            </div>
+        </>
+    );
+}
+
+export default function RescueCheckoutPage() {
+    return (
+        <Suspense>
+            <Checkout />
+        </Suspense>
     );
 }

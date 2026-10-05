@@ -3,46 +3,19 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --background: 210 40% 98%; /* canvas #F8FAFC */
-        --foreground: 222 47% 11%; /* #0F172A */
-        --card: 0 0% 100%;
-        --card-foreground: 222 47% 11%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 222 47% 11%;
-        --primary: 224 76% 48%; /* #1D4ED8 */
-        --primary-hover: 221 83% 53%; /* #2563EB */
-        --primary-deep: 226 71% 40%; /* #1E40AF */
-        --primary-subtle: 214 100% 97%; /* #EFF6FF */
-        --primary-foreground: 0 0% 100%;
-        --secondary: 0 0% 100%;
-        --secondary-foreground: 222 47% 11%;
-        --muted: 210 40% 96%;
-        --muted-foreground: 215 16% 47%; /* #64748B */
-        --accent: 214 100% 97%;
-        --accent-foreground: 226 71% 40%;
-        --rescue: 347 77% 50%; /* #E11D48 */
-        --rescue-subtle: 356 100% 97%; /* #FFF1F2 */
-        --warning: 38 92% 50%; /* #F59E0B */
-        --warning-subtle: 48 100% 96%; /* #FFFBEB */
-        --success: 161 94% 30%; /* #059669 */
-        --success-subtle: 152 81% 96%; /* #ECFDF5 */
-        --destructive: 0 72% 51%;
-        --destructive-foreground: 0 0% 100%;
-        --border: 214 32% 91%; /* #E2E8F0 */
-        --input: 213 27% 84%; /* #CBD5E1 */
-        --ring: 221 83% 53%;
-        --radius: 0.5rem;
-    }
-}
-
-@layer base {
     * {
         @apply border-border;
     }
 
+    html,
     body {
-        @apply bg-background text-foreground font-body;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        @apply bg-surface font-body-md text-on-surface antialiased;
+        overscroll-behavior: none;
         font-feature-settings: 'tnum';
     }
 
@@ -56,16 +29,46 @@
     }
 }
 
-/* Example CSS for transition effects */
-.fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    transition:
-        opacity 1.5s ease,
-        transform 1.5s ease;
+@layer components {
+    .icon-symbol {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        user-select: none;
+    }
+
+    .icon-symbol.icon-fill {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
 }
 
-.fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+    }
 }

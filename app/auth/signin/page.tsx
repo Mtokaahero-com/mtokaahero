@@ -11,11 +11,10 @@ import { AuthShell } from '@/components/auth/AuthShell';
 import { AuthTabs } from '@/components/auth/AuthTabs';
 import { authErrorMessage } from '@/components/auth/authErrors';
 import { FormError } from '@/components/auth/FormError';
+import { IconField } from '@/components/auth/IconField';
 import { PasswordField } from '@/components/auth/PasswordField';
+import { Icon } from '@/components/brand/Icon';
 import { safeCallbackPath } from '@/lib/auth/redirect';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 const schema = z.object({
     identifier: z.string().trim().min(1, 'Enter your email or phone number'),
@@ -43,50 +42,53 @@ function SignInForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <>
             <AuthTabs active="signin" />
-            {notice && <p className="rounded-md bg-success-subtle px-3 py-2 text-sm text-success">{notice}</p>}
-            <FormError message={error} />
-            <div className="space-y-1.5">
-                <Label htmlFor="identifier">Email or phone</Label>
-                <Input
-                    id="identifier"
-                    autoComplete="username"
-                    placeholder="jane@example.com or 0712 345 678"
-                    aria-invalid={Boolean(formState.errors.identifier)}
-                    aria-describedby={formState.errors.identifier ? 'identifier-error' : undefined}
-                    {...register('identifier')}
-                />
-                {formState.errors.identifier && (
-                    <p id="identifier-error" className="text-xs text-rescue">
-                        {formState.errors.identifier.message}
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-surface-container-lowest p-5 rounded-xl shadow-md flex flex-col gap-4" noValidate>
+                {notice && (
+                    <p role="status" className="rounded-xl bg-success-subtle px-3 py-2.5 font-body-sm text-body-sm text-success">
+                        {notice}
                     </p>
                 )}
-            </div>
-            <PasswordField id="password" label="Password" autoComplete="current-password" error={formState.errors.password?.message} {...register('password')} />
-            <div className="text-right">
-                <Link href="/auth/forgot-password" className="text-sm font-semibold text-primary hover:underline">
-                    Forgot password?
-                </Link>
-            </div>
-            <Button type="submit" className="w-full" disabled={formState.isSubmitting}>
-                {formState.isSubmitting ? 'Signing in…' : 'Sign in'}
-            </Button>
-        </form>
+                <FormError message={error} />
+                <IconField
+                    id="identifier"
+                    label="Email or phone"
+                    icon="person"
+                    autoComplete="username"
+                    placeholder="name@example.com or +254..."
+                    error={formState.errors.identifier?.message}
+                    {...register('identifier')}
+                />
+                <PasswordField
+                    id="password"
+                    label="Password"
+                    autoComplete="current-password"
+                    placeholder="Enter your password"
+                    error={formState.errors.password?.message}
+                    labelAction={
+                        <Link href="/auth/forgot-password" className="font-label-md text-label-md text-primary font-semibold hover:underline">
+                            Forgot password?
+                        </Link>
+                    }
+                    {...register('password')}
+                />
+                <button
+                    type="submit"
+                    disabled={formState.isSubmitting}
+                    className="w-full py-3.5 mt-2 bg-primary-container hover:bg-primary text-on-primary rounded-xl font-label-lg text-label-lg font-bold shadow-md active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                    <span>{formState.isSubmitting ? 'Signing in…' : 'Sign in'}</span>
+                    <Icon name="arrow_forward" className="text-[18px]" />
+                </button>
+            </form>
+        </>
     );
 }
 
 export default function SignInPage() {
     return (
-        <AuthShell
-            title="Welcome to MtokaaHero"
-            subtitle="Roadside rescue, trusted garages and genuine parts."
-            footer={
-                <span>
-                    <Link href="/terms" className="hover:underline">Terms</Link> · <Link href="/privacy" className="hover:underline">Privacy</Link>
-                </span>
-            }
-        >
+        <AuthShell title="Welcome to MtokaaHero">
             <Suspense>
                 <SignInForm />
             </Suspense>

@@ -1,8 +1,8 @@
 'use client';
 
-import { MailWarning, X } from 'lucide-react';
 import { getSession, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { Icon } from '@/components/brand/Icon';
 import { authApi } from '@/lib/api/account';
 
 const DISMISS_KEY = 'mtokaa.verify-banner.dismissed';
@@ -51,22 +51,22 @@ export function VerifyEmailBanner() {
     };
 
     return (
-        <div role="status" className="flex items-center gap-3 border-b border-warning/30 bg-warning-subtle px-4 py-2 text-sm text-[#B45309]">
-            <MailWarning className="h-4 w-4 shrink-0" />
-            <p className="flex-1">
+        <div role="status" className="relative z-[60] flex items-center gap-2 bg-amber-500 text-amber-950 px-3.5 py-2 text-xs font-medium shadow-sm">
+            <Icon name="warning" className="text-[16px] shrink-0" />
+            <p className="leading-tight">
                 {state === 'sent'
                     ? `Link sent to ${session.user.email}`
                     : state === 'failed'
                       ? 'Could not send the link. Try again in a minute.'
-                      : 'Verify your email to register a business or join a team.'}
+                      : 'Verify your email to register a business.'}
             </p>
             {state !== 'sent' && (
-                <button type="button" onClick={resend} disabled={state === 'sending'} className="font-semibold underline underline-offset-4">
+                <button type="button" onClick={resend} disabled={state === 'sending'} className="font-bold underline ml-1 hover:text-amber-900">
                     Resend
                 </button>
             )}
-            <button type="button" onClick={dismiss} aria-label="Dismiss" className="p-1">
-                <X className="h-4 w-4" />
+            <button type="button" onClick={dismiss} aria-label="Dismiss" className="ml-auto p-1 text-amber-950/80 hover:text-amber-950 rounded">
+                <Icon name="close" className="text-[16px]" />
             </button>
         </div>
     );

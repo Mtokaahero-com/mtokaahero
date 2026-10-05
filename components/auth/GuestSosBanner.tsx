@@ -1,22 +1,25 @@
-import { Siren, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { Icon } from '@/components/brand/Icon';
 
 export function GuestSosBanner() {
     return (
         <Link
             href="/rescue"
-            className="flex items-center gap-3 rounded-lg bg-rescue px-4 py-3 text-white shadow-raised transition-colors hover:bg-rescue/90"
+            className="flex items-center justify-between px-3.5 py-2.5 bg-tertiary text-on-tertiary rounded-xl shadow-sm active:scale-[0.98] transition-all"
         >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20">
-                <Siren className="h-5 w-5" />
-            </span>
-            <span className="flex-1">
-                <span className="block font-heading text-base font-bold uppercase tracking-wide">Need immediate rescue?</span>
-                <span className="block text-sm text-white/85">No account needed</span>
-            </span>
-            <span className="flex items-center gap-1 text-sm font-semibold underline underline-offset-4">
-                Guest SOS <ArrowRight className="h-4 w-4" />
-            </span>
+            <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0">
+                    <Icon name="emergency" fill className="text-[16px]" />
+                </div>
+                <div className="flex flex-col">
+                    <span className="font-headline-sm text-sm text-white font-bold leading-tight">Need immediate rescue?</span>
+                    <span className="font-body-sm text-[11px] text-on-tertiary-container leading-tight">No account needed</span>
+                </div>
+            </div>
+            <div className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-lg text-white">
+                <span className="font-label-md text-xs font-semibold">Guest SOS</span>
+                <Icon name="arrow_forward" className="text-[14px]" />
+            </div>
         </Link>
     );
 }

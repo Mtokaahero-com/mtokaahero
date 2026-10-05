@@ -10,10 +10,9 @@ import { AuthShell } from '@/components/auth/AuthShell';
 import { AuthTabs } from '@/components/auth/AuthTabs';
 import { authErrorMessage, passwordStrength } from '@/components/auth/authErrors';
 import { FormError } from '@/components/auth/FormError';
+import { IconField } from '@/components/auth/IconField';
 import { PasswordField } from '@/components/auth/PasswordField';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Icon } from '@/components/brand/Icon';
 import { authApi } from '@/lib/api/account';
 import { ApiError } from '@/lib/api/problem';
 import { cn } from '@/lib/utils';
@@ -59,48 +58,52 @@ export default function SignUpPage() {
         router.refresh();
     };
 
-    const field = (name: keyof Values, label: string, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
-        <div className="space-y-1.5">
-            <Label htmlFor={name}>{label}</Label>
-            <Input
-                id={name}
-                aria-invalid={Boolean(formState.errors[name])}
-                aria-describedby={formState.errors[name] ? `${name}-error` : undefined}
-                {...props}
-                {...register(name)}
-            />
-            {formState.errors[name] && (
-                <p id={`${name}-error`} className="text-xs text-rescue">
-                    {formState.errors[name]?.message}
-                </p>
-            )}
-        </div>
+    const field = (name: keyof Values, label: string, icon: string, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
+        <IconField id={name} label={label} icon={icon} error={formState.errors[name]?.message} {...props} {...register(name)} />
     );
 
     return (
-        <AuthShell title="Create your account" subtitle="Book garages, reserve parts and track rescues.">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-                <AuthTabs active="signup" />
+        <AuthShell title="Welcome to MtokaaHero">
+            <AuthTabs active="signup" />
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-surface-container-lowest p-5 rounded-xl shadow-md flex flex-col gap-4" noValidate>
                 <FormError message={error} />
                 <div className="grid grid-cols-2 gap-3">
-                    {field('firstName', 'First name', { autoComplete: 'given-name' })}
-                    {field('lastName', 'Last name', { autoComplete: 'family-name' })}
+                    {field('firstName', 'First name', 'badge', { autoComplete: 'given-name', placeholder: 'Jane' })}
+                    {field('lastName', 'Last name', 'badge', { autoComplete: 'family-name', placeholder: 'Wanjiku' })}
                 </div>
-                {field('email', 'Email', { type: 'email', autoComplete: 'email' })}
-                {field('phone', 'Phone (optional)', { type: 'tel', autoComplete: 'tel', placeholder: '0712 345 678' })}
-                <div className="space-y-1.5">
-                    <PasswordField id="password" label="Password" autoComplete="new-password" error={formState.errors.password?.message} {...register('password')} />
+                {field('email', 'Email', 'mail', { type: 'email', autoComplete: 'email', placeholder: 'name@example.com' })}
+                {field('phone', 'Phone (optional)', 'call', { type: 'tel', autoComplete: 'tel', placeholder: '0712 345 678' })}
+                <div className="flex flex-col gap-1.5">
+                    <PasswordField
+                        id="password"
+                        label="Password"
+                        autoComplete="new-password"
+                        placeholder="At least 10 characters"
+                        error={formState.errors.password?.message}
+                        {...register('password')}
+                    />
                     <div className="flex gap-1" aria-hidden>
                         {[1, 2, 3, 4].map((i) => (
-                            <span key={i} className={cn('h-1 flex-1 rounded-full', i <= strength ? (strength < 2 ? 'bg-rescue' : strength < 3 ? 'bg-warning' : 'bg-success') : 'bg-border')} />
+                            <span
+                                key={i}
+                                className={cn(
+                                    'h-1 flex-1 rounded-pill',
+                                    i <= strength ? (strength < 2 ? 'bg-error' : strength < 3 ? 'bg-secondary-container' : 'bg-primary-container') : 'bg-surface-container-high',
+                                )}
+                            />
                         ))}
                     </div>
-                    <p className="text-xs text-muted-foreground">{STRENGTH_LABEL[strength] || 'At least 10 characters'}</p>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">{STRENGTH_LABEL[strength] || 'At least 10 characters'}</p>
                 </div>
-                <Button type="submit" className="w-full" disabled={formState.isSubmitting}>
-                    {formState.isSubmitting ? 'Creating account…' : 'Create account'}
-                </Button>
-                <p className="text-center text-xs text-muted-foreground">We will email you a link to verify your address.</p>
+                <button
+                    type="submit"
+                    disabled={formState.isSubmitting}
+                    className="w-full py-3.5 mt-2 bg-primary-container hover:bg-primary text-on-primary rounded-xl font-label-lg text-label-lg font-bold shadow-md active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                    <span>{formState.isSubmitting ? 'Creating account…' : 'Create account'}</span>
+                    <Icon name="arrow_forward" className="text-[18px]" />
+                </button>
+                <p className="text-center font-body-sm text-body-sm text-on-surface-variant">We will email you a link to verify your address.</p>
             </form>
         </AuthShell>
     );

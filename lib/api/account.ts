@@ -12,6 +12,23 @@ export interface ApiUser {
     emailVerified: boolean;
 }
 
+export type OrganizationType = 'GARAGE' | 'PARTS_SHOP' | 'MOBILE_MECHANIC';
+export type MembershipRole = 'OWNER' | 'MANAGER' | 'STAFF';
+
+export interface Membership {
+    organizationId: string;
+    name: string;
+    slug: string;
+    type: OrganizationType;
+    organizationStatus: 'ACTIVE' | 'SUSPENDED';
+    role: MembershipRole;
+}
+
+export interface MeView {
+    user: ApiUser;
+    memberships: Membership[];
+}
+
 export interface AuthResult {
     accessToken: string;
     refreshToken: string;
@@ -46,7 +63,7 @@ export const authApi = {
     register: (input: RegisterInput) => call<AuthResult>('/auth/register', { body: input }),
     refresh: (refreshToken: string) => call<AuthResult>('/auth/refresh', { body: { refreshToken } }),
     logout: (accessToken: string) => call<void>('/auth/logout', { token: accessToken }),
-    me: (accessToken: string) => call<{ user: ApiUser }>('/me', { method: 'GET', token: accessToken }),
+    me: (accessToken: string) => call<MeView>('/me', { method: 'GET', token: accessToken }),
     resendVerification: (accessToken: string) => call<void>('/auth/email-verification/resend', { token: accessToken }),
     confirmEmailVerification: (token: string) => call<void>('/auth/email-verification/confirm', { body: { token } }),
     requestPasswordReset: (email: string) => call<void>('/auth/password-reset/request', { body: { email } }),
