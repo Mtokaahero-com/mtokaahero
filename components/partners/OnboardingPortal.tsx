@@ -749,7 +749,7 @@ export function OnboardingPortal() {
                                         />
                                     )}
                                     <Err message={errors.mmAccount} />
-                                    <span className="font-body-sm text-body-sm text-on-surface-variant">Real-time settlement within 60 seconds of client rescue signoff.</span>
+                                    <span className="font-body-sm text-body-sm text-on-surface-variant">Motorists pay this number directly; MtokaaHero never holds your money.</span>
                                 </div>
                                 <div className="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
                                     <div className="flex items-center justify-between">
