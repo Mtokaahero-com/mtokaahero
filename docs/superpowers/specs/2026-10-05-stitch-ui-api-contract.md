@@ -15,8 +15,9 @@ All calls in this contract go through `marketplaceFetch` (`lib/api/client.ts`), 
 `NEXT_PUBLIC_MARKETPLACE_API_URL` (default `/api/mock/v1`). Point it at `http://localhost:8080/api/v1`
 once the endpoints exist, then delete `app/api/mock` and `lib/mock`.
 
-Two calls already use the real API: `POST /organizations` (partner onboarding) and `GET /me`
-(memberships for the header and dashboard gate).
+These calls already use the real API: `POST /organizations`, `GET /me` (memberships for the header and
+dashboard gate), and the partner onboarding endpoints (`GET /partners/program` and the
+`/organization/provider-profile` family: profile, documents, submit, availability) via `lib/api/providers.ts`.
 
 ## Conventions
 

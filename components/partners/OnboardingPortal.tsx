@@ -3,16 +3,18 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getSession, useSession } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Icon } from '@/components/brand/Icon';
 import { MapSnapshot } from '@/components/map/MapSnapshot';
+import { useAccount } from '@/hooks/use-account';
 import { useApi } from '@/hooks/use-api';
 import type { OrganizationType } from '@/lib/api/account';
 import { partnersApi } from '@/lib/api/partners';
 import { ApiError } from '@/lib/api/problem';
-import { providersApi, type Capability } from '@/lib/api/providers';
+import { providersApi, type Capability, type ProviderProfile } from '@/lib/api/providers';
+import { providerMembership, resolveTargetOrg } from '@/lib/partners/resolve-org';
 import { rescueApi, type ResolvedLocation } from '@/lib/api/rescue';
 import { cn } from '@/lib/utils';
 
@@ -59,7 +61,7 @@ const schema = z
         capabilityIds: z.array(z.string()).min(1, 'Select at least one capability'),
         mmKind: z.enum(['PAYBILL', 'TILL']),
         mmNumber: z.string().trim(),
-        mmAccount: z.string().trim(),
+        mmAccount: z.string().trim().max(20, 'Account reference must be 20 characters or fewer'),
         bankName: z.string().trim(),
         bankAccount: z.string().trim(),
     })
@@ -71,7 +73,7 @@ const schema = z
         if (!mmOk && !bankOk && !d.mmNumber && !d.bankAccount) ctx.addIssue({ code: 'custom', path: ['mmNumber'], message: 'Add a mobile money or bank payout route' });
     });
 
-type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'capabilityIds' | 'mmNumber' | 'bankAccount' | 'mobileMoney' | 'form', string>>;
+type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'capabilityIds' | 'mmNumber' | 'mmAccount' | 'bankAccount' | 'mobileMoney' | 'form', string>>;
 
 const ADV_TONE = {
     primary: 'bg-primary/10 text-primary',
@@ -81,7 +83,7 @@ const ADV_TONE = {
 } as const;
 
 const ADVANTAGES: { icon: string; tone: keyof typeof ADV_TONE; title: string; body: string }[] = [
-    { icon: 'hub', tone: 'primary', title: '25,000+ Active Motorists', body: 'Instant exposure to distressed drivers on expressways and bypass roads.' },
+    { icon: 'hub', tone: 'primary', title: 'Reach Stranded Motorists', body: 'Instant exposure to distressed drivers on expressways and bypass roads.' },
     { icon: 'verified_user', tone: 'amber', title: 'Guaranteed Escrow Settlement', body: 'Funds are pre-authorized before you roll a truck or turn a wrench. No bad debts.' },
     { icon: 'inventory_2', tone: 'tint', title: 'Free Workshop & Parts ERP', body: 'Included digital hoist scheduler, automated billing, and catalog sync software.' },
     { icon: 'stars', tone: 'rescue', title: 'Verified Reputation Badging', body: 'Motorists trust high-rated shops. Grow your authentic ratings with every job.' },
@@ -138,10 +140,56 @@ export function OnboardingPortal() {
     const [errors, setErrors] = useState<Errors>({});
     const [submitting, setSubmitting] = useState(false);
     const [done, setDone] = useState<{ name: string } | null>(null);
+    const account = useAccount();
+    const membership = providerMembership(account.activeMembership);
+    const createdOrg = useRef<string | null>(null);
+    const uploaded = useRef(new Set<File>());
+    const prefilled = useRef(false);
+    const [profile, setProfile] = useState<ProviderProfile | null>(null);
+    const [profileLoading, setProfileLoading] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
     const sections = { 1: useRef<HTMLElement>(null), 2: useRef<HTMLElement>(null), 3: useRef<HTMLElement>(null) };
 
     useEffect(() => setDraft((d) => ({ ...d, ...readDraft(), type: params.get('type') === 'MOBILE_MECHANIC' ? 'MOBILE_MECHANIC' : (readDraft().type ?? d.type) })), [params]);
+
+    const orgId = membership?.organizationId;
+    const token = account.accessToken;
+    const loadProfile = useCallback(async () => {
+        if (!orgId || !token) return;
+        const prof = await providersApi.get({ token, organizationId: orgId });
+        setProfile(prof);
+        return prof;
+    }, [orgId, token]);
+
+    useEffect(() => {
+        if (!orgId || !token || prefilled.current) return;
+        prefilled.current = true;
+        setProfileLoading(true);
+        loadProfile()
+            .then((prof) => {
+                if (!prof) return;
+                const mm = prof.payout.mobileMoney;
+                const bank = prof.payout.bankAccount;
+                setDraft((d) => ({
+                    ...d,
+                    type: prof.type === 'MOBILE_MECHANIC' ? 'MOBILE_MECHANIC' : 'GARAGE',
+                    businessName: membership?.name ?? d.businessName,
+                    address: prof.addressLine ?? d.address,
+                    radiusKm: prof.serviceRadiusKm,
+                    capabilityIds: prof.capabilities,
+                    bays: prof.bays,
+                    vans: prof.vans,
+                    taxPin: prof.taxPin ?? d.taxPin,
+                    mmKind: mm?.kind ?? d.mmKind,
+                    mmNumber: mm?.number ?? '',
+                    mmAccount: mm?.account ?? '',
+                    bankName: bank?.bank ?? '',
+                    bankAccount: bank?.accountNumber ?? '',
+                }));
+            })
+            .catch(() => setErrors({ form: 'Could not load your saved profile. Refresh to try again.' }))
+            .finally(() => setProfileLoading(false));
+    }, [orgId, token, loadProfile, membership?.name]);
 
     const set = <K extends keyof Draft>(key: K, value: Draft[K]) => {
         setDraft((d) => ({ ...d, [key]: value }));
@@ -202,19 +250,26 @@ export function OnboardingPortal() {
             const fresh = await getSession();
             const token = fresh?.user.accessToken;
             if (!token || fresh?.error) throw new Error('Your session expired. Sign in again to submit.');
-            const org = await partnersApi.createOrganization(
-                {
-                    name: draft.businessName.trim(),
-                    type: draft.type,
-                    addressLine: draft.address.trim(),
-                    city: 'Nairobi',
-                    contactPhone: session.user.phone ?? undefined,
-                },
-                token,
-            );
-            const auth = { token, organizationId: org.id };
+            let target = resolveTargetOrg(membership, createdOrg);
+            let orgName = membership?.name ?? draft.businessName.trim();
+            if (!target) {
+                const org = await partnersApi.createOrganization(
+                    {
+                        name: draft.businessName.trim(),
+                        type: draft.type,
+                        addressLine: draft.address.trim(),
+                        city: 'Nairobi',
+                        contactPhone: session.user.phone ?? undefined,
+                    },
+                    token,
+                );
+                createdOrg.current = org.id;
+                orgName = org.name;
+                target = { organizationId: org.id, existing: false };
+            }
+            const auth = { token, organizationId: target.organizationId };
             await providersApi.update(auth, {
-                location: location ? { lat: location.lat, lng: location.lng } : null,
+                location: location ? { lat: location.lat, lng: location.lng } : (profile?.location ?? null),
                 addressLine: draft.address.trim(),
                 serviceRadiusKm: draft.radiusKm,
                 capabilities: draft.capabilityIds as Capability[],
@@ -222,18 +277,24 @@ export function OnboardingPortal() {
                 vans: draft.vans,
                 taxPin: draft.taxPin.trim().toUpperCase(),
                 payout: {
-                    mobileMoney: draft.mmNumber.trim() ? { kind: draft.mmKind, number: draft.mmNumber.trim(), account: draft.mmAccount.trim() || undefined } : null,
+                    mobileMoney: draft.mmNumber.trim()
+                        ? { kind: draft.mmKind, number: draft.mmNumber.trim(), account: draft.mmKind === 'PAYBILL' ? draft.mmAccount.trim() || undefined : undefined }
+                        : null,
                     bankAccount: draft.bankAccount.trim() ? { bank: draft.bankName.trim(), accountNumber: draft.bankAccount.trim() } : null,
                 },
             });
-            for (const file of files) await providersApi.uploadDocument(auth, file, 'BUSINESS_PERMIT');
+            for (const file of files) {
+                if (uploaded.current.has(file)) continue;
+                await providersApi.uploadDocument(auth, file, 'BUSINESS_PERMIT');
+                uploaded.current.add(file);
+            }
             await providersApi.submit(auth);
             try {
                 localStorage.removeItem(DRAFT_KEY);
             } catch {
                 // ignore
             }
-            setDone({ name: org.name });
+            setDone({ name: orgName });
         } catch (err) {
             if (err instanceof ApiError && err.fieldErrors.length > 0) {
                 const next: Errors = {};
@@ -296,15 +357,17 @@ export function OnboardingPortal() {
 
     const fieldBox = 'flex items-center gap-2 bg-surface-container-low px-3.5 py-2.5 rounded-lg focus-within:ring-2 focus-within:ring-primary focus-within:bg-surface-container-lowest transition-all';
 
-    if (done) {
+    const underReview = profile?.verification.status === 'SUBMITTED' || profile?.verification.status === 'APPROVED';
+    if (done || underReview) {
+        const approved = !done && profile?.verification.status === 'APPROVED';
         return (
             <div className="max-w-xl mx-auto bg-surface-container-lowest rounded-xl shadow-sm p-8 flex flex-col items-center text-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-primary-fixed text-primary flex items-center justify-center">
                     <Icon name="verified" fill className="text-[32px]" />
                 </div>
-                <h2 className="font-headline-md text-headline-md text-on-surface">{done.name} is registered</h2>
+                <h2 className="font-headline-md text-headline-md text-on-surface">{done?.name ?? membership?.name} {approved ? 'is verified' : 'is registered'}</h2>
                 <p className="font-body-md text-body-md text-on-surface-variant">
-                    Your application is under review. We&apos;ll email you when it&apos;s approved — usually within one business day.
+                    {approved ? 'Your partner profile is approved. Manage your shop from the dashboard.' : 'Your application is under review. We\'ll email you when it\'s approved — usually within one business day.'}
                 </p>
                 <Link
                     href="/dashboard/garage"
@@ -356,6 +419,15 @@ export function OnboardingPortal() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
                 <div className="lg:col-span-8 flex flex-col gap-6">
+                    {profile?.verification.status === 'REJECTED' && (
+                        <div role="alert" className="rounded-xl p-space-md flex items-start gap-space-sm bg-error-container text-on-error-container">
+                            <Icon name="error" className="text-[24px] shrink-0" />
+                            <p className="font-body-md text-body-md">
+                                Your application was not approved{profile.verification.rejectionReason ? `: ${profile.verification.rejectionReason}` : '.'} Update your details below and resubmit.
+                            </p>
+                        </div>
+                    )}
+                    {profileLoading && <p className="font-body-sm text-body-sm text-on-surface-variant">Loading your saved profile…</p>}
                     <div className="bg-surface-container-lowest p-5 rounded-xl shadow-sm">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
                             {stepTab(1, draft.type === 'GARAGE' ? 'Business Profile' : 'Mechanic Profile')}
@@ -396,6 +468,7 @@ export function OnboardingPortal() {
                                             className="bg-transparent w-full text-on-surface font-body-md text-body-md outline-none"
                                             placeholder="e.g. SpeedMasters Auto Care"
                                             value={draft.businessName}
+                                            readOnly={Boolean(membership)}
                                             onChange={(e) => set('businessName', e.target.value)}
                                         />
                                     </div>
@@ -534,6 +607,30 @@ export function OnboardingPortal() {
                             </div>
                             <div className="flex flex-col gap-2">
                                 <span className="font-label-md text-label-md text-on-surface">Trade Licenses &amp; Garage Certification</span>
+                                {(profile?.documents ?? []).length > 0 && (
+                                    <ul className="flex flex-wrap gap-2" aria-label="Uploaded documents">
+                                        {profile!.documents.map((doc) => (
+                                            <li key={doc.id} className="px-2 py-1 bg-surface-container-low rounded text-on-surface-variant font-code-xs text-code-xs flex items-center gap-1">
+                                                <Icon name="description" className="text-[14px] text-primary" />
+                                                {doc.fileName}
+                                                <button
+                                                    type="button"
+                                                    aria-label={`Remove ${doc.fileName}`}
+                                                    onClick={() => {
+                                                        if (!token || !orgId) return;
+                                                        providersApi
+                                                            .removeDocument({ token, organizationId: orgId }, doc.id)
+                                                            .then(loadProfile)
+                                                            .catch((err) => toast.error(err instanceof ApiError ? err.message : 'Could not remove the document.'));
+                                                    }}
+                                                    className="ml-0.5 hover:text-error"
+                                                >
+                                                    <Icon name="close" className="text-[14px]" />
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                                 <input
                                     ref={fileInput}
                                     type="file"
@@ -635,6 +732,7 @@ export function OnboardingPortal() {
                                             onChange={(e) => set('mmAccount', e.target.value)}
                                         />
                                     )}
+                                    <Err message={errors.mmAccount} />
                                     <span className="font-body-sm text-body-sm text-on-surface-variant">Real-time settlement within 60 seconds of client rescue signoff.</span>
                                 </div>
                                 <div className="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
