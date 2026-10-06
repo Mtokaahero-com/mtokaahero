@@ -3,20 +3,23 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getSession, useSession } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Icon } from '@/components/brand/Icon';
 import { MapSnapshot } from '@/components/map/MapSnapshot';
+import { useAccount } from '@/hooks/use-account';
 import { useApi } from '@/hooks/use-api';
 import type { OrganizationType } from '@/lib/api/account';
 import { partnersApi } from '@/lib/api/partners';
 import { ApiError } from '@/lib/api/problem';
+import { providersApi, type Capability, type ProviderProfile } from '@/lib/api/providers';
+import { providerMembership, resolveTargetOrg } from '@/lib/partners/resolve-org';
 import { rescueApi, type ResolvedLocation } from '@/lib/api/rescue';
-import { formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 const DRAFT_KEY = 'mtokaa.partner-draft';
+const CAPABILITY_IDS: string[] = ['ENGINE', 'BRAKES', 'DIAGNOSTICS', 'MOBILE_RESCUE', 'TOWING', 'PARTS_RETAIL'];
 
 interface Draft {
     type: OrganizationType;
@@ -27,7 +30,10 @@ interface Draft {
     address: string;
     capabilityIds: string[];
     radiusKm: number;
-    mobileMoney: string;
+    mmKind: 'PAYBILL' | 'TILL';
+    mmNumber: string;
+    mmAccount: string;
+    bankName: string;
     bankAccount: string;
 }
 
@@ -38,9 +44,12 @@ const EMPTY: Draft = {
     bays: 2,
     vans: 1,
     address: '',
-    capabilityIds: ['diagnostics', 'rescue'],
+    capabilityIds: ['DIAGNOSTICS', 'MOBILE_RESCUE'],
     radiusKm: 25,
-    mobileMoney: '',
+    mmKind: 'PAYBILL',
+    mmNumber: '',
+    mmAccount: '',
+    bankName: '',
     bankAccount: '',
 };
 
@@ -50,12 +59,21 @@ const schema = z
         taxPin: z.string().trim().regex(/^[AP]\d{9}[A-Z]$/i, 'Enter a KRA PIN like P051892341M'),
         address: z.string().trim().min(5, 'Enter the physical bay address'),
         capabilityIds: z.array(z.string()).min(1, 'Select at least one capability'),
-        mobileMoney: z.string().trim(),
+        mmKind: z.enum(['PAYBILL', 'TILL']),
+        mmNumber: z.string().trim(),
+        mmAccount: z.string().trim().max(20, 'Account reference must be 20 characters or fewer'),
+        bankName: z.string().trim(),
         bankAccount: z.string().trim(),
     })
-    .refine((d) => d.mobileMoney || d.bankAccount, { path: ['mobileMoney'], message: 'Add a mobile money or bank payout route' });
+    .superRefine((d, ctx) => {
+        const mmOk = /^\d{5,7}$/.test(d.mmNumber);
+        const bankOk = /^\d{6,20}$/.test(d.bankAccount) && d.bankName.length > 0;
+        if (d.mmNumber && !mmOk) ctx.addIssue({ code: 'custom', path: ['mmNumber'], message: 'Enter a 5-7 digit Paybill or Till number' });
+        if (d.bankAccount && !bankOk) ctx.addIssue({ code: 'custom', path: ['bankAccount'], message: 'Enter the bank name and a 6-20 digit account number' });
+        if (!mmOk && !bankOk && !d.mmNumber && !d.bankAccount) ctx.addIssue({ code: 'custom', path: ['mmNumber'], message: 'Add a mobile money or bank payout route' });
+    });
 
-type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'capabilityIds' | 'mobileMoney' | 'form', string>>;
+type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'location' | 'capabilityIds' | 'mmNumber' | 'mmAccount' | 'bankAccount' | 'mobileMoney' | 'form', string>>;
 
 const ADV_TONE = {
     primary: 'bg-primary/10 text-primary',
@@ -64,9 +82,19 @@ const ADV_TONE = {
     rescue: 'bg-tertiary/10 text-tertiary',
 } as const;
 
+const ADVANTAGES: { icon: string; tone: keyof typeof ADV_TONE; title: string; body: string }[] = [
+    { icon: 'hub', tone: 'primary', title: 'Reach Stranded Motorists', body: 'Instant exposure to distressed drivers on expressways and bypass roads.' },
+    { icon: 'verified_user', tone: 'amber', title: 'Direct Payments', body: 'Motorists pay you directly to your Paybill, Till or bank account.' },
+    { icon: 'inventory_2', tone: 'tint', title: 'Free Workshop & Parts ERP', body: 'Included digital hoist scheduler, automated billing, and catalog sync software.' },
+    { icon: 'stars', tone: 'rescue', title: 'Verified Reputation Badging', body: 'Motorists trust high-rated shops. Grow your authentic ratings with every job.' },
+];
+
 function readDraft(): Partial<Draft> {
     try {
-        return JSON.parse(localStorage.getItem(DRAFT_KEY) ?? '{}') as Partial<Draft>;
+        const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? '{}') as Partial<Draft>;
+        // Drafts saved before the real provider API used lowercase capability ids.
+        if (Array.isArray(raw.capabilityIds)) raw.capabilityIds = raw.capabilityIds.map((c) => String(c).toUpperCase()).filter((c) => CAPABILITY_IDS.includes(c));
+        return raw;
     } catch {
         return {};
     }
@@ -102,20 +130,67 @@ export function OnboardingPortal() {
     const router = useRouter();
     const params = useSearchParams();
     const { data: session } = useSession();
-    const program = useApi('partner-program', partnersApi.program);
+    const program = useApi('partner-program', providersApi.program);
     const p = program.data;
 
     const [draft, setDraft] = useState<Draft>(() => ({ ...EMPTY, type: params.get('type') === 'MOBILE_MECHANIC' ? 'MOBILE_MECHANIC' : 'GARAGE' }));
     const [files, setFiles] = useState<File[]>([]);
     const [location, setLocation] = useState<ResolvedLocation | null>(null);
     const [locating, setLocating] = useState(false);
+    const [locationDenied, setLocationDenied] = useState(false);
     const [errors, setErrors] = useState<Errors>({});
     const [submitting, setSubmitting] = useState(false);
     const [done, setDone] = useState<{ name: string } | null>(null);
+    const account = useAccount();
+    const membership = providerMembership(account.activeMembership);
+    const createdOrg = useRef<string | null>(null);
+    const uploaded = useRef(new Set<File>());
+    const prefilled = useRef(false);
+    const [profile, setProfile] = useState<ProviderProfile | null>(null);
+    const [profileLoading, setProfileLoading] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
     const sections = { 1: useRef<HTMLElement>(null), 2: useRef<HTMLElement>(null), 3: useRef<HTMLElement>(null) };
 
     useEffect(() => setDraft((d) => ({ ...d, ...readDraft(), type: params.get('type') === 'MOBILE_MECHANIC' ? 'MOBILE_MECHANIC' : (readDraft().type ?? d.type) })), [params]);
+
+    const orgId = membership?.organizationId;
+    const token = account.accessToken;
+    const loadProfile = useCallback(async () => {
+        if (!orgId || !token) return;
+        const prof = await providersApi.get({ token, organizationId: orgId });
+        setProfile(prof);
+        return prof;
+    }, [orgId, token]);
+
+    useEffect(() => {
+        if (!orgId || !token || prefilled.current) return;
+        prefilled.current = true;
+        setProfileLoading(true);
+        loadProfile()
+            .then((prof) => {
+                if (!prof) return;
+                const mm = prof.payout.mobileMoney;
+                const bank = prof.payout.bankAccount;
+                setDraft((d) => ({
+                    ...d,
+                    type: prof.type === 'MOBILE_MECHANIC' ? 'MOBILE_MECHANIC' : 'GARAGE',
+                    businessName: membership?.name ?? d.businessName,
+                    address: prof.addressLine ?? d.address,
+                    radiusKm: prof.serviceRadiusKm,
+                    capabilityIds: prof.capabilities,
+                    bays: prof.bays,
+                    vans: prof.vans,
+                    taxPin: prof.taxPin ?? d.taxPin,
+                    mmKind: mm?.kind ?? d.mmKind,
+                    mmNumber: mm?.number ?? '',
+                    mmAccount: mm?.account ?? '',
+                    bankName: bank?.bank ?? '',
+                    bankAccount: bank?.accountNumber ?? '',
+                }));
+            })
+            .catch(() => setErrors({ form: 'Could not load your saved profile. Refresh to try again.' }))
+            .finally(() => setProfileLoading(false));
+    }, [orgId, token, loadProfile, membership?.name]);
 
     const set = <K extends keyof Draft>(key: K, value: Draft[K]) => {
         setDraft((d) => ({ ...d, [key]: value }));
@@ -137,16 +212,21 @@ export function OnboardingPortal() {
 
     const pinLocation = () => {
         setLocating(true);
-        const fallback = { lat: -1.286389, lng: 36.817223 };
-        const done = (pt: { lat: number; lng: number }) =>
-            rescueApi
-                .reverseGeocode(pt)
-                .then(setLocation)
-                .finally(() => setLocating(false));
-        if (!('geolocation' in navigator)) return void done(fallback);
+        setLocationDenied(false);
+        setErrors((e) => ({ ...e, location: undefined }));
+        const fail = () => {
+            setLocationDenied(true);
+            setLocating(false);
+        };
+        if (!('geolocation' in navigator)) return fail();
         navigator.geolocation.getCurrentPosition(
-            (pos) => void done({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-            () => void done(fallback),
+            (pos) =>
+                void rescueApi
+                    .reverseGeocode({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+                    .then(setLocation)
+                    .catch(fail)
+                    .finally(() => setLocating(false)),
+            fail,
             { enableHighAccuracy: true, timeout: 10000 },
         );
     };
@@ -157,7 +237,7 @@ export function OnboardingPortal() {
             const next: Errors = {};
             for (const issue of parsed.error.issues) next[issue.path[0] as keyof Errors] ??= issue.message;
             setErrors(next);
-            const first = next.businessName || next.taxPin || next.address ? 1 : next.capabilityIds ? 2 : 3;
+            const first = next.businessName || next.taxPin || next.address || next.location ? 1 : next.capabilityIds ? 2 : 3;
             sections[first as 1 | 2 | 3].current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             return;
         }
@@ -176,40 +256,66 @@ export function OnboardingPortal() {
             const fresh = await getSession();
             const token = fresh?.user.accessToken;
             if (!token || fresh?.error) throw new Error('Your session expired. Sign in again to submit.');
-            const org = await partnersApi.createOrganization(
-                {
-                    name: draft.businessName.trim(),
-                    type: draft.type,
-                    addressLine: draft.address.trim(),
-                    city: 'Nairobi',
-                    contactPhone: session.user.phone ?? undefined,
+            let target = resolveTargetOrg(membership, createdOrg);
+            let orgName = membership?.name ?? draft.businessName.trim();
+            if (!target) {
+                const org = await partnersApi.createOrganization(
+                    {
+                        name: draft.businessName.trim(),
+                        type: draft.type,
+                        addressLine: draft.address.trim(),
+                        city: 'Nairobi',
+                        contactPhone: session.user.phone ?? undefined,
+                    },
+                    token,
+                );
+                createdOrg.current = org.id;
+                orgName = org.name;
+                target = { organizationId: org.id, existing: false };
+            }
+            const auth = { token, organizationId: target.organizationId };
+            await providersApi.update(auth, {
+                location: location ? { lat: location.lat, lng: location.lng } : (profile?.location ?? null),
+                addressLine: draft.address.trim(),
+                serviceRadiusKm: draft.radiusKm,
+                capabilities: draft.capabilityIds as Capability[],
+                bays: draft.bays,
+                vans: draft.vans,
+                taxPin: draft.taxPin.trim().toUpperCase(),
+                payout: {
+                    mobileMoney: draft.mmNumber.trim()
+                        ? { kind: draft.mmKind, number: draft.mmNumber.trim(), account: draft.mmKind === 'PAYBILL' ? draft.mmAccount.trim() || undefined : undefined }
+                        : null,
+                    bankAccount: draft.bankAccount.trim() ? { bank: draft.bankName.trim(), accountNumber: draft.bankAccount.trim() } : null,
                 },
-                token,
-            );
-            const docs = await Promise.all(files.map((f) => partnersApi.uploadDocument(f, token)));
-            await partnersApi.submit(
-                {
-                    organizationId: org.id,
-                    type: draft.type,
-                    taxPin: draft.taxPin.trim().toUpperCase(),
-                    bays: draft.bays,
-                    vans: draft.vans,
-                    address: draft.address.trim(),
-                    location: location ? { lat: location.lat, lng: location.lng } : null,
-                    capabilityIds: draft.capabilityIds,
-                    radiusKm: draft.radiusKm,
-                    documentIds: docs.map((d) => d.id),
-                    payout: { mobileMoney: draft.mobileMoney.trim(), bankAccount: draft.bankAccount.trim() },
-                },
-                token,
-            );
+            });
+            for (const file of files) {
+                if (uploaded.current.has(file)) continue;
+                await providersApi.uploadDocument(auth, file, 'BUSINESS_PERMIT');
+                uploaded.current.add(file);
+            }
+            await providersApi.submit(auth);
             try {
                 localStorage.removeItem(DRAFT_KEY);
             } catch {
                 // ignore
             }
-            setDone({ name: org.name });
+            setDone({ name: orgName });
         } catch (err) {
+            if (err instanceof ApiError && err.fieldErrors.length > 0) {
+                const next: Errors = {};
+                for (const fe of err.fieldErrors) {
+                    if (fe.field === 'location') next.location ??= fe.message;
+                    else if (fe.field === 'addressLine') next.address ??= fe.message;
+                    else if (fe.field === 'taxPin') next.taxPin ??= fe.message;
+                    else if (fe.field === 'capabilities') next.capabilityIds ??= fe.message;
+                    else if (fe.field === 'payout') next.mobileMoney ??= fe.message;
+                    else if (fe.field === 'documents') next.form = 'Upload at least one permit or certificate';
+                    else next.form ??= fe.message;
+                }
+                setErrors(next);
+                return;
+            }
             const message =
                 err instanceof ApiError
                     ? err.code === 'EMAIL_NOT_VERIFIED'
@@ -258,15 +364,17 @@ export function OnboardingPortal() {
 
     const fieldBox = 'flex items-center gap-2 bg-surface-container-low px-3.5 py-2.5 rounded-lg focus-within:ring-2 focus-within:ring-primary focus-within:bg-surface-container-lowest transition-all';
 
-    if (done) {
+    const underReview = profile?.verification.status === 'SUBMITTED' || profile?.verification.status === 'APPROVED';
+    if (done || underReview) {
+        const approved = !done && profile?.verification.status === 'APPROVED';
         return (
             <div className="max-w-xl mx-auto bg-surface-container-lowest rounded-xl shadow-sm p-8 flex flex-col items-center text-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-primary-fixed text-primary flex items-center justify-center">
                     <Icon name="verified" fill className="text-[32px]" />
                 </div>
-                <h2 className="font-headline-md text-headline-md text-on-surface">{done.name} is registered</h2>
+                <h2 className="font-headline-md text-headline-md text-on-surface">{done?.name ?? membership?.name} {approved ? 'is verified' : 'is registered'}</h2>
                 <p className="font-body-md text-body-md text-on-surface-variant">
-                    Your verification documents are in review. You can set up your catalogue and start accepting rescues from your shop dashboard now.
+                    {approved ? 'Your partner profile is approved. Manage your shop from the dashboard.' : 'Your application is under review. We\'ll email you when it\'s approved — usually within one business day.'}
                 </p>
                 <Link
                     href="/dashboard/garage"
@@ -290,7 +398,7 @@ export function OnboardingPortal() {
                         </div>
                         <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight max-sm:text-headline-lg-mobile">Join the MtokaaHero Network</h1>
                         <p className="font-body-md text-body-md text-on-surface-variant mt-1">
-                            Accelerate your garage bookings, process automated escrow payouts, and dispatch roadside rescues effortlessly.
+                            Get discovered by motorists, take garage bookings and dispatch roadside rescues effortlessly.
                         </p>
                     </div>
                     <div className="inline-flex flex-wrap lg:flex-nowrap lg:shrink-0 p-1.5 bg-surface-container rounded-xl shadow-inner self-start lg:self-center" role="tablist" aria-label="Partner type">
@@ -318,6 +426,15 @@ export function OnboardingPortal() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
                 <div className="lg:col-span-8 flex flex-col gap-6">
+                    {profile?.verification.status === 'REJECTED' && (
+                        <div role="alert" className="rounded-xl p-space-md flex items-start gap-space-sm bg-error-container text-on-error-container">
+                            <Icon name="error" className="text-[24px] shrink-0" />
+                            <p className="font-body-md text-body-md">
+                                Your application was not approved{profile.verification.rejectionReason ? `: ${profile.verification.rejectionReason}` : '.'} Update your details below and resubmit.
+                            </p>
+                        </div>
+                    )}
+                    {profileLoading && <p className="font-body-sm text-body-sm text-on-surface-variant">Loading your saved profile…</p>}
                     <div className="bg-surface-container-lowest p-5 rounded-xl shadow-sm">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
                             {stepTab(1, draft.type === 'GARAGE' ? 'Business Profile' : 'Mechanic Profile')}
@@ -358,6 +475,7 @@ export function OnboardingPortal() {
                                             className="bg-transparent w-full text-on-surface font-body-md text-body-md outline-none"
                                             placeholder="e.g. SpeedMasters Auto Care"
                                             value={draft.businessName}
+                                            readOnly={Boolean(membership)}
                                             onChange={(e) => set('businessName', e.target.value)}
                                         />
                                     </div>
@@ -407,6 +525,15 @@ export function OnboardingPortal() {
                                     />
                                 </div>
                                 <Err message={errors.address} />
+                                {locationDenied && (
+                                    <p role="alert" className="font-body-sm text-body-sm text-error flex items-center gap-2">
+                                        Allow location access to pin your shop.
+                                        <button type="button" onClick={pinLocation} className="underline text-primary">
+                                            Try again
+                                        </button>
+                                    </p>
+                                )}
+                                <Err message={errors.location} />
                                 {location ? (
                                     <MapSnapshot tile={location.map} label="Shop location map" className="w-full h-44 rounded-xl shadow-inner flex items-center justify-center">
                                         <div className="absolute inset-0 bg-on-surface/20 backdrop-blur-[1px]" />
@@ -470,16 +597,15 @@ export function OnboardingPortal() {
                                 <input
                                     aria-label="Emergency response radius in kilometres"
                                     className="w-full accent-primary h-2 bg-surface-container-high rounded-lg cursor-pointer"
-                                    min={p?.radiusKm.min ?? 5}
-                                    max={p?.radiusKm.max ?? 60}
+                                    min={p?.serviceRadiusKm.min ?? 5}
+                                    max={p?.serviceRadiusKm.max ?? 60}
                                     type="range"
                                     value={draft.radiusKm}
                                     onChange={(e) => set('radiusKm', Number(e.target.value))}
                                 />
                                 <div className="flex justify-between font-code-xs text-code-xs text-on-surface-variant">
-                                    {(p?.radiusKm.marks ?? []).map((m) => (
-                                        <span key={m.km}>{m.label}</span>
-                                    ))}
+                                    <span>{p?.serviceRadiusKm.min ?? 5} km</span>
+                                    <span>{p?.serviceRadiusKm.max ?? 60} km</span>
                                 </div>
                             </div>
                         </section>
@@ -487,8 +613,8 @@ export function OnboardingPortal() {
                         <section ref={sections[3]} className="flex flex-col gap-6 scroll-mt-28">
                             <div className="flex items-center justify-between gap-4 pb-4 border-b border-surface-container">
                                 <div>
-                                    <h2 className="font-headline-sm text-headline-sm text-on-surface">Verification &amp; Escrow Payouts</h2>
-                                    <p className="font-body-sm text-body-sm text-on-surface-variant">Funds are automatically settled to this account upon driver job completion.</p>
+                                    <h2 className="font-headline-sm text-headline-sm text-on-surface">Verification &amp; Payment Details</h2>
+                                    <p className="font-body-sm text-body-sm text-on-surface-variant">Motorists see these details and pay you directly.</p>
                                 </div>
                                 <span className="flex items-center gap-1 text-primary font-code-xs text-code-xs whitespace-nowrap">
                                     <Icon name="lock" className="text-[16px]" />
@@ -497,6 +623,30 @@ export function OnboardingPortal() {
                             </div>
                             <div className="flex flex-col gap-2">
                                 <span className="font-label-md text-label-md text-on-surface">Trade Licenses &amp; Garage Certification</span>
+                                {(profile?.documents ?? []).length > 0 && (
+                                    <ul className="flex flex-wrap gap-2" aria-label="Uploaded documents">
+                                        {profile!.documents.map((doc) => (
+                                            <li key={doc.id} className="px-2 py-1 bg-surface-container-low rounded text-on-surface-variant font-code-xs text-code-xs flex items-center gap-1">
+                                                <Icon name="description" className="text-[14px] text-primary" />
+                                                {doc.fileName}
+                                                <button
+                                                    type="button"
+                                                    aria-label={`Remove ${doc.fileName}`}
+                                                    onClick={() => {
+                                                        if (!token || !orgId) return;
+                                                        providersApi
+                                                            .removeDocument({ token, organizationId: orgId }, doc.id)
+                                                            .then(loadProfile)
+                                                            .catch((err) => toast.error(err instanceof ApiError ? err.message : 'Could not remove the document.'));
+                                                    }}
+                                                    className="ml-0.5 hover:text-error"
+                                                >
+                                                    <Icon name="close" className="text-[14px]" />
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                                 <input
                                     ref={fileInput}
                                     type="file"
@@ -563,14 +713,43 @@ export function OnboardingPortal() {
                                         </label>
                                         <span className="text-secondary font-code-xs text-code-xs font-semibold">TILL / PAYBILL</span>
                                     </div>
+                                    <div className="inline-flex p-1 bg-surface-container rounded-lg self-start" role="radiogroup" aria-label="Mobile money type">
+                                        {(['PAYBILL', 'TILL'] as const).map((k) => (
+                                            <button
+                                                key={k}
+                                                type="button"
+                                                role="radio"
+                                                aria-checked={draft.mmKind === k}
+                                                onClick={() => set('mmKind', k)}
+                                                className={cn(
+                                                    'px-3 py-1 rounded-md font-code-xs text-code-xs font-semibold transition-all',
+                                                    draft.mmKind === k ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant',
+                                                )}
+                                            >
+                                                {k === 'PAYBILL' ? 'Paybill' : 'Till'}
+                                            </button>
+                                        ))}
+                                    </div>
                                     <input
                                         id="pt-mm"
+                                        inputMode="numeric"
                                         className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
-                                        placeholder="Paybill: 400222 | Acc: 0110948201"
-                                        value={draft.mobileMoney}
-                                        onChange={(e) => set('mobileMoney', e.target.value)}
+                                        placeholder={draft.mmKind === 'PAYBILL' ? 'Paybill number e.g. 400222' : 'Till number e.g. 5012345'}
+                                        value={draft.mmNumber}
+                                        onChange={(e) => set('mmNumber', e.target.value)}
                                     />
-                                    <span className="font-body-sm text-body-sm text-on-surface-variant">Real-time settlement within 60 seconds of client rescue signoff.</span>
+                                    <Err message={errors.mmNumber} />
+                                    {draft.mmKind === 'PAYBILL' && (
+                                        <input
+                                            aria-label="Paybill account number"
+                                            className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
+                                            placeholder="Account number e.g. 0110948201"
+                                            value={draft.mmAccount}
+                                            onChange={(e) => set('mmAccount', e.target.value)}
+                                        />
+                                    )}
+                                    <Err message={errors.mmAccount} />
+                                    <span className="font-body-sm text-body-sm text-on-surface-variant">Motorists pay this number directly; MtokaaHero never holds your money.</span>
                                 </div>
                                 <div className="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
                                     <div className="flex items-center justify-between">
@@ -583,10 +762,19 @@ export function OnboardingPortal() {
                                     <input
                                         id="pt-bank"
                                         className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
-                                        placeholder="Stanbic Bank - 0100004928190"
+                                        placeholder="Bank name e.g. Stanbic Bank"
+                                        value={draft.bankName}
+                                        onChange={(e) => set('bankName', e.target.value)}
+                                    />
+                                    <input
+                                        aria-label="Bank account number"
+                                        inputMode="numeric"
+                                        className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
+                                        placeholder="Account number e.g. 0100004928190"
                                         value={draft.bankAccount}
                                         onChange={(e) => set('bankAccount', e.target.value)}
                                     />
+                                    <Err message={errors.bankAccount} />
                                     <span className="font-body-sm text-body-sm text-on-surface-variant">Batched daily reconciliation for larger overhaul shop operations.</span>
                                 </div>
                             </div>
@@ -627,7 +815,7 @@ export function OnboardingPortal() {
                             <h3 className="font-title-lg text-title-lg text-on-surface mt-1">Why Partner with MtokaaHero?</h3>
                         </div>
                         <div className="flex flex-col gap-4">
-                            {(p?.advantages ?? []).map((a) => (
+                            {ADVANTAGES.map((a) => (
                                 <div key={a.title} className="flex items-start gap-3">
                                     <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0', ADV_TONE[a.tone])}>
                                         <Icon name={a.icon} className="text-[22px]" />
@@ -644,57 +832,11 @@ export function OnboardingPortal() {
                                 <Icon name="support_agent" className="text-secondary text-[20px]" />
                                 <span className="font-label-md text-label-md">Need setup assistance?</span>
                             </div>
-                            <Link className="font-code-xs text-code-xs text-primary font-semibold hover:underline" href={p?.support.href ?? '/contact'}>
-                                {p?.support.label ?? 'Chat with Ops'}
+                            <Link className="font-code-xs text-code-xs text-primary font-semibold hover:underline" href="/contact">
+                                Chat with Ops
                             </Link>
                         </div>
                     </div>
-
-                    {p?.testimonial && (
-                        <div className="bg-gradient-to-br from-surface-container-lowest to-surface-container-low p-6 rounded-xl shadow-sm relative overflow-hidden">
-                            <div className="flex items-center gap-4 mb-4">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img className="w-14 h-14 rounded-full object-cover shadow-sm" alt={p.testimonial.name} src={p.testimonial.photo} />
-                                <div>
-                                    <h4 className="font-title-md text-title-md text-on-surface">{p.testimonial.name}</h4>
-                                    <span className="font-body-sm text-body-sm text-on-surface-variant">{p.testimonial.business}</span>
-                                </div>
-                            </div>
-                            <blockquote className="font-body-sm text-body-sm text-on-surface italic mb-4">“{p.testimonial.quote}”</blockquote>
-                            <div className="p-3 bg-surface-container-lowest rounded-xl flex items-center justify-between shadow-sm">
-                                <div>
-                                    <span className="font-code-xs text-code-xs text-on-surface-variant block uppercase">Monthly Network Payout</span>
-                                    <span className="font-headline-sm text-headline-sm text-primary font-bold">{formatMoney(p.testimonial.monthlyPayout)}+</span>
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <div className="flex text-secondary-container">
-                                        {[1, 2, 3, 4, 5].map((i) => (
-                                            <Icon key={i} name="star" fill className="text-[16px]" />
-                                        ))}
-                                    </div>
-                                    <span className="font-code-xs text-code-xs text-on-surface-variant">
-                                        {p.testimonial.rating} ({p.testimonial.reviewCount} reviews)
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {p && (
-                        <div className="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col gap-3">
-                            <div className="flex justify-between items-center text-on-surface-variant">
-                                <span className="font-label-md text-label-md">Average Rescue Dispatch</span>
-                                <span className="font-code-sm text-code-sm text-on-surface font-semibold">{p.dispatch.avgMinutes} Mins</span>
-                            </div>
-                            <div className="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-primary h-full rounded-full" style={{ width: `${Math.min(100, (1 - p.dispatch.avgMinutes / (p.dispatch.targetMinutes * 4)) * 100)}%` }} />
-                            </div>
-                            <div className="flex justify-between font-code-xs text-code-xs text-on-surface-variant">
-                                <span>Target: &lt;{p.dispatch.targetMinutes}m</span>
-                                <span className="text-primary font-semibold">Top Tier {p.dispatch.onTimeRate}% On-Time</span>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

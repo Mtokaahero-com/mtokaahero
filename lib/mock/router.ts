@@ -1,7 +1,6 @@
 import type { RescueRequestInput } from '@/lib/api/rescue';
 import { filters, offers, queryOffers, summary } from './marketplace';
 import * as garage from './garage';
-import { program, submitApplication } from './partners';
 import { buildQuote, createRequest, reverseGeocode, tracking } from './rescue';
 
 export interface MockResult {
@@ -54,25 +53,9 @@ const routes: [string, RegExp, Handler][] = [
             return view ? ok(view) : notFound('This tracking link has expired or does not exist.');
         },
     ],
-    ['GET', /^\/partners\/program$/, () => ok(program)],
-    [
-        'POST',
-        /^\/partners\/documents$/,
-        (_m, _q, body) => {
-            const file = body as { name?: string; size?: number } | undefined;
-            if (!file?.name) return { status: 422, body: { code: 'VALIDATION_FAILED', detail: 'Attach a file.' } };
-            return { status: 201, body: { id: `doc_${crypto.randomUUID()}`, name: file.name, size: file.size ?? 0 } };
-        },
-    ],
-    [
-        'POST',
-        /^\/partners\/applications$/,
-        (_m, _q, body) => ({ status: 201, body: submitApplication(body as Parameters<typeof submitApplication>[0]) }),
-    ],
 
     // Garage operations: tenant-scoped by X-Organization-Id, like mtokaa-api's /organization routes.
     ['GET', /^\/garage\/dashboard$/, (_m, _q, _b, h) => ok(garage.dashboard(org(h)))],
-    ['PATCH', /^\/garage\/availability$/, (_m, _q, b, h) => ok(garage.setAvailability(org(h), Boolean((b as { accepting?: boolean })?.accepting)))],
     ['GET', /^\/garage\/dispatch-radar$/, (_m, _q, _b, h) => ok(garage.radar(org(h)))],
     ['POST', /^\/garage\/dispatch-radar\/([\w-]+)\/accept$/, (m, _q, _b, h) => ok(garage.acceptCall(org(h), m[1]))],
     ['GET', /^\/garage\/catalog$/, (_m, q, _b, h) => ok(garage.catalog(org(h), q))],

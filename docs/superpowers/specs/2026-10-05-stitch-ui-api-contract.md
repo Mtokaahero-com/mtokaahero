@@ -15,8 +15,9 @@ All calls in this contract go through `marketplaceFetch` (`lib/api/client.ts`), 
 `NEXT_PUBLIC_MARKETPLACE_API_URL` (default `/api/mock/v1`). Point it at `http://localhost:8080/api/v1`
 once the endpoints exist, then delete `app/api/mock` and `lib/mock`.
 
-Two calls already use the real API: `POST /organizations` (partner onboarding) and `GET /me`
-(memberships for the header and dashboard gate).
+These calls already use the real API: `POST /organizations`, `GET /me` (memberships for the header and
+dashboard gate), and the partner onboarding endpoints (`GET /partners/program` and the
+`/organization/provider-profile` family: profile, documents, submit, availability) via `lib/api/providers.ts`.
 
 ## Conventions
 
@@ -24,7 +25,7 @@ Two calls already use the real API: `POST /organizations` (partner onboarding) a
 - Errors are problem+json `{ code, detail, errors?: [{ field, message }] }`, as `parseProblem` expects.
   Validation failures are `422 VALIDATION_FAILED` with field errors; the forms map them onto inputs.
 - Garage endpoints are tenant-scoped: bearer token plus `X-Organization-Id`, same as `/organization`.
-- Types live in `lib/api/{marketplace,rescue,partners,garage,support}.ts`. Those files are the source of truth.
+- Types live in `lib/api/{marketplace,rescue,providers,partners,garage,support}.ts`. Those files are the source of truth.
 
 ## Marketplace (public)
 
@@ -57,17 +58,22 @@ until the payments spec changes it.
 
 | Method | Path | Returns | Notes |
 |---|---|---|---|
-| GET | `/partners/program` | `PartnerProgram` | Capability list, radius range/marks, advantages, testimonial, dispatch stats (P9: real data or omitted). |
-| POST | `/organizations` | `OrganizationView` | **Exists.** Called first; needs a verified email. |
-| POST | `/partners/documents` | `UploadedDocument` | `multipart/form-data` with `file` (PDF/JPG/PNG ≤ 15 MB). |
-| POST | `/partners/applications` | `PartnerApplication` | `{ organizationId, type, taxPin, bays, vans, address, location, capabilityIds, radiusKm, documentIds, payout }`. Maps to roadmap sub-project 1's new organization fields. |
+| GET | `/partners/program` | `PartnerProgram` | **Live.** Public. Capability ids (UPPERCASE), service radius min/max/default, document kinds and limits. |
+| POST | `/organizations` | `OrganizationView` | **Live.** Called first; needs a verified email. |
+| GET, PATCH | `/organization/provider-profile` | `ProviderProfile` | **Live.** Tenant-scoped. Location, address, radius, capabilities, bays/vans, tax PIN, structured payout. 400 `INVALID_TAX_PIN` / `INVALID_PAYOUT` / `VALIDATION_FAILED`. |
+| POST | `/organization/provider-profile/documents` | document | **Live.** `multipart/form-data` with `kind` and `file`. 413 `FILE_TOO_LARGE`, 422 `UNSUPPORTED_FILE_TYPE`. |
+| DELETE | `/organization/provider-profile/documents/:id` | 204 | **Live.** |
+| POST | `/organization/provider-profile/submit` | `ProviderProfile` | **Live.** 422 `PROFILE_INCOMPLETE` with `errors[{ field, message }]` (location, addressLine, taxPin, capabilities, documents, payout). |
+| PUT | `/organization/provider-profile/availability` | `ProviderProfile` | **Live.** `{ accepting }`. 422 `NOT_VERIFIED` / `RESCUE_NOT_ENABLED`. |
+
+Types: `lib/api/providers.ts`. The mock marketplace no longer serves any `/partners/*` route.
 
 ## Garage operations (tenant-scoped)
 
 | Method | Path | Returns |
 |---|---|---|
 | GET | `/garage/dashboard` | `GarageDashboard`: shop header, 4 KPIs, revenue buckets (parts/labor/rescue), payout date, ledger URL, fleet. |
-| PATCH | `/garage/availability` | `{ accepting }` → shop. Drives the "Online: Accepting Rescues" toggle (SOS broadcast eligibility, P3). |
+| PUT | `/organization/provider-profile/availability` | `{ accepting }` → `ProviderProfile`. **Live.** Drives the "Online: Accepting Rescues" toggle; requires an approved provider (SOS broadcast eligibility, P3). |
 | GET | `/garage/dispatch-radar` | `DispatchRadar`: open SOS calls in the geo-fence with `expiresAt` for the countdown. Polled every 15 s. |
 | POST | `/garage/dispatch-radar/:id/accept` | `{ trackingToken }`; `409` when another garage won (first to accept wins). |
 | GET | `/garage/catalog?type=&page=&pageSize=` | `CatalogPage` with per-type counts for the tabs. |
