@@ -50,6 +50,15 @@ function Dashboard({ auth, shopName }: { auth: GarageAuth; shopName: string }) {
     const [newItemOpen, setNewItemOpen] = useState(false);
     const [catalogVersion, setCatalogVersion] = useState(0);
     const d = dashboard.data;
+    const prof = profile.data;
+    const canGoOnline = !!prof && prof.verification.status === 'APPROVED' && prof.capabilities.includes('MOBILE_RESCUE');
+    const goOnlineReason = !prof
+        ? undefined
+        : prof.verification.status !== 'APPROVED'
+          ? 'Verification pending'
+          : !prof.capabilities.includes('MOBILE_RESCUE')
+            ? 'Add 24/7 Mobile Rescue in your partner profile'
+            : undefined;
 
     useEffect(() => {
         const id = setInterval(radar.reload, RADAR_POLL_MS);
@@ -113,7 +122,7 @@ function Dashboard({ auth, shopName }: { auth: GarageAuth; shopName: string }) {
             ) : (
                 <div className="flex flex-col w-full space-y-space-lg">
                     <VerificationBanner status={profile.data?.verification.status} reason={profile.data?.verification.rejectionReason} />
-                    <ShopHeader shop={{ ...d.shop, accepting: profile.data?.accepting ?? false, autoDispatch: profile.data?.accepting ?? false }} displayName={shopName || d.shop.name} onToggle={toggle} toggling={toggling} onNewItem={() => setNewItemOpen(true)} />
+                    <ShopHeader shop={{ ...d.shop, accepting: profile.data?.accepting ?? false, autoDispatch: profile.data?.accepting ?? false }} displayName={shopName || d.shop.name} onToggle={toggle} toggling={toggling} canGoOnline={canGoOnline} reason={goOnlineReason} unavailable={!!profile.error && !prof} loading={profile.loading && !prof} onNewItem={() => setNewItemOpen(true)} />
                     <KpiCards kpis={d.kpis} />
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
                         <RevenueChart revenue={d.revenue} />

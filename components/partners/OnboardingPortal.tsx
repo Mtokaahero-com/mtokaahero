@@ -73,7 +73,7 @@ const schema = z
         if (!mmOk && !bankOk && !d.mmNumber && !d.bankAccount) ctx.addIssue({ code: 'custom', path: ['mmNumber'], message: 'Add a mobile money or bank payout route' });
     });
 
-type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'capabilityIds' | 'mmNumber' | 'mmAccount' | 'bankAccount' | 'mobileMoney' | 'form', string>>;
+type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'location' | 'capabilityIds' | 'mmNumber' | 'mmAccount' | 'bankAccount' | 'mobileMoney' | 'form', string>>;
 
 const ADV_TONE = {
     primary: 'bg-primary/10 text-primary',
@@ -84,7 +84,7 @@ const ADV_TONE = {
 
 const ADVANTAGES: { icon: string; tone: keyof typeof ADV_TONE; title: string; body: string }[] = [
     { icon: 'hub', tone: 'primary', title: 'Reach Stranded Motorists', body: 'Instant exposure to distressed drivers on expressways and bypass roads.' },
-    { icon: 'verified_user', tone: 'amber', title: 'Guaranteed Escrow Settlement', body: 'Funds are pre-authorized before you roll a truck or turn a wrench. No bad debts.' },
+    { icon: 'verified_user', tone: 'amber', title: 'Direct Payments', body: 'Motorists pay you directly to your Paybill, Till or bank account.' },
     { icon: 'inventory_2', tone: 'tint', title: 'Free Workshop & Parts ERP', body: 'Included digital hoist scheduler, automated billing, and catalog sync software.' },
     { icon: 'stars', tone: 'rescue', title: 'Verified Reputation Badging', body: 'Motorists trust high-rated shops. Grow your authentic ratings with every job.' },
 ];
@@ -137,6 +137,7 @@ export function OnboardingPortal() {
     const [files, setFiles] = useState<File[]>([]);
     const [location, setLocation] = useState<ResolvedLocation | null>(null);
     const [locating, setLocating] = useState(false);
+    const [locationDenied, setLocationDenied] = useState(false);
     const [errors, setErrors] = useState<Errors>({});
     const [submitting, setSubmitting] = useState(false);
     const [done, setDone] = useState<{ name: string } | null>(null);
@@ -211,16 +212,21 @@ export function OnboardingPortal() {
 
     const pinLocation = () => {
         setLocating(true);
-        const fallback = { lat: -1.286389, lng: 36.817223 };
-        const done = (pt: { lat: number; lng: number }) =>
-            rescueApi
-                .reverseGeocode(pt)
-                .then(setLocation)
-                .finally(() => setLocating(false));
-        if (!('geolocation' in navigator)) return void done(fallback);
+        setLocationDenied(false);
+        setErrors((e) => ({ ...e, location: undefined }));
+        const fail = () => {
+            setLocationDenied(true);
+            setLocating(false);
+        };
+        if (!('geolocation' in navigator)) return fail();
         navigator.geolocation.getCurrentPosition(
-            (pos) => void done({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-            () => void done(fallback),
+            (pos) =>
+                void rescueApi
+                    .reverseGeocode({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+                    .then(setLocation)
+                    .catch(fail)
+                    .finally(() => setLocating(false)),
+            fail,
             { enableHighAccuracy: true, timeout: 10000 },
         );
     };
@@ -231,7 +237,7 @@ export function OnboardingPortal() {
             const next: Errors = {};
             for (const issue of parsed.error.issues) next[issue.path[0] as keyof Errors] ??= issue.message;
             setErrors(next);
-            const first = next.businessName || next.taxPin || next.address ? 1 : next.capabilityIds ? 2 : 3;
+            const first = next.businessName || next.taxPin || next.address || next.location ? 1 : next.capabilityIds ? 2 : 3;
             sections[first as 1 | 2 | 3].current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             return;
         }
@@ -299,7 +305,8 @@ export function OnboardingPortal() {
             if (err instanceof ApiError && err.fieldErrors.length > 0) {
                 const next: Errors = {};
                 for (const fe of err.fieldErrors) {
-                    if (fe.field === 'location' || fe.field === 'addressLine') next.address ??= fe.message;
+                    if (fe.field === 'location') next.location ??= fe.message;
+                    else if (fe.field === 'addressLine') next.address ??= fe.message;
                     else if (fe.field === 'taxPin') next.taxPin ??= fe.message;
                     else if (fe.field === 'capabilities') next.capabilityIds ??= fe.message;
                     else if (fe.field === 'payout') next.mobileMoney ??= fe.message;
@@ -391,7 +398,7 @@ export function OnboardingPortal() {
                         </div>
                         <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight max-sm:text-headline-lg-mobile">Join the MtokaaHero Network</h1>
                         <p className="font-body-md text-body-md text-on-surface-variant mt-1">
-                            Accelerate your garage bookings, process automated escrow payouts, and dispatch roadside rescues effortlessly.
+                            Get discovered by motorists, take garage bookings and dispatch roadside rescues effortlessly.
                         </p>
                     </div>
                     <div className="inline-flex flex-wrap lg:flex-nowrap lg:shrink-0 p-1.5 bg-surface-container rounded-xl shadow-inner self-start lg:self-center" role="tablist" aria-label="Partner type">
@@ -518,6 +525,15 @@ export function OnboardingPortal() {
                                     />
                                 </div>
                                 <Err message={errors.address} />
+                                {locationDenied && (
+                                    <p role="alert" className="font-body-sm text-body-sm text-error flex items-center gap-2">
+                                        Allow location access to pin your shop.
+                                        <button type="button" onClick={pinLocation} className="underline text-primary">
+                                            Try again
+                                        </button>
+                                    </p>
+                                )}
+                                <Err message={errors.location} />
                                 {location ? (
                                     <MapSnapshot tile={location.map} label="Shop location map" className="w-full h-44 rounded-xl shadow-inner flex items-center justify-center">
                                         <div className="absolute inset-0 bg-on-surface/20 backdrop-blur-[1px]" />
@@ -597,8 +613,8 @@ export function OnboardingPortal() {
                         <section ref={sections[3]} className="flex flex-col gap-6 scroll-mt-28">
                             <div className="flex items-center justify-between gap-4 pb-4 border-b border-surface-container">
                                 <div>
-                                    <h2 className="font-headline-sm text-headline-sm text-on-surface">Verification &amp; Escrow Payouts</h2>
-                                    <p className="font-body-sm text-body-sm text-on-surface-variant">Funds are automatically settled to this account upon driver job completion.</p>
+                                    <h2 className="font-headline-sm text-headline-sm text-on-surface">Verification &amp; Payment Details</h2>
+                                    <p className="font-body-sm text-body-sm text-on-surface-variant">Motorists see these details and pay you directly.</p>
                                 </div>
                                 <span className="flex items-center gap-1 text-primary font-code-xs text-code-xs whitespace-nowrap">
                                     <Icon name="lock" className="text-[16px]" />

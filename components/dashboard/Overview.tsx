@@ -22,12 +22,20 @@ export function ShopHeader({
     displayName,
     onToggle,
     toggling,
+    canGoOnline,
+    reason,
+    unavailable = false,
+    loading = false,
     onNewItem,
 }: {
     shop: GarageDashboard['shop'];
     displayName: string;
     onToggle: (accepting: boolean) => void;
     toggling: boolean;
+    canGoOnline: boolean;
+    reason?: string;
+    unavailable?: boolean;
+    loading?: boolean;
     onNewItem: () => void;
 }) {
     return (
@@ -67,7 +75,7 @@ export function ShopHeader({
                             type="checkbox"
                             className="sr-only peer"
                             checked={shop.accepting}
-                            disabled={toggling}
+                            disabled={toggling || loading || unavailable || (!canGoOnline && !shop.accepting)}
                             onChange={(e) => onToggle(e.target.checked)}
                             aria-label="Accept rescue requests"
                         />
@@ -76,8 +84,11 @@ export function ShopHeader({
                     <div className="flex flex-col">
                         <span className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5" role="status">
                             <span className={cn('w-2 h-2 rounded-full inline-block', shop.accepting ? 'bg-emerald-500 animate-pulse' : 'bg-outline')} />
-                            {shop.accepting ? 'Online: Accepting Rescues' : 'Paused: Offline'}
+                            {unavailable ? 'Status unavailable' : shop.accepting ? 'Online: Accepting Rescues' : 'Paused: Offline'}
                         </span>
+                        {!unavailable && !canGoOnline && !shop.accepting && reason && (
+                            <span className="font-code-xs text-code-xs text-on-surface-variant">{reason}</span>
+                        )}
                         <span className="font-code-xs text-code-xs text-on-surface-variant">{shop.autoDispatch ? 'Auto-dispatch armed' : 'Dispatch paused'}</span>
                     </div>
                 </div>
