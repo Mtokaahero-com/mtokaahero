@@ -102,8 +102,6 @@ const tenant = (a: GarageAuth) => ({ token: a.token, headers: { 'X-Organization-
 
 export const garageApi = {
     dashboard: (a: GarageAuth) => marketplaceFetch<GarageDashboard>('/garage/dashboard', tenant(a)),
-    setAvailability: (a: GarageAuth, accepting: boolean) =>
-        marketplaceFetch<GarageDashboard['shop']>('/garage/availability', { ...tenant(a), method: 'PATCH', body: { accepting } }),
     radar: (a: GarageAuth) => marketplaceFetch<DispatchRadar>('/garage/dispatch-radar', tenant(a)),
     acceptCall: (a: GarageAuth, id: string) =>
         marketplaceFetch<{ trackingToken: string }>(`/garage/dispatch-radar/${id}/accept`, { ...tenant(a), method: 'POST' }),

@@ -12,11 +12,12 @@ import { useApi } from '@/hooks/use-api';
 import type { OrganizationType } from '@/lib/api/account';
 import { partnersApi } from '@/lib/api/partners';
 import { ApiError } from '@/lib/api/problem';
+import { providersApi, type Capability } from '@/lib/api/providers';
 import { rescueApi, type ResolvedLocation } from '@/lib/api/rescue';
-import { formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 const DRAFT_KEY = 'mtokaa.partner-draft';
+const CAPABILITY_IDS: string[] = ['ENGINE', 'BRAKES', 'DIAGNOSTICS', 'MOBILE_RESCUE', 'TOWING', 'PARTS_RETAIL'];
 
 interface Draft {
     type: OrganizationType;
@@ -27,7 +28,10 @@ interface Draft {
     address: string;
     capabilityIds: string[];
     radiusKm: number;
-    mobileMoney: string;
+    mmKind: 'PAYBILL' | 'TILL';
+    mmNumber: string;
+    mmAccount: string;
+    bankName: string;
     bankAccount: string;
 }
 
@@ -38,9 +42,12 @@ const EMPTY: Draft = {
     bays: 2,
     vans: 1,
     address: '',
-    capabilityIds: ['diagnostics', 'rescue'],
+    capabilityIds: ['DIAGNOSTICS', 'MOBILE_RESCUE'],
     radiusKm: 25,
-    mobileMoney: '',
+    mmKind: 'PAYBILL',
+    mmNumber: '',
+    mmAccount: '',
+    bankName: '',
     bankAccount: '',
 };
 
@@ -50,12 +57,21 @@ const schema = z
         taxPin: z.string().trim().regex(/^[AP]\d{9}[A-Z]$/i, 'Enter a KRA PIN like P051892341M'),
         address: z.string().trim().min(5, 'Enter the physical bay address'),
         capabilityIds: z.array(z.string()).min(1, 'Select at least one capability'),
-        mobileMoney: z.string().trim(),
+        mmKind: z.enum(['PAYBILL', 'TILL']),
+        mmNumber: z.string().trim(),
+        mmAccount: z.string().trim(),
+        bankName: z.string().trim(),
         bankAccount: z.string().trim(),
     })
-    .refine((d) => d.mobileMoney || d.bankAccount, { path: ['mobileMoney'], message: 'Add a mobile money or bank payout route' });
+    .superRefine((d, ctx) => {
+        const mmOk = /^\d{5,7}$/.test(d.mmNumber);
+        const bankOk = /^\d{6,20}$/.test(d.bankAccount) && d.bankName.length > 0;
+        if (d.mmNumber && !mmOk) ctx.addIssue({ code: 'custom', path: ['mmNumber'], message: 'Enter a 5-7 digit Paybill or Till number' });
+        if (d.bankAccount && !bankOk) ctx.addIssue({ code: 'custom', path: ['bankAccount'], message: 'Enter the bank name and a 6-20 digit account number' });
+        if (!mmOk && !bankOk && !d.mmNumber && !d.bankAccount) ctx.addIssue({ code: 'custom', path: ['mmNumber'], message: 'Add a mobile money or bank payout route' });
+    });
 
-type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'capabilityIds' | 'mobileMoney' | 'form', string>>;
+type Errors = Partial<Record<'businessName' | 'taxPin' | 'address' | 'capabilityIds' | 'mmNumber' | 'bankAccount' | 'mobileMoney' | 'form', string>>;
 
 const ADV_TONE = {
     primary: 'bg-primary/10 text-primary',
@@ -64,9 +80,19 @@ const ADV_TONE = {
     rescue: 'bg-tertiary/10 text-tertiary',
 } as const;
 
+const ADVANTAGES: { icon: string; tone: keyof typeof ADV_TONE; title: string; body: string }[] = [
+    { icon: 'hub', tone: 'primary', title: '25,000+ Active Motorists', body: 'Instant exposure to distressed drivers on expressways and bypass roads.' },
+    { icon: 'verified_user', tone: 'amber', title: 'Guaranteed Escrow Settlement', body: 'Funds are pre-authorized before you roll a truck or turn a wrench. No bad debts.' },
+    { icon: 'inventory_2', tone: 'tint', title: 'Free Workshop & Parts ERP', body: 'Included digital hoist scheduler, automated billing, and catalog sync software.' },
+    { icon: 'stars', tone: 'rescue', title: 'Verified Reputation Badging', body: 'Motorists trust high-rated shops. Grow your authentic ratings with every job.' },
+];
+
 function readDraft(): Partial<Draft> {
     try {
-        return JSON.parse(localStorage.getItem(DRAFT_KEY) ?? '{}') as Partial<Draft>;
+        const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? '{}') as Partial<Draft>;
+        // Drafts saved before the real provider API used lowercase capability ids.
+        if (Array.isArray(raw.capabilityIds)) raw.capabilityIds = raw.capabilityIds.map((c) => String(c).toUpperCase()).filter((c) => CAPABILITY_IDS.includes(c));
+        return raw;
     } catch {
         return {};
     }
@@ -102,7 +128,7 @@ export function OnboardingPortal() {
     const router = useRouter();
     const params = useSearchParams();
     const { data: session } = useSession();
-    const program = useApi('partner-program', partnersApi.program);
+    const program = useApi('partner-program', providersApi.program);
     const p = program.data;
 
     const [draft, setDraft] = useState<Draft>(() => ({ ...EMPTY, type: params.get('type') === 'MOBILE_MECHANIC' ? 'MOBILE_MECHANIC' : 'GARAGE' }));
@@ -186,23 +212,22 @@ export function OnboardingPortal() {
                 },
                 token,
             );
-            const docs = await Promise.all(files.map((f) => partnersApi.uploadDocument(f, token)));
-            await partnersApi.submit(
-                {
-                    organizationId: org.id,
-                    type: draft.type,
-                    taxPin: draft.taxPin.trim().toUpperCase(),
-                    bays: draft.bays,
-                    vans: draft.vans,
-                    address: draft.address.trim(),
-                    location: location ? { lat: location.lat, lng: location.lng } : null,
-                    capabilityIds: draft.capabilityIds,
-                    radiusKm: draft.radiusKm,
-                    documentIds: docs.map((d) => d.id),
-                    payout: { mobileMoney: draft.mobileMoney.trim(), bankAccount: draft.bankAccount.trim() },
+            const auth = { token, organizationId: org.id };
+            await providersApi.update(auth, {
+                location: location ? { lat: location.lat, lng: location.lng } : null,
+                addressLine: draft.address.trim(),
+                serviceRadiusKm: draft.radiusKm,
+                capabilities: draft.capabilityIds as Capability[],
+                bays: draft.bays,
+                vans: draft.vans,
+                taxPin: draft.taxPin.trim().toUpperCase(),
+                payout: {
+                    mobileMoney: draft.mmNumber.trim() ? { kind: draft.mmKind, number: draft.mmNumber.trim(), account: draft.mmAccount.trim() || undefined } : null,
+                    bankAccount: draft.bankAccount.trim() ? { bank: draft.bankName.trim(), accountNumber: draft.bankAccount.trim() } : null,
                 },
-                token,
-            );
+            });
+            for (const file of files) await providersApi.uploadDocument(auth, file, 'BUSINESS_PERMIT');
+            await providersApi.submit(auth);
             try {
                 localStorage.removeItem(DRAFT_KEY);
             } catch {
@@ -210,6 +235,19 @@ export function OnboardingPortal() {
             }
             setDone({ name: org.name });
         } catch (err) {
+            if (err instanceof ApiError && err.fieldErrors.length > 0) {
+                const next: Errors = {};
+                for (const fe of err.fieldErrors) {
+                    if (fe.field === 'location' || fe.field === 'addressLine') next.address ??= fe.message;
+                    else if (fe.field === 'taxPin') next.taxPin ??= fe.message;
+                    else if (fe.field === 'capabilities') next.capabilityIds ??= fe.message;
+                    else if (fe.field === 'payout') next.mobileMoney ??= fe.message;
+                    else if (fe.field === 'documents') next.form = 'Upload at least one permit or certificate';
+                    else next.form ??= fe.message;
+                }
+                setErrors(next);
+                return;
+            }
             const message =
                 err instanceof ApiError
                     ? err.code === 'EMAIL_NOT_VERIFIED'
@@ -266,7 +304,7 @@ export function OnboardingPortal() {
                 </div>
                 <h2 className="font-headline-md text-headline-md text-on-surface">{done.name} is registered</h2>
                 <p className="font-body-md text-body-md text-on-surface-variant">
-                    Your verification documents are in review. You can set up your catalogue and start accepting rescues from your shop dashboard now.
+                    Your application is under review. We&apos;ll email you when it&apos;s approved — usually within one business day.
                 </p>
                 <Link
                     href="/dashboard/garage"
@@ -470,16 +508,15 @@ export function OnboardingPortal() {
                                 <input
                                     aria-label="Emergency response radius in kilometres"
                                     className="w-full accent-primary h-2 bg-surface-container-high rounded-lg cursor-pointer"
-                                    min={p?.radiusKm.min ?? 5}
-                                    max={p?.radiusKm.max ?? 60}
+                                    min={p?.serviceRadiusKm.min ?? 5}
+                                    max={p?.serviceRadiusKm.max ?? 60}
                                     type="range"
                                     value={draft.radiusKm}
                                     onChange={(e) => set('radiusKm', Number(e.target.value))}
                                 />
                                 <div className="flex justify-between font-code-xs text-code-xs text-on-surface-variant">
-                                    {(p?.radiusKm.marks ?? []).map((m) => (
-                                        <span key={m.km}>{m.label}</span>
-                                    ))}
+                                    <span>{p?.serviceRadiusKm.min ?? 5} km</span>
+                                    <span>{p?.serviceRadiusKm.max ?? 60} km</span>
                                 </div>
                             </div>
                         </section>
@@ -563,13 +600,41 @@ export function OnboardingPortal() {
                                         </label>
                                         <span className="text-secondary font-code-xs text-code-xs font-semibold">TILL / PAYBILL</span>
                                     </div>
+                                    <div className="inline-flex p-1 bg-surface-container rounded-lg self-start" role="radiogroup" aria-label="Mobile money type">
+                                        {(['PAYBILL', 'TILL'] as const).map((k) => (
+                                            <button
+                                                key={k}
+                                                type="button"
+                                                role="radio"
+                                                aria-checked={draft.mmKind === k}
+                                                onClick={() => set('mmKind', k)}
+                                                className={cn(
+                                                    'px-3 py-1 rounded-md font-code-xs text-code-xs font-semibold transition-all',
+                                                    draft.mmKind === k ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant',
+                                                )}
+                                            >
+                                                {k === 'PAYBILL' ? 'Paybill' : 'Till'}
+                                            </button>
+                                        ))}
+                                    </div>
                                     <input
                                         id="pt-mm"
+                                        inputMode="numeric"
                                         className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
-                                        placeholder="Paybill: 400222 | Acc: 0110948201"
-                                        value={draft.mobileMoney}
-                                        onChange={(e) => set('mobileMoney', e.target.value)}
+                                        placeholder={draft.mmKind === 'PAYBILL' ? 'Paybill number e.g. 400222' : 'Till number e.g. 5012345'}
+                                        value={draft.mmNumber}
+                                        onChange={(e) => set('mmNumber', e.target.value)}
                                     />
+                                    <Err message={errors.mmNumber} />
+                                    {draft.mmKind === 'PAYBILL' && (
+                                        <input
+                                            aria-label="Paybill account number"
+                                            className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
+                                            placeholder="Account number e.g. 0110948201"
+                                            value={draft.mmAccount}
+                                            onChange={(e) => set('mmAccount', e.target.value)}
+                                        />
+                                    )}
                                     <span className="font-body-sm text-body-sm text-on-surface-variant">Real-time settlement within 60 seconds of client rescue signoff.</span>
                                 </div>
                                 <div className="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
@@ -583,10 +648,19 @@ export function OnboardingPortal() {
                                     <input
                                         id="pt-bank"
                                         className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
-                                        placeholder="Stanbic Bank - 0100004928190"
+                                        placeholder="Bank name e.g. Stanbic Bank"
+                                        value={draft.bankName}
+                                        onChange={(e) => set('bankName', e.target.value)}
+                                    />
+                                    <input
+                                        aria-label="Bank account number"
+                                        inputMode="numeric"
+                                        className="bg-surface-container-lowest px-3.5 py-2 rounded-lg font-code-sm text-code-sm text-on-surface outline-none shadow-sm focus:ring-2 focus:ring-primary"
+                                        placeholder="Account number e.g. 0100004928190"
                                         value={draft.bankAccount}
                                         onChange={(e) => set('bankAccount', e.target.value)}
                                     />
+                                    <Err message={errors.bankAccount} />
                                     <span className="font-body-sm text-body-sm text-on-surface-variant">Batched daily reconciliation for larger overhaul shop operations.</span>
                                 </div>
                             </div>
@@ -627,7 +701,7 @@ export function OnboardingPortal() {
                             <h3 className="font-title-lg text-title-lg text-on-surface mt-1">Why Partner with MtokaaHero?</h3>
                         </div>
                         <div className="flex flex-col gap-4">
-                            {(p?.advantages ?? []).map((a) => (
+                            {ADVANTAGES.map((a) => (
                                 <div key={a.title} className="flex items-start gap-3">
                                     <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0', ADV_TONE[a.tone])}>
                                         <Icon name={a.icon} className="text-[22px]" />
@@ -644,57 +718,11 @@ export function OnboardingPortal() {
                                 <Icon name="support_agent" className="text-secondary text-[20px]" />
                                 <span className="font-label-md text-label-md">Need setup assistance?</span>
                             </div>
-                            <Link className="font-code-xs text-code-xs text-primary font-semibold hover:underline" href={p?.support.href ?? '/contact'}>
-                                {p?.support.label ?? 'Chat with Ops'}
+                            <Link className="font-code-xs text-code-xs text-primary font-semibold hover:underline" href="/contact">
+                                Chat with Ops
                             </Link>
                         </div>
                     </div>
-
-                    {p?.testimonial && (
-                        <div className="bg-gradient-to-br from-surface-container-lowest to-surface-container-low p-6 rounded-xl shadow-sm relative overflow-hidden">
-                            <div className="flex items-center gap-4 mb-4">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img className="w-14 h-14 rounded-full object-cover shadow-sm" alt={p.testimonial.name} src={p.testimonial.photo} />
-                                <div>
-                                    <h4 className="font-title-md text-title-md text-on-surface">{p.testimonial.name}</h4>
-                                    <span className="font-body-sm text-body-sm text-on-surface-variant">{p.testimonial.business}</span>
-                                </div>
-                            </div>
-                            <blockquote className="font-body-sm text-body-sm text-on-surface italic mb-4">“{p.testimonial.quote}”</blockquote>
-                            <div className="p-3 bg-surface-container-lowest rounded-xl flex items-center justify-between shadow-sm">
-                                <div>
-                                    <span className="font-code-xs text-code-xs text-on-surface-variant block uppercase">Monthly Network Payout</span>
-                                    <span className="font-headline-sm text-headline-sm text-primary font-bold">{formatMoney(p.testimonial.monthlyPayout)}+</span>
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <div className="flex text-secondary-container">
-                                        {[1, 2, 3, 4, 5].map((i) => (
-                                            <Icon key={i} name="star" fill className="text-[16px]" />
-                                        ))}
-                                    </div>
-                                    <span className="font-code-xs text-code-xs text-on-surface-variant">
-                                        {p.testimonial.rating} ({p.testimonial.reviewCount} reviews)
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {p && (
-                        <div className="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col gap-3">
-                            <div className="flex justify-between items-center text-on-surface-variant">
-                                <span className="font-label-md text-label-md">Average Rescue Dispatch</span>
-                                <span className="font-code-sm text-code-sm text-on-surface font-semibold">{p.dispatch.avgMinutes} Mins</span>
-                            </div>
-                            <div className="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-primary h-full rounded-full" style={{ width: `${Math.min(100, (1 - p.dispatch.avgMinutes / (p.dispatch.targetMinutes * 4)) * 100)}%` }} />
-                            </div>
-                            <div className="flex justify-between font-code-xs text-code-xs text-on-surface-variant">
-                                <span>Target: &lt;{p.dispatch.targetMinutes}m</span>
-                                <span className="text-primary font-semibold">Top Tier {p.dispatch.onTimeRate}% On-Time</span>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

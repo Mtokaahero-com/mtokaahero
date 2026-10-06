@@ -182,11 +182,6 @@ export function dashboard(orgId: string): GarageDashboard {
     };
 }
 
-export function setAvailability(orgId: string, accepting: boolean) {
-    state(orgId).accepting = accepting;
-    return dashboard(orgId).shop;
-}
-
 export function radar(orgId: string): DispatchRadar {
     const s = state(orgId);
     const now = Date.now();

@@ -12,8 +12,32 @@ import { useAccount } from '@/hooks/use-account';
 import { useApi } from '@/hooks/use-api';
 import { garageApi, type GarageAuth } from '@/lib/api/garage';
 import type { ItemType } from '@/lib/api/marketplace';
+import { ApiError } from '@/lib/api/problem';
+import { providersApi, type VerificationStatus } from '@/lib/api/providers';
 
 const RADAR_POLL_MS = 15_000;
+
+function VerificationBanner({ status, reason }: { status?: VerificationStatus; reason?: string | null }) {
+    if (status !== 'SUBMITTED' && status !== 'REJECTED' && status !== 'DRAFT') return null;
+    const rejected = status === 'REJECTED';
+    return (
+        <div role="status" className={`rounded-xl p-space-md flex items-center gap-space-sm ${rejected ? 'bg-error-container text-on-error-container' : 'bg-secondary-fixed text-on-secondary-fixed'}`}>
+            <Icon name={rejected ? 'error' : 'hourglass_top'} className="text-[24px] shrink-0" />
+            <p className="font-body-md text-body-md flex-1">
+                {status === 'SUBMITTED'
+                    ? "Under review — you'll be able to go online once approved."
+                    : rejected
+                      ? `Your application was not approved${reason ? `: ${reason}` : '.'}`
+                      : 'Finish your partner profile to get listed.'}
+            </p>
+            {status !== 'SUBMITTED' && (
+                <Link href="/partners" className="font-label-lg text-label-lg font-bold underline whitespace-nowrap">
+                    {rejected ? 'Fix and resubmit' : 'Finish profile'}
+                </Link>
+            )}
+        </div>
+    );
+}
 
 function Dashboard({ auth, shopName }: { auth: GarageAuth; shopName: string }) {
     const params = useSearchParams();
@@ -21,6 +45,7 @@ function Dashboard({ auth, shopName }: { auth: GarageAuth; shopName: string }) {
     const view = (params.get('view') as ItemType | null) ?? 'ALL';
     const dashboard = useApi(`dash:${auth.organizationId}`, () => garageApi.dashboard(auth));
     const radar = useApi(`radar:${auth.organizationId}`, () => garageApi.radar(auth));
+    const profile = useApi(`profile:${auth.organizationId}`, () => providersApi.get(auth));
     const [toggling, setToggling] = useState(false);
     const [newItemOpen, setNewItemOpen] = useState(false);
     const [catalogVersion, setCatalogVersion] = useState(0);
@@ -34,12 +59,13 @@ function Dashboard({ auth, shopName }: { auth: GarageAuth; shopName: string }) {
     const toggle = async (accepting: boolean) => {
         setToggling(true);
         try {
-            await garageApi.setAvailability(auth, accepting);
+            await providersApi.setAvailability(auth, accepting);
+            profile.reload();
             dashboard.reload();
             radar.reload();
             toast.success(accepting ? 'You are online and accepting rescues' : 'Rescue dispatch paused');
-        } catch {
-            toast.error('Could not change your availability. Try again.');
+        } catch (err) {
+            toast.error(err instanceof ApiError ? err.message : 'Could not change your availability. Try again.');
         } finally {
             setToggling(false);
         }
@@ -86,11 +112,12 @@ function Dashboard({ auth, shopName }: { auth: GarageAuth; shopName: string }) {
                 </div>
             ) : (
                 <div className="flex flex-col w-full space-y-space-lg">
-                    <ShopHeader shop={d.shop} displayName={shopName || d.shop.name} onToggle={toggle} toggling={toggling} onNewItem={() => setNewItemOpen(true)} />
+                    <VerificationBanner status={profile.data?.verification.status} reason={profile.data?.verification.rejectionReason} />
+                    <ShopHeader shop={{ ...d.shop, accepting: profile.data?.accepting ?? false, autoDispatch: profile.data?.accepting ?? false }} displayName={shopName || d.shop.name} onToggle={toggle} toggling={toggling} onNewItem={() => setNewItemOpen(true)} />
                     <KpiCards kpis={d.kpis} />
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
                         <RevenueChart revenue={d.revenue} />
-                        <DispatchRadarCard radar={radar.data} fleet={d.fleet} accepting={d.shop.accepting} onAccept={accept} />
+                        <DispatchRadarCard radar={radar.data} fleet={d.fleet} accepting={profile.data?.accepting ?? false} onAccept={accept} />
                     </div>
                     <InventorySection auth={auth} initialType={view} refreshKey={catalogVersion} />
                     <ReviewsSection auth={auth} />
