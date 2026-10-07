@@ -1,6 +1,8 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { authApi } from '@/lib/api/auth';
+import { authApi } from '@/lib/api/account';
+import { ApiError } from '@/lib/api/problem';
+import { refreshIfNeeded, tokenFromAuthResult } from '@/lib/auth/tokens';
 
 export const authOptions: NextAuthOptions = {
     session: { strategy: 'jwt' },
@@ -9,69 +11,39 @@ export const authOptions: NextAuthOptions = {
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
-                email: { label: 'Email', type: 'text' },
-                phone: { label: 'Phone', type: 'text' },
+                identifier: { label: 'Email or phone', type: 'text' },
                 password: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
-                if (!credentials?.password) {
-                    throw new Error('Password is required.');
-                }
-                if (!credentials.email && !credentials.phone) {
-                    throw new Error('Email or phone number is required.');
-                }
-
+                const identifier = credentials?.identifier?.trim() ?? '';
+                const password = credentials?.password ?? '';
+                if (!identifier || !password) throw new Error('Enter your email or phone and your password.');
                 try {
-                    const response = await authApi.login({
-                        email: credentials.email || undefined,
-                        phone: credentials.phone || undefined,
-                        password: credentials.password,
-                    });
-
-                    return {
-                        id: response.user.id,
-                        email: response.user.email,
-                        firstName: response.user.firstName,
-                        lastName: response.user.lastName,
-                        phoneNumber: response.user.phoneNumber,
-                        role: response.user.role,
-                        accessToken: response.accessToken,
-                        refreshToken: response.refreshToken,
-                    };
-                } catch (err: any) {
-                    throw new Error(err.message ?? 'Authentication failed.');
+                    const authResult = await authApi.login(
+                        identifier.includes('@') ? { email: identifier, password } : { phone: identifier, password },
+                    );
+                    return { id: authResult.user.id, authResult };
+                } catch (err) {
+                    throw new Error(err instanceof ApiError ? err.code : 'SIGN_IN_FAILED');
                 }
             },
         }),
     ],
 
     callbacks: {
-        async jwt({ token, user }) {
-            // On initial sign-in, user object is present — persist everything to the token
-            if (user) {
-                token.id = user.id;
-                token.email = user.email;
-                token.firstName = user.firstName;
-                token.lastName = user.lastName;
-                token.phoneNumber = user.phoneNumber;
-                token.role = user.role;
-                token.accessToken = user.accessToken;
-                token.refreshToken = user.refreshToken;
+        async jwt({ token, user, trigger, session }) {
+            if (user) return { ...token, ...tokenFromAuthResult(user.authResult) };
+            let current = await refreshIfNeeded(token, Date.now(), authApi.refresh);
+            if (trigger === 'update' && session?.refreshUser && !current.error) {
+                const me = await authApi.me(current.accessToken).catch(() => null);
+                if (me) current = { ...current, user: { ...current.user, ...me.user } };
             }
-            return token;
+            return { ...token, ...current };
         },
 
         async session({ session, token }) {
-            session.user = {
-                id: token.id,
-                email: token.email,
-                firstName: token.firstName,
-                lastName: token.lastName,
-                phoneNumber: token.phoneNumber,
-                role: token.role,
-                accessToken: token.accessToken,
-                refreshToken: token.refreshToken,
-            };
+            session.user = { ...token.user, accessToken: token.accessToken };
+            session.error = token.error;
             return session;
         },
     },

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 70" width="280" height="70" fill="none">
+  <defs>
+    <linearGradient id="heroBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="amberGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="8" width="54" height="54" rx="14" fill="url(#heroBlue)"/>
+  <path d="M22 18L35 31M35 18L22 31" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <path d="M31 35L42 46M42 35L31 46" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  <circle cx="31" cy="35" r="5" fill="url(#amberGold)"/>
+  <path d="M28 23L38 43" stroke="url(#amberGold)" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="70" y="38" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="900" fill="#0F172A" letter-spacing="-0.5">Mtokaa<tspan fill="#2563EB">Hero</tspan></text>
+  <text x="71" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600" fill="#64748B" letter-spacing="1.5">GARAGE &amp; RESCUE NETWORK</text>
+</svg>

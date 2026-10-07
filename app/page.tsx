@@ -1,57 +1,61 @@
 'use client';
 
-import Footer from '@/components/fragments/Footer';
-import CustomerView from '@/components/fragments/CustomerView';
-import { lazy, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { toast } from 'sonner';
+import { DesktopMarketplace } from '@/components/marketplace/DesktopMarketplace';
+import { MobileMarketplace } from '@/components/marketplace/MobileMarketplace';
+import { useMarketplace } from '@/components/marketplace/useMarketplace';
+import { MobileHeader } from '@/components/site/MobileHeader';
+import { MobileTabBar } from '@/components/site/MobileTabBar';
+import { SiteFooter } from '@/components/site/SiteFooter';
+import { SiteHeader } from '@/components/site/SiteHeader';
+import type { Offer } from '@/lib/api/marketplace';
+import { useCart } from '@/providers/cart-provider';
 
-const HeroSection = lazy(() => import('@/components/fragments/HeroComponent'));
-const customerView = lazy(() => import('@/components/fragments/CustomerView'));
-const PricingSection = lazy(() => import('@/components/fragments/Pricing'));
+function Marketplace() {
+    const params = useSearchParams();
+    const router = useRouter();
+    const cart = useCart();
+    const market = useMarketplace({ q: params.get('q') ?? undefined, categoryId: params.get('categoryId') ?? undefined });
 
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { HelpCircle, Home, LogOut, Menu } from 'lucide-react';
-import Link from 'next/link';
+    const addToCart = (offer: Offer) => {
+        const { replaced } = cart.add(offer);
+        toast.success(replaced ? `Cart restarted with ${offer.provider.name}` : 'Added to cart', {
+            description: replaced ? 'An order is fulfilled by one provider, so the previous items were removed.' : offer.title,
+        });
+    };
+
+    // Every primary action leads into checkout with the offer preselected; checkout picks rescue vs. bay booking from it.
+    const startCheckout = (offer: Offer) => {
+        cart.add(offer);
+        router.push(`/rescue?offerId=${encodeURIComponent(offer.id)}${offer.fulfilment === 'IN_SHOP' ? '&mode=IN_SHOP' : ''}`);
+    };
+
+    return (
+        <>
+            <div className="hidden md:block">
+                <DesktopMarketplace market={market} onPrimary={startCheckout} onAddToCart={addToCart} />
+            </div>
+            <div className="md:hidden">
+                <MobileMarketplace market={market} onPrimary={startCheckout} />
+            </div>
+        </>
+    );
+}
 
 export default function HomePage() {
     return (
-        <main className="w-full h-screen max-w-screen">
-            <div className="absolute top-4 right-4 z-50">
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="outline" size="icon">
-                            <Menu className="h-6 w-6" />
-                            <span className="sr-only">Open menu</span>
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                        <SheetHeader>
-                            <SheetTitle>Menu</SheetTitle>
-                        </SheetHeader>
-                        <nav className="flex flex-col space-y-4 mt-4">
-                            <Link href="/" className="flex items-center space-x-2 text-sm">
-                                <Home className="h-5 w-5" />
-                                <span>Home</span>
-                            </Link>
-                            <Link href="/contact" className="flex items-center space-x-2 text-sm">
-                                <HelpCircle className="h-5 w-5" />
-                                <span>Contact</span>
-                            </Link>
-                            <Link href="/auth/signin" className="flex items-center space-x-2 text-sm">
-                                <LogOut className="h-5 w-5" />
-                                <span>Login</span>
-                            </Link>
-                        </nav>
-                    </SheetContent>
-                </Sheet>
-            </div>
-            {/* <Navbar /> */}
-            <Suspense fallback={<div>Loading...</div>}>
-                <HeroSection />
-                {/* <OurServices /> */}
-                <PricingSection />
-            </Suspense>
-            <Footer />
-        </main>
+        <>
+            <SiteHeader className="hidden md:block" />
+            <MobileHeader className="md:hidden" />
+            <main className="w-full pt-16 pb-20 md:pt-20 md:pb-0 bg-surface min-h-[calc(100vh-80px)]">
+                <Suspense>
+                    <Marketplace />
+                </Suspense>
+            </main>
+            <SiteFooter className="hidden md:block" />
+            <MobileTabBar className="md:hidden" />
+        </>
     );
 }
