@@ -17,11 +17,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en" className={`${heading.variable} ${body.variable} ${mono.variable}`}>
             <head>
-                {/* Material Symbols is the icon set used across the Stitch screens. */}
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                {/* Material Symbols and brand fonts used across the Stitch screens. */}
                 {/* eslint-disable-next-line @next/next/no-page-custom-font */}
                 <link
                     rel="stylesheet"
-                    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+                    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
                 />
             </head>
             <body>

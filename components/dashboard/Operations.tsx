@@ -5,10 +5,19 @@ import { toast } from 'sonner';
 import { Icon } from '@/components/brand/Icon';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { useApi } from '@/hooks/use-api';
-import { garageApi, type CatalogItem, type CatalogItemInput, type DispatchRadar, type GarageAuth, type GarageDashboard, type Review } from '@/lib/api/garage';
-import type { ItemType } from '@/lib/api/marketplace';
+import {
+    garageApi,
+    type CatalogItem,
+    type CatalogItemInput,
+    type DispatchRadar,
+    type GarageAuth,
+    type GarageDashboard,
+    type Review,
+} from '@/lib/api/garage';
+import { marketplaceApi, type ItemType } from '@/lib/api/marketplace';
 import { ApiError } from '@/lib/api/problem';
 import { formatMoney } from '@/lib/format';
+import { offerImage } from '@/lib/offer-image';
 import { cn } from '@/lib/utils';
 
 const card = 'bg-surface-container-lowest rounded-xl shadow-[0_1px_3px_0_rgba(15,23,42,0.05)]';
@@ -48,8 +57,15 @@ export function DispatchRadarCard({
                 <div className="flex items-center justify-between mb-space-sm">
                     <div className="flex items-center gap-2">
                         <span className="relative flex h-3 w-3">
-                            {accepting && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75" />}
-                            <span className={cn('relative inline-flex rounded-full h-3 w-3', accepting ? 'bg-tertiary-container' : 'bg-outline')} />
+                            {accepting && (
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75" />
+                            )}
+                            <span
+                                className={cn(
+                                    'relative inline-flex rounded-full h-3 w-3',
+                                    accepting ? 'bg-tertiary-container' : 'bg-outline',
+                                )}
+                            />
                         </span>
                         <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">Dispatch Radar</h2>
                     </div>
@@ -76,20 +92,36 @@ export function DispatchRadarCard({
                         live.map((c) => {
                             const urgent = c.severity === 'URGENT';
                             return (
-                                <div key={c.id} className="p-space-md bg-surface-container-low rounded-xl relative overflow-hidden">
-                                    <div className={cn('absolute top-0 left-0 bottom-0 w-1', urgent ? 'bg-tertiary-container' : 'bg-secondary')} />
+                                <div
+                                    key={c.id}
+                                    className="p-space-md bg-surface-container-low rounded-xl relative overflow-hidden">
+                                    <div
+                                        className={cn(
+                                            'absolute top-0 left-0 bottom-0 w-1',
+                                            urgent ? 'bg-tertiary-container' : 'bg-secondary',
+                                        )}
+                                    />
                                     <div className="flex items-start justify-between gap-2 mb-1">
                                         <div className="flex items-center gap-1.5">
-                                            <Icon name={c.icon} className={cn('text-[18px]', urgent ? 'text-tertiary-container' : 'text-secondary')} />
-                                            <span className="font-title-md text-title-md text-on-surface font-bold">{c.title}</span>
+                                            <Icon
+                                                name={c.icon}
+                                                className={cn(
+                                                    'text-[18px]',
+                                                    urgent ? 'text-tertiary-container' : 'text-secondary',
+                                                )}
+                                            />
+                                            <span className="font-title-md text-title-md text-on-surface font-bold">
+                                                {c.title}
+                                            </span>
                                         </div>
                                         <span
                                             className={cn(
                                                 'font-code-xs text-code-xs px-2 py-0.5 rounded font-bold',
-                                                urgent ? 'bg-error-container text-on-error-container' : 'bg-secondary-fixed text-on-secondary-fixed',
+                                                urgent
+                                                    ? 'bg-error-container text-on-error-container'
+                                                    : 'bg-secondary-fixed text-on-secondary-fixed',
                                             )}
-                                            title="Time left to accept"
-                                        >
+                                            title="Time left to accept">
                                             {mmss(new Date(c.expiresAt).getTime() - now)}
                                         </span>
                                     </div>
@@ -99,7 +131,9 @@ export function DispatchRadarCard({
                                     <div className="flex items-center justify-between gap-2 pt-1">
                                         <div className="flex flex-wrap items-center gap-1 text-on-surface font-code-sm text-code-sm font-semibold">
                                             <span>EST: {formatMoney(c.estimate)}</span>
-                                            <span className="text-on-surface-variant font-normal">| {c.paymentLabel}</span>
+                                            <span className="text-on-surface-variant font-normal">
+                                                | {c.paymentLabel}
+                                            </span>
                                         </div>
                                         <button
                                             type="button"
@@ -113,8 +147,7 @@ export function DispatchRadarCard({
                                                 urgent
                                                     ? 'bg-tertiary-container text-on-tertiary hover:bg-tertiary'
                                                     : 'bg-secondary text-on-secondary hover:bg-on-secondary-container',
-                                            )}
-                                        >
+                                            )}>
                                             {busy === c.id ? 'Dispatching…' : 'Accept & Dispatch'}
                                         </button>
                                     </div>
@@ -153,21 +186,35 @@ const TYPE_CELL: Record<ItemType, { icon: string; label: string; className: stri
 };
 
 function StockPill({ stock }: { stock: CatalogItem['stock'] }) {
-    const instant = stock.kind === 'INSTANT';
+    const tone =
+        stock.kind === 'INSTANT'
+            ? { pill: 'bg-primary-fixed text-primary', dot: 'bg-primary animate-ping' }
+            : stock.quantity === 0
+              ? { pill: 'bg-error-container text-on-error-container', dot: 'bg-error' }
+              : stock.kind === 'BOOKING'
+                ? { pill: 'bg-surface-container-high text-on-surface', dot: 'bg-outline' }
+                : { pill: 'bg-emerald-50 text-emerald-700', dot: 'bg-emerald-600' };
     return (
         <span
             className={cn(
                 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-code-xs text-code-xs font-bold whitespace-nowrap',
-                instant ? 'bg-primary-fixed text-primary' : 'bg-emerald-50 text-emerald-700',
-            )}
-        >
-            <span className={cn('w-1.5 h-1.5 rounded-full', instant ? 'bg-primary animate-ping' : 'bg-emerald-600')} />
+                tone.pill,
+            )}>
+            <span className={cn('w-1.5 h-1.5 rounded-full', tone.dot)} />
             {stock.label}
         </span>
     );
 }
 
-export function InventorySection({ auth, initialType, refreshKey }: { auth: GarageAuth; initialType: ItemType | 'ALL'; refreshKey: number }) {
+export function InventorySection({
+    auth,
+    initialType,
+    refreshKey,
+}: {
+    auth: GarageAuth;
+    initialType: ItemType | 'ALL';
+    refreshKey: number;
+}) {
     const [type, setType] = useState<ItemType | 'ALL'>(initialType);
     const [page, setPage] = useState(1);
     const pageSize = 5;
@@ -193,10 +240,16 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
         <div id="inventory" className={cn(card, 'p-space-lg flex flex-col space-y-space-md scroll-mt-28')}>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
                 <div>
-                    <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">Inventory &amp; Service Offerings</h2>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant">Manage workshop services, stocked retail parts, and roadside on-demand packages.</p>
+                    <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                        Inventory &amp; Service Offerings
+                    </h2>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">
+                        Manage workshop services, stocked retail parts, and roadside on-demand packages.
+                    </p>
                 </div>
-                <div className="flex items-center overflow-x-auto gap-1 bg-surface-container-low p-1 rounded-xl no-scrollbar" role="tablist">
+                <div
+                    className="flex items-center overflow-x-auto gap-1 bg-surface-container-low p-1 rounded-xl no-scrollbar"
+                    role="tablist">
                     {TABS.map((t) => (
                         <button
                             key={t.type}
@@ -209,9 +262,10 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
                             }}
                             className={cn(
                                 'px-3 py-1.5 rounded-lg font-label-md text-label-md font-semibold whitespace-nowrap',
-                                type === t.type ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface',
-                            )}
-                        >
+                                type === t.type
+                                    ? 'bg-surface-container-lowest text-primary shadow-sm'
+                                    : 'text-on-surface-variant hover:text-on-surface',
+                            )}>
                             {t.label}
                             {data ? ` (${data.counts[t.type]})` : ''}
                         </button>
@@ -233,7 +287,11 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
                             <th className="py-3 px-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className={cn('divide-y divide-surface-container-low font-body-md text-body-md transition-opacity', catalog.loading && data && 'opacity-50')}>
+                    <tbody
+                        className={cn(
+                            'divide-y divide-surface-container-low font-body-md text-body-md transition-opacity',
+                            catalog.loading && data && 'opacity-50',
+                        )}>
                         {!data
                             ? Array.from({ length: pageSize }, (_, i) => (
                                   <tr key={i}>
@@ -245,32 +303,58 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
                             : data.items.map((item) => {
                                   const t = TYPE_CELL[item.type];
                                   const categoryTone =
-                                      item.type === 'RESCUE_PACKAGE' ? 'bg-tertiary-fixed text-tertiary' : 'bg-surface-container-high text-on-surface';
+                                      item.type === 'RESCUE_PACKAGE'
+                                          ? 'bg-tertiary-fixed text-tertiary'
+                                          : 'bg-surface-container-high text-on-surface';
                                   return (
                                       <tr key={item.id} className="hover:bg-surface-container-low/50 transition-colors">
                                           <td className="py-3 px-4">
                                               <div className="flex items-center gap-3 min-w-[280px]">
                                                   <div className="w-10 h-10 rounded-lg bg-surface-container overflow-hidden flex items-center justify-center flex-shrink-0">
                                                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                      <img className="w-full h-full object-cover" alt="" src={item.image} />
+                                                      <img
+                                                          className="w-full h-full object-cover"
+                                                          alt=""
+                                                          src={offerImage({
+                                                              type: item.type,
+                                                              categoryId: item.category.id,
+                                                          })}
+                                                      />
                                                   </div>
                                                   <div className="min-w-0">
-                                                      <span className="font-label-lg text-label-lg text-on-surface font-semibold block">{item.title}</span>
-                                                      <span className="font-code-xs text-code-xs text-on-surface-variant">{item.code}</span>
+                                                      <span className="font-label-lg text-label-lg text-on-surface font-semibold block">
+                                                          {item.title}
+                                                      </span>
+                                                      <span className="font-code-xs text-code-xs text-on-surface-variant">
+                                                          SKU: {item.sku}
+                                                          {item.fitment ? ` • Fits ${item.fitment.label}` : ''}
+                                                      </span>
                                                   </div>
                                               </div>
                                           </td>
                                           <td className="py-3 px-4">
-                                              <span className={cn('px-2 py-0.5 rounded font-code-xs text-code-xs font-medium whitespace-nowrap', categoryTone)}>{item.category}</span>
+                                              <span
+                                                  className={cn(
+                                                      'px-2 py-0.5 rounded font-code-xs text-code-xs font-medium whitespace-nowrap',
+                                                      categoryTone,
+                                                  )}>
+                                                  {item.category.label}
+                                              </span>
                                           </td>
                                           <td className="py-3 px-4">
-                                              <span className={cn('inline-flex items-center gap-1 font-body-sm text-body-sm font-semibold whitespace-nowrap', t.className)}>
+                                              <span
+                                                  className={cn(
+                                                      'inline-flex items-center gap-1 font-body-sm text-body-sm font-semibold whitespace-nowrap',
+                                                      t.className,
+                                                  )}>
                                                   <Icon name={t.icon} className="text-[16px]" />
                                                   {t.label}
                                               </span>
                                           </td>
                                           <td className="py-3 px-4">
-                                              <span className="font-headline-sm text-headline-sm text-on-surface font-bold whitespace-nowrap">{formatMoney(item.unitPrice)}</span>
+                                              <span className="font-headline-sm text-headline-sm text-on-surface font-bold whitespace-nowrap">
+                                                  {formatMoney(item.unitPrice)}
+                                              </span>
                                           </td>
                                           <td className="py-3 px-4">
                                               <StockPill stock={item.stock} />
@@ -279,49 +363,77 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
                                               {item.reviewCount > 0 ? (
                                                   <div className="flex items-center gap-1 font-code-xs text-code-xs">
                                                       <Icon name="star" fill className="text-amber-500 text-[14px]" />
-                                                      <span className="font-bold text-on-surface">{item.rating.toFixed(1)}</span>
-                                                      <span className="text-on-surface-variant">({item.reviewCount})</span>
+                                                      <span className="font-bold text-on-surface">
+                                                          {item.rating.toFixed(1)}
+                                                      </span>
+                                                      <span className="text-on-surface-variant">
+                                                          ({item.reviewCount})
+                                                      </span>
                                                   </div>
                                               ) : (
-                                                  <span className="font-code-xs text-code-xs text-on-surface-variant">New</span>
+                                                  <span className="font-code-xs text-code-xs text-on-surface-variant">
+                                                      New
+                                                  </span>
                                               )}
                                           </td>
                                           <td className="py-3 px-4">
                                               <button
                                                   type="button"
-                                                  title={item.status === 'ACTIVE' ? 'Pause listing' : 'Activate listing'}
+                                                  title={
+                                                      item.status === 'ACTIVE' ? 'Pause listing' : 'Activate listing'
+                                                  }
                                                   onClick={() =>
                                                       act(
-                                                          () => garageApi.updateItem(auth, item.id, { status: item.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE' }),
-                                                          item.status === 'ACTIVE' ? 'Listing paused' : 'Listing active',
+                                                          () =>
+                                                              garageApi.updateItem(auth, item.id, {
+                                                                  status:
+                                                                      item.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE',
+                                                              }),
+                                                          item.status === 'ACTIVE'
+                                                              ? 'Listing paused'
+                                                              : 'Listing active',
                                                       )
                                                   }
                                                   className={cn(
                                                       'px-2 py-0.5 rounded-full font-code-xs text-code-xs font-semibold',
-                                                      item.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : 'bg-surface-container-high text-on-surface-variant',
-                                                  )}
-                                              >
+                                                      item.status === 'ACTIVE'
+                                                          ? 'bg-emerald-100 text-emerald-800'
+                                                          : 'bg-surface-container-high text-on-surface-variant',
+                                                  )}>
                                                   {item.status === 'ACTIVE' ? 'Active' : 'Paused'}
                                               </button>
                                           </td>
                                           <td className="py-3 px-4 text-right">
                                               <div className="flex items-center justify-end gap-1">
-                                                  {item.type !== 'RESCUE_PACKAGE' && (
+                                                  {item.type === 'PART' ? (
                                                       <button
                                                           type="button"
                                                           className="p-1 rounded text-on-surface-variant hover:text-emerald-700 hover:bg-surface-container"
-                                                          title={item.type === 'PART' ? 'Restock +5' : 'Open a bay'}
-                                                          aria-label={item.type === 'PART' ? `Restock ${item.title}` : `Open a bay for ${item.title}`}
+                                                          title="Restock +5"
+                                                          aria-label={`Restock ${item.title}`}
                                                           onClick={() =>
-                                                              act(() => garageApi.updateItem(auth, item.id, { restock: item.type === 'PART' ? 5 : 1 }), 'Capacity updated')
-                                                          }
-                                                      >
-                                                          <Icon name={item.type === 'PART' ? 'add_box' : 'calendar_month'} className="text-[18px]" />
+                                                              act(
+                                                                  () =>
+                                                                      garageApi.updateItem(auth, item.id, {
+                                                                          restock: 5,
+                                                                      }),
+                                                                  'Stock updated',
+                                                              )
+                                                          }>
+                                                          <Icon name="add_box" className="text-[18px]" />
                                                       </button>
-                                                  )}
-                                                  {item.type === 'RESCUE_PACKAGE' && (
-                                                      <span className="p-1 text-on-surface-variant" title="Dispatched on demand">
-                                                          <Icon name="tune" className="text-[18px]" />
+                                                  ) : (
+                                                      <span
+                                                          className="p-1 text-on-surface-variant"
+                                                          title={
+                                                              item.type === 'SERVICE'
+                                                                  ? 'Booked by motorists'
+                                                                  : 'Dispatched on demand'
+                                                          }>
+                                                          <Icon
+                                                              name={item.type === 'SERVICE' ? 'calendar_month' : 'tune'}
+                                                              className="text-[18px]"
+                                                          />
                                                       </span>
                                                   )}
                                                   <button
@@ -329,8 +441,12 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
                                                       className="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container"
                                                       title="Remove"
                                                       aria-label={`Remove ${item.title}`}
-                                                      onClick={() => act(() => garageApi.deleteItem(auth, item.id), `${item.title} removed`)}
-                                                  >
+                                                      onClick={() =>
+                                                          act(
+                                                              () => garageApi.deleteItem(auth, item.id),
+                                                              `${item.title} removed`,
+                                                          )
+                                                      }>
                                                       <Icon name="delete" className="text-[18px]" />
                                                   </button>
                                               </div>
@@ -344,15 +460,14 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
             {data && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-space-xs">
                     <span className="font-body-sm text-body-sm text-on-surface-variant">
-                        Showing {data.items.length} of {data.total} total catalog items • Synchronized with Central MtokaaHero Driver App
+                        Showing {data.items.length} of {data.total} catalog item{data.total === 1 ? '' : 's'}
                     </span>
                     <div className="flex items-center gap-2">
                         <button
                             type="button"
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
-                            className="px-3 py-1 rounded bg-surface-container-high text-on-surface font-label-md text-label-md disabled:opacity-50"
-                        >
+                            className="px-3 py-1 rounded bg-surface-container-high text-on-surface font-label-md text-label-md disabled:opacity-50">
                             Previous
                         </button>
                         <span className="font-code-xs text-code-xs font-bold">
@@ -362,8 +477,7 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
                             type="button"
                             disabled={page >= pages}
                             onClick={() => setPage((p) => p + 1)}
-                            className="px-3 py-1 rounded bg-surface-container-high text-on-surface font-label-md text-label-md disabled:opacity-50"
-                        >
+                            className="px-3 py-1 rounded bg-surface-container-high text-on-surface font-label-md text-label-md disabled:opacity-50">
                             Next
                         </button>
                     </div>
@@ -376,69 +490,165 @@ export function InventorySection({ auth, initialType, refreshKey }: { auth: Gara
 const fieldClass =
     'w-full bg-surface-container-lowest border-0 ring-1 ring-outline-variant focus:ring-2 focus:ring-primary focus:outline-none rounded-lg px-3 py-2 text-on-surface font-body-sm text-body-sm';
 
-export function NewItemDialog({ auth, open, onOpenChange, onCreated }: { auth: GarageAuth; open: boolean; onOpenChange: (o: boolean) => void; onCreated: () => void }) {
-    const [values, setValues] = useState<CatalogItemInput>({ title: '', type: 'PART', unitPrice: 0, stock: '', category: 'Tyres & Alignment', sku: '' });
+type ItemForm = {
+    title: string;
+    type: ItemType;
+    description: string;
+    sku: string;
+    categoryId: string;
+    unitPrice: string;
+    stock: string;
+    makeId: string;
+    modelId: string;
+    yearFrom: string;
+    yearTo: string;
+};
+
+const EMPTY_FORM: ItemForm = {
+    title: '',
+    type: 'PART',
+    description: '',
+    sku: '',
+    categoryId: '',
+    unitPrice: '',
+    stock: '',
+    makeId: '',
+    modelId: '',
+    yearFrom: '',
+    yearTo: '',
+};
+
+const API_FIELD: Partial<Record<keyof ItemForm, string>> = {
+    stock: 'stockQuantity',
+    makeId: 'fitment.makeId',
+    modelId: 'fitment.modelId',
+    yearFrom: 'fitment.yearFrom',
+    yearTo: 'fitment.yearTo',
+};
+
+const digits = (v: string) => v.replace(/[^\d]/g, '');
+
+/** Form state → API input. Blank stock means "not tracked"; a blank make means the item fits every vehicle. */
+export function toCatalogInput(v: ItemForm): CatalogItemInput {
+    const int = (x: string) => (x.trim() === '' ? null : Number(digits(x)));
+    return {
+        title: v.title,
+        type: v.type,
+        description: v.description.trim() || null,
+        sku: v.sku,
+        categoryId: v.categoryId,
+        unitPrice: Number(digits(v.unitPrice)) || 0,
+        stockQuantity: v.type === 'PART' ? int(v.stock) : null,
+        fitment:
+            v.type !== 'RESCUE_PACKAGE' && v.makeId
+                ? { makeId: v.makeId, modelId: v.modelId || null, yearFrom: int(v.yearFrom), yearTo: int(v.yearTo) }
+                : null,
+    };
+}
+
+export function NewItemDialog({
+    auth,
+    open,
+    onOpenChange,
+    onCreated,
+}: {
+    auth: GarageAuth;
+    open: boolean;
+    onOpenChange: (o: boolean) => void;
+    onCreated: () => void;
+}) {
+    const reference = useApi(open ? 'catalog-reference' : null, marketplaceApi.filters);
+    const [values, setValues] = useState<ItemForm>(EMPTY_FORM);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [saving, setSaving] = useState(false);
-    const set = (k: keyof CatalogItemInput, v: string | number) => {
-        setValues((s) => ({ ...s, [k]: v }));
-        setErrors((e) => ({ ...e, [k]: '' }));
+    const categories = reference.data?.categories.filter((c) => c.types.includes(values.type)) ?? [];
+    const make = reference.data?.makes.find((m) => m.id === values.makeId);
+
+    const set = (patch: Partial<ItemForm>) => {
+        setValues((s) => ({ ...s, ...patch }));
+        // Clear the API error shown under each edited field (API field names differ from form keys).
+        setErrors((e) => ({
+            ...e,
+            form: '',
+            ...Object.fromEntries(Object.keys(patch).map((k) => [API_FIELD[k as keyof ItemForm] ?? k, ''])),
+        }));
     };
 
     const save = async () => {
         setSaving(true);
         try {
-            await garageApi.createItem(auth, values);
-            toast.success(`${values.title} published to the marketplace`);
-            setValues({ title: '', type: 'PART', unitPrice: 0, stock: '', category: 'Tyres & Alignment', sku: '' });
+            const created = await garageApi.createItem(auth, toCatalogInput(values));
+            toast.success(
+                created.status === 'ACTIVE' ? `${created.title} added to your catalog` : `${created.title} saved`,
+            );
+            setValues(EMPTY_FORM);
+            setErrors({});
             onCreated();
             onOpenChange(false);
         } catch (err) {
-            if (err instanceof ApiError && err.fieldErrors.length) setErrors(Object.fromEntries(err.fieldErrors.map((f) => [f.field, f.message])));
+            if (err instanceof ApiError && err.fieldErrors.length)
+                setErrors(Object.fromEntries(err.fieldErrors.map((f) => [f.field, f.message])));
             else setErrors({ form: err instanceof Error ? err.message : 'Could not save.' });
         } finally {
             setSaving(false);
         }
     };
 
-    const err = (k: string) => (errors[k] ? <p className="font-body-sm text-body-sm text-error mt-1">{errors[k]}</p> : null);
+    const err = (...keys: string[]) => {
+        const message = keys.map((k) => errors[k]).find(Boolean);
+        return message ? <p className="font-body-sm text-body-sm text-error mt-1">{message}</p> : null;
+    };
+    const label = 'block font-label-md text-label-md text-on-surface font-medium mb-1';
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center gap-2">
                     <Icon name="add_business" className="text-primary text-[24px]" />
-                    <DialogTitle className="font-headline-sm text-headline-sm text-on-surface font-bold">Add New Catalog Offering</DialogTitle>
+                    <DialogTitle className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                        Add New Catalog Offering
+                    </DialogTitle>
                 </div>
-                <DialogDescription className="sr-only">Publish a part, workshop service or rescue package to the marketplace.</DialogDescription>
+                <DialogDescription className="font-body-sm text-body-sm text-on-surface-variant">
+                    Items show on the marketplace while they are active and your partner profile is approved.
+                </DialogDescription>
                 <form
                     className="space-y-space-sm"
                     noValidate
                     onSubmit={(e) => {
                         e.preventDefault();
                         void save();
-                    }}
-                >
+                    }}>
                     <div>
-                        <label htmlFor="ni-title" className="block font-label-md text-label-md text-on-surface font-medium mb-1">
+                        <label htmlFor="ni-title" className={label}>
                             Item or Service Title
                         </label>
-                        <input id="ni-title" className={fieldClass} placeholder="e.g. Michelin Primacy 4 215/55 R17" value={values.title} onChange={(e) => set('title', e.target.value)} />
+                        <input
+                            id="ni-title"
+                            className={fieldClass}
+                            placeholder="e.g. Michelin Primacy 4 215/55 R17"
+                            value={values.title}
+                            onChange={(e) => set({ title: e.target.value })}
+                        />
                         {err('title')}
                     </div>
                     <div className="grid grid-cols-2 gap-space-sm">
                         <div>
-                            <label htmlFor="ni-type" className="block font-label-md text-label-md text-on-surface font-medium mb-1">
+                            <label htmlFor="ni-type" className={label}>
                                 Catalog Offering Type
                             </label>
-                            <select id="ni-type" className={fieldClass} value={values.type} onChange={(e) => set('type', e.target.value as ItemType)}>
+                            <select
+                                id="ni-type"
+                                className={fieldClass}
+                                value={values.type}
+                                onChange={(e) => set({ type: e.target.value as ItemType, categoryId: '', stock: '' })}>
                                 <option value="PART">Parts Retail Inventory</option>
                                 <option value="SERVICE">In-Shop Labor &amp; Service</option>
                                 <option value="RESCUE_PACKAGE">Mobile Emergency Rescue</option>
                             </select>
                         </div>
                         <div>
-                            <label htmlFor="ni-price" className="block font-label-md text-label-md text-on-surface font-medium mb-1">
+                            <label htmlFor="ni-price" className={label}>
                                 Unit Rate (KES)
                             </label>
                             <input
@@ -446,51 +656,155 @@ export function NewItemDialog({ auth, open, onOpenChange, onCreated }: { auth: G
                                 className={fieldClass}
                                 placeholder="18,850"
                                 inputMode="numeric"
-                                value={values.unitPrice || ''}
-                                onChange={(e) => set('unitPrice', Number(e.target.value.replace(/[^\d]/g, '')))}
+                                value={values.unitPrice ? Number(values.unitPrice).toLocaleString('en-KE') : ''}
+                                onChange={(e) => set({ unitPrice: digits(e.target.value) })}
                             />
                             {err('unitPrice')}
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-space-sm">
                         <div>
-                            <label htmlFor="ni-stock" className="block font-label-md text-label-md text-on-surface font-medium mb-1">
-                                Stock Quantity or Capacity
+                            <label htmlFor="ni-cat" className={label}>
+                                Category
                             </label>
-                            <input id="ni-stock" className={fieldClass} placeholder="e.g. 12 or Unlimited" value={values.stock} onChange={(e) => set('stock', e.target.value)} />
-                        </div>
-                        <div>
-                            <label htmlFor="ni-cat" className="block font-label-md text-label-md text-on-surface font-medium mb-1">
-                                Category Classification
-                            </label>
-                            <select id="ni-cat" className={fieldClass} value={values.category} onChange={(e) => set('category', e.target.value)}>
-                                <option>Tyres &amp; Alignment</option>
-                                <option>Braking System</option>
-                                <option>Engine &amp; Powertrain</option>
-                                <option>Electrical &amp; Starting</option>
-                                <option>Fluids &amp; Lubricants</option>
-                                <option>Roadside Rescue</option>
+                            <select
+                                id="ni-cat"
+                                className={fieldClass}
+                                value={values.categoryId}
+                                onChange={(e) => set({ categoryId: e.target.value })}>
+                                <option value="">{reference.data ? 'Choose a category' : 'Loading…'}</option>
+                                {categories.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {c.label}
+                                    </option>
+                                ))}
                             </select>
+                            {err('categoryId')}
                         </div>
+                        {values.type === 'PART' ? (
+                            <div>
+                                <label htmlFor="ni-stock" className={label}>
+                                    Units in Stock
+                                </label>
+                                <input
+                                    id="ni-stock"
+                                    className={fieldClass}
+                                    placeholder="Leave blank if not tracked"
+                                    inputMode="numeric"
+                                    value={values.stock}
+                                    onChange={(e) => set({ stock: digits(e.target.value) })}
+                                />
+                                {err('stockQuantity')}
+                            </div>
+                        ) : (
+                            <div>
+                                <span className={label}>Availability</span>
+                                <p className="font-body-sm text-body-sm text-on-surface-variant py-2">
+                                    {values.type === 'SERVICE'
+                                        ? 'Booked by motorists'
+                                        : 'Dispatched on demand while you accept rescues'}
+                                </p>
+                            </div>
+                        )}
                     </div>
                     <div>
-                        <label htmlFor="ni-sku" className="block font-label-md text-label-md text-on-surface font-medium mb-1">
+                        <label htmlFor="ni-sku" className={label}>
                             OEM / Part / Package SKU
                         </label>
-                        <input id="ni-sku" className={cn(fieldClass, 'font-code-xs text-code-xs')} placeholder="e.g. TYR-MICH-21555" value={values.sku} onChange={(e) => set('sku', e.target.value)} />
+                        <input
+                            id="ni-sku"
+                            className={cn(fieldClass, 'font-code-xs text-code-xs')}
+                            placeholder="e.g. TYR-MICH-21555"
+                            value={values.sku}
+                            onChange={(e) => set({ sku: e.target.value })}
+                        />
                         {err('sku')}
                     </div>
+                    <div>
+                        <label htmlFor="ni-desc" className={label}>
+                            Description <span className="text-on-surface-variant font-normal">(optional)</span>
+                        </label>
+                        <textarea
+                            id="ni-desc"
+                            rows={2}
+                            className={fieldClass}
+                            placeholder="What is included, warranty, brand…"
+                            value={values.description}
+                            onChange={(e) => set({ description: e.target.value })}
+                        />
+                        {err('description')}
+                    </div>
+                    {values.type !== 'RESCUE_PACKAGE' && (
+                        <fieldset className="rounded-lg ring-1 ring-outline-variant p-space-sm space-y-space-xs">
+                            <legend className="px-1 font-label-md text-label-md text-on-surface font-medium">
+                                Vehicle fitment{' '}
+                                <span className="text-on-surface-variant font-normal">
+                                    (leave blank if it fits any vehicle)
+                                </span>
+                            </legend>
+                            <div className="grid grid-cols-2 gap-space-sm">
+                                <select
+                                    aria-label="Fits make"
+                                    className={fieldClass}
+                                    value={values.makeId}
+                                    onChange={(e) => set({ makeId: e.target.value, modelId: '' })}>
+                                    <option value="">Any make</option>
+                                    {reference.data?.makes.map((m) => (
+                                        <option key={m.id} value={m.id}>
+                                            {m.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    aria-label="Fits model"
+                                    className={fieldClass}
+                                    value={values.modelId}
+                                    disabled={!make}
+                                    onChange={(e) => set({ modelId: e.target.value })}>
+                                    <option value="">All models</option>
+                                    {make?.models.map((m) => (
+                                        <option key={m.id} value={m.id}>
+                                            {m.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <input
+                                    aria-label="First model year"
+                                    className={fieldClass}
+                                    placeholder="From year"
+                                    inputMode="numeric"
+                                    maxLength={4}
+                                    disabled={!make}
+                                    value={values.yearFrom}
+                                    onChange={(e) => set({ yearFrom: digits(e.target.value) })}
+                                />
+                                <input
+                                    aria-label="Last model year"
+                                    className={fieldClass}
+                                    placeholder="To year"
+                                    inputMode="numeric"
+                                    maxLength={4}
+                                    disabled={!make}
+                                    value={values.yearTo}
+                                    onChange={(e) => set({ yearTo: digits(e.target.value) })}
+                                />
+                            </div>
+                            {err('fitment.makeId', 'fitment.modelId', 'fitment.yearFrom', 'fitment.yearTo')}
+                        </fieldset>
+                    )}
                     {errors.form && <p className="font-body-sm text-body-sm text-error">{errors.form}</p>}
                     <div className="pt-space-sm flex items-center justify-end gap-2">
-                        <button type="button" onClick={() => onOpenChange(false)} className="px-4 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold">
+                        <button
+                            type="button"
+                            onClick={() => onOpenChange(false)}
+                            className="px-4 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold">
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={saving}
-                            className="px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container shadow-sm disabled:opacity-70"
-                        >
-                            {saving ? 'Publishing…' : 'Save & Publish'}
+                            className="px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container shadow-sm disabled:opacity-70">
+                            {saving ? 'Saving…' : 'Save & Publish'}
                         </button>
                     </div>
                 </form>
@@ -499,7 +813,11 @@ export function NewItemDialog({ auth, open, onOpenChange, onCreated }: { auth: G
     );
 }
 
-const AVATAR_TONES = ['bg-primary-fixed text-primary', 'bg-secondary-fixed text-secondary', 'bg-tertiary-fixed text-tertiary'];
+const AVATAR_TONES = [
+    'bg-primary-fixed text-primary',
+    'bg-secondary-fixed text-secondary',
+    'bg-tertiary-fixed text-tertiary',
+];
 
 function ago(iso: string) {
     const h = (Date.now() - new Date(iso).getTime()) / 3600_000;
@@ -525,15 +843,25 @@ function ReviewCard({ review, index, auth }: { review: Review; index: number; au
             <div>
                 <div className="flex items-center justify-between mb-2 gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                        <div className={cn('w-8 h-8 rounded-full font-bold flex items-center justify-center font-code-xs text-code-xs shrink-0', AVATAR_TONES[index % 3])}>
+                        <div
+                            className={cn(
+                                'w-8 h-8 rounded-full font-bold flex items-center justify-center font-code-xs text-code-xs shrink-0',
+                                AVATAR_TONES[index % 3],
+                            )}>
                             {initials}
                         </div>
                         <div className="min-w-0">
-                            <span className="font-title-md text-title-md text-on-surface font-semibold block leading-tight truncate">{review.author}</span>
+                            <span className="font-title-md text-title-md text-on-surface font-semibold block leading-tight truncate">
+                                {review.author}
+                            </span>
                             <span className="font-code-xs text-code-xs text-on-surface-variant">{review.vehicle}</span>
                         </div>
                     </div>
-                    {review.verified && <span className="font-code-xs text-code-xs text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-semibold">Verified</span>}
+                    {review.verified && (
+                        <span className="font-code-xs text-code-xs text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-semibold">
+                            Verified
+                        </span>
+                    )}
                 </div>
                 <div className="flex text-amber-500 mb-2" aria-label={`${review.rating} out of 5 stars`}>
                     {[1, 2, 3, 4, 5].map((i) => (
@@ -560,8 +888,7 @@ function ReviewCard({ review, index, auth }: { review: Review; index: number; au
                             } catch (err) {
                                 toast.error(err instanceof Error ? err.message : 'Could not post reply');
                             }
-                        }}
-                    >
+                        }}>
                         <textarea
                             autoFocus
                             rows={2}
@@ -572,10 +899,15 @@ function ReviewCard({ review, index, auth }: { review: Review; index: number; au
                             placeholder="Thank the motorist or follow up…"
                         />
                         <div className="flex justify-end gap-2">
-                            <button type="button" onClick={() => setReplying(false)} className="px-3 py-1 rounded-lg font-label-md text-label-md text-on-surface-variant">
+                            <button
+                                type="button"
+                                onClick={() => setReplying(false)}
+                                className="px-3 py-1 rounded-lg font-label-md text-label-md text-on-surface-variant">
                                 Cancel
                             </button>
-                            <button type="submit" className="px-3 py-1 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold">
+                            <button
+                                type="submit"
+                                className="px-3 py-1 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold">
                                 Post reply
                             </button>
                         </div>
@@ -585,7 +917,10 @@ function ReviewCard({ review, index, auth }: { review: Review; index: number; au
             <div className="pt-2 border-t border-surface-container flex items-center justify-between">
                 <span className="font-code-xs text-code-xs text-on-surface-variant">{ago(review.createdAt)}</span>
                 {!reply && !replying && (
-                    <button type="button" onClick={() => setReplying(true)} className="text-primary font-label-md text-label-md font-semibold hover:underline flex items-center gap-1">
+                    <button
+                        type="button"
+                        onClick={() => setReplying(true)}
+                        className="text-primary font-label-md text-label-md font-semibold hover:underline flex items-center gap-1">
                         <Icon name="reply" className="text-[16px]" />
                         Reply to Motorist
                     </button>
@@ -601,8 +936,12 @@ export function ReviewsSection({ auth }: { auth: GarageAuth }) {
         <div className={cn(card, 'p-space-lg flex flex-col space-y-space-md')}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
                 <div>
-                    <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">Recent Verified Motorist Feedback</h2>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant">Real-time ratings submitted via the MtokaaHero Motorist App post-rescue and workshop checkout.</p>
+                    <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                        Recent Verified Motorist Feedback
+                    </h2>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">
+                        Real-time ratings submitted via the MtokaaHero Motorist App post-rescue and workshop checkout.
+                    </p>
                 </div>
                 <div className="flex items-center gap-2 font-code-xs text-code-xs text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg shrink-0">
                     <Icon name="verified_user" className="text-[18px] text-emerald-700" />
@@ -612,7 +951,9 @@ export function ReviewsSection({ auth }: { auth: GarageAuth }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
                 {reviews.data
                     ? reviews.data.map((r, i) => <ReviewCard key={r.id} review={r} index={i} auth={auth} />)
-                    : Array.from({ length: 3 }, (_, i) => <div key={i} className="h-48 rounded-xl bg-surface-container-low animate-pulse" />)}
+                    : Array.from({ length: 3 }, (_, i) => (
+                          <div key={i} className="h-48 rounded-xl bg-surface-container-low animate-pulse" />
+                      ))}
             </div>
         </div>
     );

@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { Offer } from '@/lib/api/marketplace';
 import type { Money } from '@/lib/format';
+import { offerImage } from '@/lib/offer-image';
 
 export interface CartLine {
     offerId: string;
@@ -63,7 +64,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                           offerId: offer.id,
                           title: offer.title,
                           type: offer.type,
-                          image: offer.image.url,
+                          image: offerImage(offer),
                           price: { amount: offer.price.amount, currency: offer.price.currency },
                           provider: { id: offer.provider.id, name: offer.provider.name },
                           quantity: 1,
@@ -78,7 +79,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const value = useMemo<CartState>(() => {
         const count = lines.reduce((n, l) => n + l.quantity, 0);
         const total = lines.length
-            ? { amount: lines.reduce((sum, l) => sum + l.price.amount * l.quantity, 0), currency: lines[0].price.currency }
+            ? {
+                  amount: lines.reduce((sum, l) => sum + l.price.amount * l.quantity, 0),
+                  currency: lines[0].price.currency,
+              }
             : null;
         return {
             lines,

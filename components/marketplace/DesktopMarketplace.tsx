@@ -12,10 +12,9 @@ import type { Marketplace } from './useMarketplace';
 import { VehicleFilterBar } from './VehicleFilterBar';
 
 const SORTS: { value: OfferSort; label: string }[] = [
-    { value: 'FASTEST_ARRIVAL', label: 'Fastest Emergency Arrival' },
-    { value: 'TOP_RATED', label: 'Highest Customer Rating' },
+    { value: 'FASTEST_ARRIVAL', label: 'Nearest First' },
     { value: 'LOWEST_PRICE', label: 'Lowest Price First' },
-    { value: 'OEM_FIT', label: 'Guaranteed OEM Fit' },
+    { value: 'OEM_FIT', label: 'Vehicle-Specific Fit First' },
 ];
 
 const CHIP_ICON_TONE: Record<string, string> = {
@@ -43,7 +42,8 @@ export function DesktopMarketplace({
     const first = page && page.total ? (page.page - 1) * pageSize + 1 : 0;
     const last = page ? Math.min(page.page * pageSize, page.total) : 0;
 
-    const chipBase = 'px-space-md py-2 rounded-full font-label-md text-label-md shadow-sm whitespace-nowrap flex items-center gap-1 transition-all';
+    const chipBase =
+        'px-space-md py-2 rounded-full font-label-md text-label-md shadow-sm whitespace-nowrap flex items-center gap-1 transition-all';
 
     return (
         <div className="flex flex-col w-full">
@@ -56,14 +56,16 @@ export function DesktopMarketplace({
                             <div className="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-primary-fixed text-on-primary-fixed mb-space-xs shadow-sm">
                                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                                 <span className="font-code-xs text-code-xs tracking-wider uppercase font-semibold">
-                                    Live High-Trust Network{s ? ` • ${formatCount(s.activeServiceBays)} Active Service Bays` : ''}
+                                    Live High-Trust Network
+                                    {s ? ` • ${formatCount(s.activeServiceBays)} Active Service Bays` : ''}
                                 </span>
                             </div>
                             <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
                                 Find Top Garages, Genuine Parts &amp; Mobile Rescue Mechanics
                             </h1>
                             <p className="font-body-lg text-body-lg text-on-surface-variant mt-1">
-                                Standardized pricing, verified technician credentials, and guaranteed OEM compatibility across verified workshop partners.
+                                Upfront prices in KES from workshops whose business documents we have reviewed, filtered
+                                for your vehicle.
                             </p>
                         </div>
                         <div className="flex items-center gap-space-md bg-surface-container-lowest p-space-sm px-space-md rounded-xl shadow-sm self-start lg:self-auto">
@@ -74,7 +76,9 @@ export function DesktopMarketplace({
                                         {s?.region.name ?? 'Locating…'}
                                     </span>
                                     <span className="font-code-xs text-code-xs text-on-surface-variant">
-                                        Avg ETA: {s ? `${s.region.avgEtaMinutes} mins` : '--'}
+                                        {s
+                                            ? `${s.rescue.acceptingProviders} rescue provider${s.rescue.acceptingProviders === 1 ? '' : 's'} online`
+                                            : '--'}
                                     </span>
                                 </div>
                             </div>
@@ -82,8 +86,12 @@ export function DesktopMarketplace({
                             <div className="flex items-center gap-2">
                                 <Icon name="verified_user" className="text-secondary text-[20px]" />
                                 <div className="flex flex-col">
-                                    <span className="font-code-sm text-code-sm text-on-surface font-semibold leading-none">Escrow Lock</span>
-                                    <span className="font-code-xs text-code-xs text-on-surface-variant">Post-Inspection Pay</span>
+                                    <span className="font-code-sm text-code-sm text-on-surface font-semibold leading-none">
+                                        Verified Partners
+                                    </span>
+                                    <span className="font-code-xs text-code-xs text-on-surface-variant">
+                                        Pay the provider directly
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +99,10 @@ export function DesktopMarketplace({
 
                     <VehicleFilterBar market={market} />
 
-                    <div className="flex items-center gap-space-xs overflow-x-auto pb-1 no-scrollbar" role="tablist" aria-label="Categories">
+                    <div
+                        className="flex items-center gap-space-xs overflow-x-auto pb-1 no-scrollbar"
+                        role="tablist"
+                        aria-label="Categories">
                         <button
                             type="button"
                             role="tab"
@@ -102,8 +113,7 @@ export function DesktopMarketplace({
                                 state.categoryId === 'all'
                                     ? 'bg-primary text-on-primary'
                                     : 'bg-surface-container-lowest hover:bg-surface-container-high text-on-surface-variant',
-                            )}
-                        >
+                            )}>
                             <Icon name="grid_view" className="text-[16px]" />
                             All Services &amp; Spares
                         </button>
@@ -124,12 +134,19 @@ export function DesktopMarketplace({
                                                   'bg-surface-container-lowest hover:bg-surface-container-high',
                                                   c.rescue ? 'text-tertiary' : 'text-on-surface-variant',
                                               ),
-                                    )}
-                                >
+                                    )}>
                                     {c.rescue ? (
-                                        <span className={cn('w-2 h-2 rounded-full animate-ping', active ? 'bg-on-primary' : 'bg-tertiary')} />
+                                        <span
+                                            className={cn(
+                                                'w-2 h-2 rounded-full animate-ping',
+                                                active ? 'bg-on-primary' : 'bg-tertiary',
+                                            )}
+                                        />
                                     ) : (
-                                        <Icon name={c.icon} className={cn('text-[16px]', !active && CHIP_ICON_TONE[c.tone])} />
+                                        <Icon
+                                            name={c.icon}
+                                            className={cn('text-[16px]', !active && CHIP_ICON_TONE[c.tone])}
+                                        />
                                     )}
                                     {c.label}
                                 </button>
@@ -146,24 +163,27 @@ export function DesktopMarketplace({
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm bg-surface-container-lowest p-space-sm px-space-md rounded-xl shadow-sm">
                             <div className="flex items-center gap-2">
                                 <span className="font-label-lg text-label-lg text-on-surface font-bold">
-                                    {page ? `Showing ${page.items.length} Verified Offers` : 'Loading verified offers…'}
+                                    {page
+                                        ? `${page.total} Verified Offer${page.total === 1 ? '' : 's'}`
+                                        : 'Loading verified offers…'}
                                 </span>
                                 {page?.fitment && (
                                     <span className="font-code-xs text-code-xs bg-surface-container text-on-surface-variant px-2 py-0.5 rounded">
-                                        {page.fitment.label} Matched
+                                        For {page.fitment.label}
                                     </span>
                                 )}
                             </div>
                             <div className="flex items-center gap-space-xs self-end sm:self-auto">
-                                <label htmlFor="offer-sort" className="font-code-xs text-code-xs text-on-surface-variant uppercase">
+                                <label
+                                    htmlFor="offer-sort"
+                                    className="font-code-xs text-code-xs text-on-surface-variant uppercase">
                                     Sort By:
                                 </label>
                                 <select
                                     id="offer-sort"
                                     value={state.sort}
                                     onChange={(e) => update({ sort: e.target.value as OfferSort })}
-                                    className="bg-surface-container-low font-body-sm text-body-sm text-on-surface px-space-sm py-1 rounded focus:outline-none cursor-pointer"
-                                >
+                                    className="bg-surface-container-low font-body-sm text-body-sm text-on-surface px-space-sm py-1 rounded focus:outline-none cursor-pointer">
                                     {SORTS.map((o) => (
                                         <option key={o.value} value={o.value}>
                                             {o.label}
@@ -176,23 +196,44 @@ export function DesktopMarketplace({
                         {offers.error ? (
                             <div className="bg-surface-container-lowest rounded-xl shadow-sm p-space-xl flex flex-col items-center gap-space-sm text-center">
                                 <Icon name="cloud_off" className="text-[32px] text-tertiary" />
-                                <p className="font-title-md text-title-md text-on-surface">We couldn&apos;t load offers right now.</p>
-                                <button type="button" onClick={offers.reload} className="font-label-lg text-label-lg text-primary hover:underline">
+                                <p className="font-title-md text-title-md text-on-surface">
+                                    We couldn&apos;t load offers right now.
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={offers.reload}
+                                    className="font-label-lg text-label-lg text-primary hover:underline">
                                     Try again
                                 </button>
                             </div>
                         ) : page && page.items.length === 0 ? (
                             <div className="bg-surface-container-lowest rounded-xl shadow-sm p-space-xl flex flex-col items-center gap-space-sm text-center">
                                 <Icon name="search_off" className="text-[32px] text-on-surface-variant" />
-                                <p className="font-title-md text-title-md text-on-surface">No verified offers match these filters.</p>
-                                <button type="button" onClick={market.reset} className="font-label-lg text-label-lg text-primary hover:underline">
+                                <p className="font-title-md text-title-md text-on-surface">
+                                    No verified offers match these filters.
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={market.reset}
+                                    className="font-label-lg text-label-lg text-primary hover:underline">
                                     Reset filters
                                 </button>
                             </div>
                         ) : (
-                            <div className={cn('grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md transition-opacity', offers.loading && page && 'opacity-50')}>
+                            <div
+                                className={cn(
+                                    'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md transition-opacity',
+                                    offers.loading && page && 'opacity-50',
+                                )}>
                                 {page
-                                    ? page.items.map((o) => <OfferCard key={o.id} offer={o} onPrimary={onPrimary} onAddToCart={onAddToCart} />)
+                                    ? page.items.map((o) => (
+                                          <OfferCard
+                                              key={o.id}
+                                              offer={o}
+                                              onPrimary={onPrimary}
+                                              onAddToCart={onAddToCart}
+                                          />
+                                      ))
                                     : Array.from({ length: pageSize }, (_, i) => <OfferCardSkeleton key={i} />)}
                             </div>
                         )}
@@ -204,7 +245,8 @@ export function DesktopMarketplace({
                                     <strong className="text-on-surface">
                                         {first} - {last}
                                     </strong>{' '}
-                                    of {page.total} total compatible listings{page.fitment ? ' for selected vehicle' : ''}
+                                    of {page.total} listing{page.total === 1 ? '' : 's'}
+                                    {page.fitment ? ' for the selected vehicle' : ''}
                                 </span>
                                 <Pagination page={page.page} pages={pages} onPage={(p) => update({ page: p })} />
                             </div>
@@ -213,7 +255,7 @@ export function DesktopMarketplace({
                 </div>
             </section>
 
-            <SosStrip etaMin={s?.rescue.etaMinutes.min} etaMax={s?.rescue.etaMinutes.max} />
+            <SosStrip acceptingProviders={s?.rescue.acceptingProviders} />
         </div>
     );
 }

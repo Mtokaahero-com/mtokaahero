@@ -1,5 +1,5 @@
 import type { Money } from '@/lib/format';
-import { marketplaceFetch } from './client';
+import { apiFetch } from './client';
 
 export type ServiceMode = 'ROADSIDE' | 'IN_SHOP';
 export type PaymentMethod = 'MPESA' | 'CARD' | 'ON_ARRIVAL';
@@ -122,11 +122,12 @@ export interface RescueTracking {
 
 export const rescueApi = {
     quote: (input: { offerIds: string[]; mode: ServiceMode; location?: GeoPoint }) =>
-        marketplaceFetch<CheckoutQuote>('/rescue/quotes', { method: 'POST', body: input }),
-    reverseGeocode: (point: GeoPoint) => marketplaceFetch<ResolvedLocation>('/geo/reverse', { query: { lat: point.lat, lng: point.lng } }),
+        apiFetch<CheckoutQuote>('/rescue/quotes', { method: 'POST', body: input }),
+    reverseGeocode: (point: GeoPoint) =>
+        apiFetch<ResolvedLocation>('/geo/reverse', { query: { lat: point.lat, lng: point.lng } }),
     create: (input: RescueRequestInput, token?: string) =>
-        marketplaceFetch<RescueRequestCreated>('/rescue/requests', { method: 'POST', body: input, token }),
-    track: (trackingToken: string) => marketplaceFetch<RescueTracking>(`/rescue/track/${encodeURIComponent(trackingToken)}`),
+        apiFetch<RescueRequestCreated>('/rescue/requests', { method: 'POST', body: input, token }),
+    track: (trackingToken: string) => apiFetch<RescueTracking>(`/rescue/track/${encodeURIComponent(trackingToken)}`),
 };
 
 const LAST_TRACKING_KEY = 'mtokaa.rescue.last-tracking';

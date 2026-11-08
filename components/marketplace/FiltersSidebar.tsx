@@ -39,6 +39,10 @@ export function FiltersSidebar({ market }: { market: Marketplace }) {
     };
 
     const currency = f?.price.currency ?? 'KES';
+    const priceMin = f?.price.min ?? 0;
+    const priceMax = f?.price.max ?? 0;
+    // Ratings arrive with reviews; until someone is rated the filter would only ever empty the results.
+    const hasRatings = Boolean(f?.ratingBuckets.some((b) => b.count > 0));
 
     return (
         <aside className="lg:col-span-3 flex flex-col gap-space-md bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
@@ -47,7 +51,10 @@ export function FiltersSidebar({ market }: { market: Marketplace }) {
                     <Icon name="tune" className="text-primary text-[20px]" />
                     <h3 className="font-title-lg text-title-lg text-on-surface">Precision Filters</h3>
                 </div>
-                <button className="font-code-xs text-code-xs text-primary hover:underline" type="button" onClick={reset}>
+                <button
+                    className="font-code-xs text-code-xs text-primary hover:underline"
+                    type="button"
+                    onClick={reset}>
                     Reset All
                 </button>
             </div>
@@ -97,8 +104,7 @@ export function FiltersSidebar({ market }: { market: Marketplace }) {
                     {f?.providers.map((p) => (
                         <label
                             key={p.id}
-                            className="flex items-center gap-2 font-body-sm text-body-sm text-on-surface cursor-pointer p-1 rounded hover:bg-surface-container-low"
-                        >
+                            className="flex items-center gap-2 font-body-sm text-body-sm text-on-surface cursor-pointer p-1 rounded hover:bg-surface-container-low">
                             <input
                                 checked={checkedProviders.includes(p.id)}
                                 onChange={(e) => toggleProvider(p.id, e.target.checked)}
@@ -112,75 +118,70 @@ export function FiltersSidebar({ market }: { market: Marketplace }) {
             </div>
             <div className="h-px bg-surface-container" />
 
-            <div className="flex flex-col gap-space-xs">
-                <span className={sectionTitle}>Garage Trust Score</span>
-                <div className="flex flex-col gap-1.5">
-                    {f?.ratingBuckets.map((b) => (
-                        <label key={b.min} className="flex items-center justify-between cursor-pointer p-1 rounded hover:bg-surface-container-low">
-                            <div className="flex items-center gap-2 font-body-sm text-body-sm text-on-surface">
-                                <input
-                                    checked={state.minRating === b.min}
-                                    onChange={() => update({ minRating: b.min })}
-                                    className="accent-primary-container"
-                                    name="rating-filter"
-                                    type="radio"
-                                />
-                                <Stars value={b.min} />
-                                <span className="font-code-sm text-code-sm">{b.min.toFixed(1)} &amp; up</span>
-                            </div>
-                            <span className="font-code-xs text-code-xs text-on-surface-variant">({b.count})</span>
-                        </label>
-                    ))}
-                </div>
-            </div>
-            <div className="h-px bg-surface-container" />
+            {hasRatings && (
+                <>
+                    <div className="flex flex-col gap-space-xs">
+                        <span className={sectionTitle}>Garage Trust Score</span>
+                        <div className="flex flex-col gap-1.5">
+                            {f?.ratingBuckets.map((b) => (
+                                <label
+                                    key={b.min}
+                                    className="flex items-center justify-between cursor-pointer p-1 rounded hover:bg-surface-container-low">
+                                    <div className="flex items-center gap-2 font-body-sm text-body-sm text-on-surface">
+                                        <input
+                                            checked={state.minRating === b.min}
+                                            onChange={() => update({ minRating: b.min })}
+                                            className="accent-primary-container"
+                                            name="rating-filter"
+                                            type="radio"
+                                        />
+                                        <Stars value={b.min} />
+                                        <span className="font-code-sm text-code-sm">{b.min.toFixed(1)} &amp; up</span>
+                                    </div>
+                                    <span className="font-code-xs text-code-xs text-on-surface-variant">
+                                        ({b.count})
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="h-px bg-surface-container" />
+                </>
+            )}
 
-            <div className="flex flex-col gap-space-xs">
-                <div className="flex items-center justify-between">
-                    <span className={sectionTitle}>Rescue Response Time</span>
-                    <span className="font-code-sm text-code-sm text-tertiary font-bold">≤ {state.maxEtaMinutes} mins</span>
+            {priceMax > priceMin && (
+                <div className="flex flex-col gap-space-xs">
+                    <div className="flex items-center justify-between">
+                        <span className={sectionTitle}>Max Price Range</span>
+                        <span className="font-code-sm text-code-sm text-primary font-bold">
+                            {state.maxPrice === null ? 'Any price' : formatMoney({ amount: state.maxPrice, currency })}
+                        </span>
+                    </div>
+                    <input
+                        aria-label="Maximum price"
+                        className="w-full accent-primary-container cursor-pointer"
+                        min={priceMin}
+                        max={priceMax}
+                        step={50}
+                        type="range"
+                        value={state.maxPrice ?? priceMax}
+                        onChange={(e) => {
+                            const value = Number(e.target.value);
+                            update({ maxPrice: value >= priceMax ? null : value });
+                        }}
+                    />
+                    <div className="flex justify-between font-code-xs text-code-xs text-on-surface-variant">
+                        <span>{formatMoney({ amount: priceMin, currency })}</span>
+                        <span>{formatMoney({ amount: priceMax, currency })}</span>
+                    </div>
                 </div>
-                <input
-                    aria-label="Maximum rescue response time"
-                    className="w-full accent-tertiary-container cursor-pointer"
-                    min={f?.eta.min ?? 10}
-                    max={f?.eta.max ?? 60}
-                    type="range"
-                    value={state.maxEtaMinutes}
-                    onChange={(e) => update({ maxEtaMinutes: Number(e.target.value) })}
-                />
-                <div className="flex justify-between font-code-xs text-code-xs text-on-surface-variant">
-                    <span>&lt; {f?.eta.min ?? 10} min (Urgent)</span>
-                    <span>&lt; {f?.eta.max ?? 60} min</span>
-                </div>
-            </div>
-            <div className="h-px bg-surface-container" />
-
-            <div className="flex flex-col gap-space-xs">
-                <div className="flex items-center justify-between">
-                    <span className={sectionTitle}>Max Price Range</span>
-                    <span className="font-code-sm text-code-sm text-primary font-bold">{formatMoney({ amount: state.maxPrice, currency })}</span>
-                </div>
-                <input
-                    aria-label="Maximum price"
-                    className="w-full accent-primary-container cursor-pointer"
-                    min={f?.price.min ?? 2600}
-                    max={f?.price.max ?? 39000}
-                    step={100}
-                    type="range"
-                    value={state.maxPrice}
-                    onChange={(e) => update({ maxPrice: Number(e.target.value) })}
-                />
-                <div className="flex justify-between font-code-xs text-code-xs text-on-surface-variant">
-                    <span>{formatMoney({ amount: f?.price.min ?? 2600, currency })}</span>
-                    <span>{formatMoney({ amount: f?.price.max ?? 39000, currency })}+</span>
-                </div>
-            </div>
+            )}
 
             <div className="bg-surface-container p-space-sm rounded-lg flex items-start gap-space-xs mt-2">
-                <Icon name="shield_with_heart" className="text-secondary text-[20px]" />
+                <Icon name="payments" className="text-secondary text-[20px]" />
                 <p className="font-body-sm text-body-sm text-on-surface leading-tight">
-                    MtokaaHero Escrow: Funds are held safely until diagnostics or test runs are verified complete.
+                    You pay the workshop or mechanic directly, by M-Pesa or cash, once the job is done. MtokaaHero never
+                    holds your money.
                 </p>
             </div>
         </aside>
