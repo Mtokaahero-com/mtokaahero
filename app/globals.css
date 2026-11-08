@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --font-heading: 'Space Grotesk', sans-serif;
+        --font-body: 'Manrope', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+    }
+
     * {
         @apply border-border;
     }
