@@ -3,6 +3,7 @@
 import { Icon } from '@/components/brand/Icon';
 import type { Offer } from '@/lib/api/marketplace';
 import { formatMoney, formatRating } from '@/lib/format';
+import { offerImage } from '@/lib/offer-image';
 import { cn } from '@/lib/utils';
 import { TEXT_TONE } from './tones';
 
@@ -54,7 +55,9 @@ export function OfferCard({
 
     const primaryBtn = cn(
         'w-full py-2 rounded-lg font-label-md text-label-md shadow-sm transition-colors flex items-center justify-center gap-1',
-        rescue ? 'bg-tertiary-container hover:bg-tertiary text-on-tertiary' : 'bg-primary-container hover:bg-primary text-on-primary',
+        rescue
+            ? 'bg-tertiary-container hover:bg-tertiary text-on-tertiary'
+            : 'bg-primary-container hover:bg-primary text-on-primary',
     );
     const tonalBtn =
         'w-full py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-1';
@@ -66,17 +69,19 @@ export function OfferCard({
                 <img
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     alt={offer.image.alt}
-                    src={offer.image.url}
+                    src={offerImage(offer)}
                     loading="lazy"
                 />
                 <div
                     className={cn(
                         'absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full font-label-md text-label-md flex items-center gap-1 shadow-sm',
                         MODE_PILL[mode.tone ?? 'primary'],
-                    )}
-                >
+                    )}>
                     {mode.icon ? (
-                        <Icon name={mode.icon} className={cn('text-[14px]', mode.tone === 'amber' && 'text-secondary')} />
+                        <Icon
+                            name={mode.icon}
+                            className={cn('text-[14px]', mode.tone === 'amber' && 'text-secondary')}
+                        />
                     ) : (
                         <span className="w-2 h-2 rounded-full bg-tertiary-fixed animate-ping" />
                     )}
@@ -85,14 +90,18 @@ export function OfferCard({
                 <div
                     className={cn(
                         'absolute bottom-2.5 left-2.5 backdrop-blur-md px-2 py-0.5 rounded font-code-xs text-code-xs flex items-center gap-1',
-                        hl.style === 'dark' ? 'bg-on-surface/85 text-on-primary' : 'bg-surface-container-lowest/90 text-on-surface',
-                    )}
-                >
+                        hl.style === 'dark'
+                            ? 'bg-on-surface/85 text-on-primary'
+                            : 'bg-surface-container-lowest/90 text-on-surface',
+                    )}>
                     {hl.icon ? (
                         <Icon
                             name={hl.icon}
                             fill={hl.icon === 'star'}
-                            className={cn('text-[14px]', hl.style === 'dark' ? DARK_ICON[hl.tone ?? 'amber'] : TEXT_TONE[hl.tone ?? 'amber'])}
+                            className={cn(
+                                'text-[14px]',
+                                hl.style === 'dark' ? DARK_ICON[hl.tone ?? 'amber'] : TEXT_TONE[hl.tone ?? 'amber'],
+                            )}
                         />
                     ) : (
                         <span className={cn('w-1.5 h-1.5 rounded-full', LIGHT_DOT[hl.tone ?? 'primary'])} />
@@ -111,19 +120,30 @@ export function OfferCard({
                                 </span>
                             )}
                         </span>
-                        <div className="flex items-center gap-1 text-secondary shrink-0">
-                            <Icon name="star" fill className="text-[14px]" />
-                            <span className="font-code-sm text-code-sm font-semibold text-on-surface">{formatRating(offer.provider.rating)}</span>
-                            <span className="font-code-xs text-code-xs text-on-surface-variant">({offer.provider.reviewCount})</span>
-                        </div>
+                        {offer.provider.reviewCount > 0 ? (
+                            <div className="flex items-center gap-1 text-secondary shrink-0">
+                                <Icon name="star" fill className="text-[14px]" />
+                                <span className="font-code-sm text-code-sm font-semibold text-on-surface">
+                                    {formatRating(offer.provider.rating)}
+                                </span>
+                                <span className="font-code-xs text-code-xs text-on-surface-variant">
+                                    ({offer.provider.reviewCount})
+                                </span>
+                            </div>
+                        ) : (
+                            <span className="font-code-xs text-code-xs text-on-surface-variant shrink-0">
+                                New on MtokaaHero
+                            </span>
+                        )}
                     </div>
                     <h4
                         className="font-title-md text-title-md text-on-surface hover:text-primary transition-colors cursor-pointer line-clamp-2"
-                        onClick={() => onPrimary(offer)}
-                    >
+                        onClick={() => onPrimary(offer)}>
                         {offer.title}
                     </h4>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">{offer.description}</p>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+                        {offer.description}
+                    </p>
                 </div>
                 <div className="bg-surface-container-low p-space-xs px-space-sm rounded-lg flex items-center justify-between gap-2 text-on-surface">
                     <div className="flex items-center gap-1 min-w-0">
@@ -135,16 +155,19 @@ export function OfferCard({
                             'font-code-xs text-code-xs text-right',
                             TEXT_TONE[offer.spec.note.tone ?? 'muted'],
                             offer.spec.note.tone === 'rescue' ? 'font-bold' : 'font-semibold',
-                        )}
-                    >
+                        )}>
                         {offer.spec.note.label}
                     </span>
                 </div>
                 <div className="pt-space-xs flex flex-col gap-2">
                     <div className="flex items-baseline justify-between gap-2">
                         <div className="flex flex-col shrink-0">
-                            <span className="font-code-xs text-code-xs text-on-surface-variant">{offer.price.label}</span>
-                            <span className="font-headline-md text-headline-md text-on-surface font-bold leading-none whitespace-nowrap">{formatMoney(offer.price)}</span>
+                            <span className="font-code-xs text-code-xs text-on-surface-variant">
+                                {offer.price.label}
+                            </span>
+                            <span className="font-headline-md text-headline-md text-on-surface font-bold leading-none whitespace-nowrap">
+                                {formatMoney(offer.price)}
+                            </span>
                         </div>
                         {offer.priceNote &&
                             (offer.priceNote.style === 'chip' ? (
@@ -152,7 +175,11 @@ export function OfferCard({
                                     {offer.priceNote.label}
                                 </span>
                             ) : (
-                                <span className={cn('font-code-xs text-code-xs text-right', PRICE_NOTE[offer.priceNote.tone ?? 'muted'])}>
+                                <span
+                                    className={cn(
+                                        'font-code-xs text-code-xs text-right',
+                                        PRICE_NOTE[offer.priceNote.tone ?? 'muted'],
+                                    )}>
                                     {offer.priceNote.label}
                                 </span>
                             ))}
@@ -190,7 +217,9 @@ export function OfferCard({
 
 export function OfferCardSkeleton() {
     return (
-        <div className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden animate-pulse" aria-hidden="true">
+        <div
+            className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden animate-pulse"
+            aria-hidden="true">
             <div className="h-44 bg-surface-container" />
             <div className="p-space-md flex flex-col gap-space-sm">
                 <div className="h-3 w-1/2 rounded bg-surface-container" />

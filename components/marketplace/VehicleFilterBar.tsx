@@ -4,7 +4,19 @@ import { Icon } from '@/components/brand/Icon';
 import type { MarketplaceFilters, VehicleSelection } from '@/lib/api/marketplace';
 import type { Marketplace } from './useMarketplace';
 
-function Field({ label, icon, iconClass, span, children }: { label: string; icon: string; iconClass?: string; span: string; children: React.ReactNode }) {
+function Field({
+    label,
+    icon,
+    iconClass,
+    span,
+    children,
+}: {
+    label: string;
+    icon: string;
+    iconClass?: string;
+    span: string;
+    children: React.ReactNode;
+}) {
     return (
         <div className={`${span} flex flex-col`}>
             <label className="font-code-xs text-code-xs text-on-surface-variant mb-1 font-medium">{label}</label>
@@ -16,7 +28,8 @@ function Field({ label, icon, iconClass, span, children }: { label: string; icon
     );
 }
 
-const selectClass = 'w-full bg-transparent font-title-md text-title-md text-on-surface focus:outline-none cursor-pointer';
+const selectClass =
+    'w-full bg-transparent font-title-md text-title-md text-on-surface focus:outline-none cursor-pointer';
 
 export function modelsFor(filters: MarketplaceFilters | undefined, v: VehicleSelection) {
     return filters?.makes.find((m) => m.id === v.makeId)?.models ?? [];
@@ -37,33 +50,29 @@ export function VehicleFilterBar({ market }: { market: Marketplace }) {
             <div className="flex items-center justify-between">
                 <span className="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider flex items-center gap-space-xs">
                     <Icon name="minor_crash" className="text-primary text-[18px]" />
-                    Step 1: Calibrate Vehicle Spec for Guaranteed Fitment
+                    Step 1: Choose Your Vehicle for Parts That Fit
                 </span>
-                <span className="font-code-xs text-code-xs text-primary bg-primary-fixed/50 px-2 py-0.5 rounded">VIN Decoder Ready</span>
             </div>
             <form
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-space-sm items-center"
                 onSubmit={(e) => {
                     e.preventDefault();
                     update({ vehicle: draft });
-                }}
-            >
+                }}>
                 <Field label="VEHICLE MAKE" icon="directions_car" span="lg:col-span-3">
                     <select
                         aria-label="Vehicle make"
                         className={selectClass}
                         value={draft.makeId ?? ''}
-                        onChange={(e) => {
-                            const make = f?.makes.find((m) => m.id === e.target.value);
-                            const model = make?.models[0];
-                            setDraft({ makeId: e.target.value, modelId: model?.id, year: model?.years[0] });
-                        }}
-                    >
+                        onChange={(e) =>
+                            setDraft({ makeId: e.target.value || undefined, modelId: undefined, year: undefined })
+                        }>
+                        <option value="">Any make</option>
                         {f?.makes.map((m) => (
                             <option key={m.id} value={m.id}>
                                 {m.name}
                             </option>
-                        )) ?? <option>Toyota</option>}
+                        ))}
                     </select>
                 </Field>
                 <Field label="SERIES / MODEL" icon="tune" span="lg:col-span-3">
@@ -71,11 +80,15 @@ export function VehicleFilterBar({ market }: { market: Marketplace }) {
                         aria-label="Series or model"
                         className={selectClass}
                         value={draft.modelId ?? ''}
+                        disabled={!draft.makeId}
                         onChange={(e) => {
                             const model = models.find((m) => m.id === e.target.value);
-                            setDraft({ modelId: e.target.value, year: model?.years.includes(draft.year ?? 0) ? draft.year : model?.years[0] });
-                        }}
-                    >
+                            setDraft({
+                                modelId: model?.id,
+                                year: model?.years.includes(draft.year ?? 0) ? draft.year : undefined,
+                            });
+                        }}>
+                        <option value="">Any model</option>
                         {models.map((m) => (
                             <option key={m.id} value={m.id}>
                                 {m.name}
@@ -88,8 +101,9 @@ export function VehicleFilterBar({ market }: { market: Marketplace }) {
                         aria-label="Build year"
                         className={selectClass}
                         value={draft.year ?? ''}
-                        onChange={(e) => setDraft({ year: Number(e.target.value) })}
-                    >
+                        disabled={!draft.modelId}
+                        onChange={(e) => setDraft({ year: e.target.value ? Number(e.target.value) : undefined })}>
+                        <option value="">Any year</option>
                         {years.map((y) => (
                             <option key={y} value={y}>
                                 {y}
@@ -102,23 +116,24 @@ export function VehicleFilterBar({ market }: { market: Marketplace }) {
                         aria-label="Service locality"
                         className={selectClass}
                         value={state.localityId}
-                        onChange={(e) => update({ localityId: e.target.value })}
-                    >
+                        onChange={(e) => update({ localityId: e.target.value })}>
+                        <option value="">Anywhere in Nairobi</option>
                         {f?.localities.map((l) => (
                             <option key={l.id} value={l.id}>
-                                {l.radiusKm ? `${l.name} (${l.radiusKm}km)` : l.name}
+                                {l.name}
                             </option>
                         ))}
                     </select>
                 </Field>
                 <div className="lg:col-span-2 flex flex-col justify-end">
-                    <label className="hidden lg:block font-code-xs text-code-xs text-transparent mb-1" aria-hidden="true">
+                    <label
+                        className="hidden lg:block font-code-xs text-code-xs text-transparent mb-1"
+                        aria-hidden="true">
                         EXECUTE
                     </label>
                     <button
                         className="h-12 w-full bg-primary-container text-on-primary hover:bg-primary font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-space-xs shadow-md transition-all active:scale-[0.98]"
-                        type="submit"
-                    >
+                        type="submit">
                         <Icon name="filter_alt" className="text-[20px]" />
                         <span>Filter Results</span>
                     </button>

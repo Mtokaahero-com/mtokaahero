@@ -1,4 +1,4 @@
-import { marketplaceFetch } from './client';
+import { apiFetch } from './client';
 
 export interface SupportMessageInput {
     name: string;
@@ -8,5 +8,6 @@ export interface SupportMessageInput {
 }
 
 export const supportApi = {
-    send: (input: SupportMessageInput) => marketplaceFetch<{ id: string; ticket: string }>('/support/messages', { method: 'POST', body: input }),
+    send: (input: SupportMessageInput) =>
+        apiFetch<{ id: string; ticket: string }>('/support/messages', { method: 'POST', body: input }),
 };

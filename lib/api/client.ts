@@ -1,15 +1,17 @@
 import { parseProblem } from './problem';
 
-/**
- * Base URL for the marketplace, rescue and garage-operations endpoints.
- *
- * These endpoints are specified in docs/superpowers/specs/2026-10-05-stitch-ui-api-contract.md but not yet served by
- * mtokaa-api, so the default points at the in-app mock (app/api/mock/v1). Point it at the real API
- * (e.g. http://localhost:8080/api/v1) once the endpoints exist.
- */
-export const MARKETPLACE_API_URL = process.env.NEXT_PUBLIC_MARKETPLACE_API_URL ?? '/api/mock/v1';
+/** mtokaa-api base URL. All API queries go here. */
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 
 type Query = Record<string, string | number | boolean | string[] | undefined | null>;
+
+export interface FetchInit {
+    method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
+    query?: Query;
+    body?: unknown;
+    token?: string;
+    headers?: Record<string, string>;
+}
 
 export function toQueryString(query: Query = {}): string {
     const params = new URLSearchParams();
@@ -22,14 +24,11 @@ export function toQueryString(query: Query = {}): string {
     return qs ? `?${qs}` : '';
 }
 
-export async function marketplaceFetch<T>(
-    path: string,
-    init: { method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'; query?: Query; body?: unknown; token?: string; headers?: Record<string, string> } = {},
-): Promise<T> {
+async function request<T>(base: string, path: string, init: FetchInit): Promise<T> {
     const headers: Record<string, string> = { Accept: 'application/json', ...init.headers };
     if (init.body !== undefined) headers['Content-Type'] = 'application/json';
     if (init.token) headers.Authorization = `Bearer ${init.token}`;
-    const res = await fetch(`${MARKETPLACE_API_URL}${path}${toQueryString(init.query)}`, {
+    const res = await fetch(`${base}${path}${toQueryString(init.query)}`, {
         method: init.method ?? 'GET',
         headers,
         body: init.body === undefined ? undefined : JSON.stringify(init.body),
@@ -39,3 +38,5 @@ export async function marketplaceFetch<T>(
     if (res.status === 204) return undefined as T;
     return (await res.json()) as T;
 }
+
+export const apiFetch = <T>(path: string, init: FetchInit = {}): Promise<T> => request<T>(API_URL, path, init);

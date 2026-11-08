@@ -125,7 +125,7 @@ function Dashboard({ auth, shopName }: { auth: GarageAuth; shopName: string }) {
                     <ShopHeader shop={{ ...d.shop, accepting: profile.data?.accepting ?? false, autoDispatch: profile.data?.accepting ?? false }} displayName={shopName || d.shop.name} onToggle={toggle} toggling={toggling} canGoOnline={canGoOnline} reason={goOnlineReason} unavailable={!!profile.error && !prof} loading={profile.loading && !prof} onNewItem={() => setNewItemOpen(true)} />
                     <KpiCards kpis={d.kpis} />
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-                        <RevenueChart revenue={d.revenue} />
+                        <RevenueChart revenue={d.revenue} auth={auth} />
                         <DispatchRadarCard radar={radar.data} fleet={d.fleet} accepting={profile.data?.accepting ?? false} onAccept={accept} />
                     </div>
                     <InventorySection auth={auth} initialType={view} refreshKey={catalogVersion} />

@@ -1,5 +1,5 @@
 import type { Money } from '@/lib/format';
-import { marketplaceFetch } from './client';
+import { apiFetch } from './client';
 
 export type ItemType = 'PART' | 'SERVICE' | 'RESCUE_PACKAGE';
 export type Fulfilment = 'MOBILE' | 'IN_SHOP' | 'MOBILE_OR_SHOP' | 'PICKUP';
@@ -28,7 +28,8 @@ export interface Offer {
     categoryId: string;
     title: string;
     description: string;
-    image: { url: string; alt: string };
+    /** Item photos are not supported yet, so `url` is null; use `offerImage()` for the category's stock photo. */
+    image: { url: string | null; alt: string };
     provider: ProviderSummary;
     /** Top-left pill on the card image, e.g. "Mobile Rescue Unit". */
     modeLabel: OfferLabel;
@@ -40,12 +41,11 @@ export interface Offer {
     priceNote?: OfferLabel & { style?: 'text' | 'chip' };
     /** Call to action for the primary button ("Request Rescue", "Book Service Bay", "Details"). */
     action: { label: string; icon: string };
-    /** Compact mobile card details. */
+    /** Distance from the searched locality, or the provider's address without one. */
     distanceLabel?: OfferLabel;
-    nextSlot?: string;
-    chips?: string[];
+    /** True only when the item declares a fitment matching the searched vehicle; universal items are false. */
     fitsVehicle: boolean;
-    etaMinutes?: number;
+    distanceKm: number | null;
 }
 
 export interface VehicleMake {
@@ -57,7 +57,6 @@ export interface VehicleMake {
 export interface Locality {
     id: string;
     name: string;
-    radiusKm?: number;
 }
 
 export interface Category {
@@ -66,7 +65,9 @@ export interface Category {
     shortLabel: string;
     icon: string;
     tone: LabelTone | 'neutral';
-    rescue?: boolean;
+    rescue: boolean;
+    /** Item types that may be listed under this category. */
+    types: ItemType[];
 }
 
 export interface MarketplaceFilters {
@@ -74,17 +75,19 @@ export interface MarketplaceFilters {
     localities: Locality[];
     categories: Category[];
     providers: { id: string; name: string }[];
+    /** Every count is zero until reviews exist. */
     ratingBuckets: { min: number; count: number }[];
-    eta: { min: number; max: number };
+    /** Lowest and highest live price; both 0 when nothing is listed. */
     price: { min: number; max: number; currency: string };
 }
 
 export interface MarketplaceSummary {
+    /** Workshop bays across every approved provider. */
     activeServiceBays: number;
-    region: { name: string; avgEtaMinutes: number };
+    region: { name: string };
+    /** Within the selected locality when one is given. */
     deliveryModes: { mobileUnits: number; shopBays: number };
-    rescue: { etaMinutes: { min: number; max: number }; dispatchedNow: number };
-    activePatrol: { unit: string; vehicle: 'MOTORBIKE' | 'VAN'; location: string; minutesAway: number } | null;
+    rescue: { acceptingProviders: number };
 }
 
 export interface VehicleSelection {
@@ -100,7 +103,6 @@ export interface OfferQuery extends VehicleSelection {
     fulfilment?: Fulfilment[];
     providerIds?: string[];
     minRating?: number;
-    maxEtaMinutes?: number;
     maxPrice?: number;
     sort?: OfferSort;
     page?: number;
@@ -117,10 +119,10 @@ export interface OfferPage {
 }
 
 export const marketplaceApi = {
-    summary: (localityId?: string) => marketplaceFetch<MarketplaceSummary>('/marketplace/summary', { query: { localityId } }),
-    filters: () => marketplaceFetch<MarketplaceFilters>('/marketplace/filters'),
+    summary: (localityId?: string) => apiFetch<MarketplaceSummary>('/marketplace/summary', { query: { localityId } }),
+    filters: () => apiFetch<MarketplaceFilters>('/marketplace/filters'),
     offers: (query: OfferQuery) =>
-        marketplaceFetch<OfferPage>('/marketplace/offers', {
+        apiFetch<OfferPage>('/marketplace/offers', {
             query: {
                 q: query.q,
                 makeId: query.makeId,
@@ -131,12 +133,11 @@ export const marketplaceApi = {
                 fulfilment: query.fulfilment,
                 providerId: query.providerIds,
                 minRating: query.minRating,
-                maxEtaMinutes: query.maxEtaMinutes,
                 maxPrice: query.maxPrice,
                 sort: query.sort,
                 page: query.page,
                 pageSize: query.pageSize,
             },
         }),
-    offer: (id: string) => marketplaceFetch<Offer>(`/marketplace/offers/${id}`),
+    offer: (id: string) => apiFetch<Offer>(`/marketplace/offers/${id}`),
 };

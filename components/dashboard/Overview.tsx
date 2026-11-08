@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon } from '@/components/brand/Icon';
-import type { GarageDashboard } from '@/lib/api/garage';
+import { garageApi, type GarageAuth, type GarageDashboard } from '@/lib/api/garage';
 import { formatMoney, formatMoneyCompact } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -208,7 +208,19 @@ function smoothPath(points: [number, number][]): string {
     return d;
 }
 
-export function RevenueChart({ revenue }: { revenue: GarageDashboard['revenue'] }) {
+export function RevenueChart({ revenue, auth }: { revenue: GarageDashboard['revenue']; auth?: GarageAuth }) {
+    const downloadLedger = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (!auth) return;
+        e.preventDefault();
+        const csv = await garageApi.ledgerCsv(auth);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'tax-ledger.csv';
+        link.click();
+        URL.revokeObjectURL(url);
+    };
     const base = 190;
     const gap = 2;
     const step = 700 / revenue.buckets.length;
@@ -278,7 +290,12 @@ export function RevenueChart({ revenue }: { revenue: GarageDashboard['revenue'] 
                         Automatic payout cycle active: Next scheduled transfer <strong>{revenue.nextPayout}</strong>
                     </span>
                 </div>
-                <a className="text-primary font-label-md text-label-md font-semibold hover:underline" href={revenue.ledgerUrl} download>
+                <a
+                    className="text-primary font-label-md text-label-md font-semibold hover:underline"
+                    href={revenue.ledgerUrl}
+                    onClick={downloadLedger}
+                    download
+                >
                     Download Tax Ledger (CSV)
                 </a>
             </div>
